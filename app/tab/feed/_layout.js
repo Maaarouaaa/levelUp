@@ -1,3 +1,4 @@
+// back end director for feed stack navigation
 import { Stack } from "expo-router";
 import Theme from "@/assets/theme";
 import { View, Text } from "react-native";
