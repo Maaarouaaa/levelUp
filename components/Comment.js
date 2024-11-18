@@ -1,3 +1,4 @@
+/*
 import { StyleSheet, Text, View } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
@@ -65,3 +66,4 @@ const styles = StyleSheet.create({
     color: Theme.colors.textSecondary,
   },
 });
+*/

@@ -13,7 +13,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="feed"
         options={{
-          title: "one",
+          title: "home",
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons
               name="beehive-outline"
@@ -34,7 +34,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: "two",
+          title: "experience",
           tabBarIcon: ({ size, color }) => (
             <AntDesign name="staro" size={24} color={color} />
           ),
@@ -51,7 +51,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="three"
         options={{
-          title: "three",
+          title: "leaderboard",
           tabBarIcon: ({ size, color }) => (
             <FontAwesome name="user" size={24} color={color} />
           ),
@@ -68,7 +68,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="four"
         options={{
-          title: "four",
+          title: "profile",
           tabBarIcon: ({ size, color }) => (
             <AntDesign name="smile-circle" size={24} color={color} />
           ),
@@ -91,7 +91,7 @@ export default function TabLayout() {
             backgroundColor: Theme.colors.backgroundPrimary, // Customize the header background color
           },
           headerTintColor: "#fff", // Customize the color of the back button and header text
-          headerTitle: () => (
+          /*headerTitle: () => (
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <MaterialCommunityIcons name="bee" size={31} color="#f4511e" />
               <Text
@@ -105,7 +105,7 @@ export default function TabLayout() {
                 Buzz
               </Text>
             </View>
-          ),
+          ), */
           tabBarStyle: {
             backgroundColor: Theme.colors.backgroundPrimary, // Customize the tab bar itself
           },

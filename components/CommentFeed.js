@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
 });
 */
 
+/*
 import { useState, useEffect } from "react";
 import { StyleSheet, FlatList, RefreshControl, View, Text } from "react-native";
 
@@ -160,3 +161,4 @@ const styles = StyleSheet.create({
     color: Theme.colors.textSecondary,
   },
 });
+*/

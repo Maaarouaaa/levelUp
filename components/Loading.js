@@ -1,3 +1,4 @@
+/*
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 
 import Theme from "@/assets/theme";
@@ -18,3 +19,4 @@ const styles = StyleSheet.create({
     backgroundColor: Theme.colors.backgroundPrimary,
   },
 });
+*/

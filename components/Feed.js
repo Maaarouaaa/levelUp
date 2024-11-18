@@ -1,3 +1,4 @@
+/*
 import { StyleSheet, View } from "react-native";
 
 import FontAwesome from "@expo/vector-icons/FontAwesome";

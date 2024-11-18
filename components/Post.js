@@ -1,3 +1,4 @@
+/*
 import { useState, useEffect } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
@@ -130,57 +131,57 @@ export default function Post({
   };
   */
 
-  let post = (
-    <TouchableOpacity style={styles.content} disabled={!shouldNavigateOnPress}>
-      <View style={styles.header}>
+let post = (
+  <TouchableOpacity style={styles.content} disabled={!shouldNavigateOnPress}>
+    <View style={styles.header}>
+      <FontAwesome
+        size={Theme.sizes.iconSmall}
+        name="user"
+        color={Theme.colors.iconSecondary}
+      />
+      <Text style={styles.username}>{username}</Text>
+    </View>
+    <View style={styles.body}>
+      <Text style={styles.text}>{text}</Text>
+    </View>
+    <View style={styles.footer}>
+      <Text style={styles.timestamp}>{timestamp}</Text>
+      <View style={styles.comment}>
         <FontAwesome
           size={Theme.sizes.iconSmall}
-          name="user"
+          name="comment"
           color={Theme.colors.iconSecondary}
         />
-        <Text style={styles.username}>{username}</Text>
+        <Text style={styles.commentCount}>{commentCount}</Text>
       </View>
-      <View style={styles.body}>
-        <Text style={styles.text}>{text}</Text>
-      </View>
-      <View style={styles.footer}>
-        <Text style={styles.timestamp}>{timestamp}</Text>
-        <View style={styles.comment}>
-          <FontAwesome
-            size={Theme.sizes.iconSmall}
-            name="comment"
-            color={Theme.colors.iconSecondary}
-          />
-          <Text style={styles.commentCount}>{commentCount}</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
+    </View>
+  </TouchableOpacity>
+);
+
+if (shouldNavigateOnPress) {
+  post = (
+    <Link
+      href={{
+        pathname: "/tab/feed/details",
+        params: {
+          id: id,
+          username: username,
+          timestamp: timestamp,
+          text: text,
+          score: score,
+          commentCount: commentCount,
+          vote: vote,
+        },
+      }}
+      asChild={true}
+      style={styles.content}
+    >
+      {post}
+    </Link>
   );
+}
 
-  if (shouldNavigateOnPress) {
-    post = (
-      <Link
-        href={{
-          pathname: "/tab/feed/details",
-          params: {
-            id: id,
-            username: username,
-            timestamp: timestamp,
-            text: text,
-            score: score,
-            commentCount: commentCount,
-            vote: vote,
-          },
-        }}
-        asChild={true}
-        style={styles.content}
-      >
-        {post}
-      </Link>
-    );
-  }
-
-  /*
+/*
   const upvoteButton = (
     <TouchableOpacity
       onPress={() => (vote > 0 ? submitVote(0) : submitVote(1))}
@@ -197,42 +198,42 @@ export default function Post({
     </TouchableOpacity>
   );
   */
-  const upvoteButton = (
-    <TouchableOpacity
-      onPress={() => submitVote(currentVote > 0 ? 0 : 1)} // Toggle upvote
-      style={styles.upvoteButton}
-      disabled={isLoading}
-    >
-      <FontAwesome
-        size={16}
-        name="chevron-up"
-        color={
-          currentVote > 0
-            ? Theme.colors.iconHighlighted
-            : Theme.colors.iconSecondary
-        }
-      />
-    </TouchableOpacity>
-  );
+const upvoteButton = (
+  <TouchableOpacity
+    onPress={() => submitVote(currentVote > 0 ? 0 : 1)} // Toggle upvote
+    style={styles.upvoteButton}
+    disabled={isLoading}
+  >
+    <FontAwesome
+      size={16}
+      name="chevron-up"
+      color={
+        currentVote > 0
+          ? Theme.colors.iconHighlighted
+          : Theme.colors.iconSecondary
+      }
+    />
+  </TouchableOpacity>
+);
 
-  const downvoteButton = (
-    <TouchableOpacity
-      onPress={() => submitVote(currentVote < 0 ? 0 : -1)} // Toggle downvote
-      style={styles.downvoteButton}
-      disabled={isLoading}
-    >
-      <FontAwesome
-        size={16}
-        name="chevron-down"
-        color={
-          currentVote < 0
-            ? Theme.colors.iconHighlighted
-            : Theme.colors.iconSecondary
-        }
-      />
-    </TouchableOpacity>
-  );
-  /*
+const downvoteButton = (
+  <TouchableOpacity
+    onPress={() => submitVote(currentVote < 0 ? 0 : -1)} // Toggle downvote
+    style={styles.downvoteButton}
+    disabled={isLoading}
+  >
+    <FontAwesome
+      size={16}
+      name="chevron-down"
+      color={
+        currentVote < 0
+          ? Theme.colors.iconHighlighted
+          : Theme.colors.iconSecondary
+      }
+    />
+  </TouchableOpacity>
+);
+/*
   const downvoteButton = (
     <TouchableOpacity
       onPress={() => (vote < 0 ? submitVote(0) : submitVote(-1))}
@@ -249,6 +250,7 @@ export default function Post({
     </TouchableOpacity>
   );
 */
+/*
   return (
     <View style={styles.container}>
       {post}
@@ -332,6 +334,7 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
 });
+*/
 
 /*
 import { useState } from "react";

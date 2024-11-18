@@ -1,3 +1,4 @@
+/*
 import { useState } from "react";
 import {
   Text,
@@ -132,3 +133,4 @@ const styles = StyleSheet.create({
     color: Theme.colors.textSecondary,
   },
 });
+*/
