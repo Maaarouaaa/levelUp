@@ -5,7 +5,7 @@ import { StatusBar } from "expo-status-bar";
 import { Link } from "expo-router";
 
 import Theme from "@/assets/theme";
-import Feed from "@/components/Feed";
+//import Feed from "@/components/Feed";
 
 export default function Home() {
   return (
