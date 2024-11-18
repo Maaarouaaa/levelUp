@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 export default function four() {
   return (
     <View style={styles.container}>
-      <Text style={styles.centerText}>This is scren four</Text>
+      <Text style={styles.centerText}>This is screen four</Text>
     </View>
   );
 }
