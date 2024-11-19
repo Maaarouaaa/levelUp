@@ -5,7 +5,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 export default function ExperienceCard({ name, xp, photo, onPress }) {
   return (
-    
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.content}>
         <View style={styles.details}>
