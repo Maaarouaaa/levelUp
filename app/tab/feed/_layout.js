@@ -39,6 +39,7 @@ export default function FeedStackLayout() {
       />
 
       {/* New Post Screen */}
+      {/*We can talk about it, if removed, there is the extra button and idk why, I can ask in OH*/}
       <Stack.Screen
         name="newpost" // Matches "feed/newpost.js"
         options={{

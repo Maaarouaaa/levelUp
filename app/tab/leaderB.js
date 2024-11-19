@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View } from "react-native";
 
-export default function four() {
+export default function three() {
   return (
     <View style={styles.container}>
-      <Text style={styles.centerText}>This is the profile screen</Text>
+      <Text style={styles.centerText}>This is the leaderboard screen</Text>
     </View>
   );
 }

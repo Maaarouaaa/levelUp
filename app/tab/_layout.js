@@ -28,11 +28,11 @@ export default function TabLayout() {
             backgroundColor: Theme.colors.backgroundPrimary, // Use tabBarColor for the tab bar itself
           },
           headerTintColor: "#fff",
-          headerShown: false,
+          headerShown: true,
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="experience"
         options={{
           title: "experience",
           tabBarIcon: ({ size, color }) => (
@@ -49,11 +49,21 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="three"
+        name="Experience"
+        options={{
+          title: "LevelUp", // default title
+          href: null,
+          headerStyle: {
+            backgroundColor: Theme.colors.backgroundPrimary, // Customize the header background color
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="leaderB"
         options={{
           title: "leaderboard",
           tabBarIcon: ({ size, color }) => (
-            <FontAwesome name="user" size={24} color={color} />
+            <AntDesign name="smile-circle" size={24} color={color} />
           ),
           headerStyle: {
             backgroundColor: Theme.colors.backgroundPrimary,
@@ -66,11 +76,11 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="four"
+        name="profile"
         options={{
           title: "profile",
           tabBarIcon: ({ size, color }) => (
-            <AntDesign name="smile-circle" size={24} color={color} />
+            <FontAwesome name="user" size={24} color={color} />
           ),
           headerStyle: {
             backgroundColor: Theme.colors.backgroundPrimary,

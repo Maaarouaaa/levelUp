@@ -1,5 +1,4 @@
 import { StyleSheet, View } from "react-native";
-
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { StatusBar } from "expo-status-bar";
 import { Link } from "expo-router";

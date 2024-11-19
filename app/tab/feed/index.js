@@ -14,6 +14,11 @@ export default function Feed() {
           <FontAwesome size={32} name="plus" color={Theme.colors.textPrimary} />
         </View>
       </Link>
+      <Link href="/tab/feed/details" style={styles.postButtonContainer}>
+        <View style={styles.postButton}>
+          <FontAwesome size={32} name="cog" color={Theme.colors.textPrimary} />
+        </View>
+      </Link>
     </View>
   );
 }
@@ -29,6 +34,7 @@ const styles = StyleSheet.create({
     color: Theme.colors.textSecondary,
     fontSize: Theme.sizes.textMedium,
   },
+  postButtonContainer: {},
 });
 
 /*

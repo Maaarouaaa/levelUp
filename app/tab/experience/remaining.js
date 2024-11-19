@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View } from "react-native";
 
-export default function three() {
+export default function NewPost() {
   return (
     <View style={styles.container}>
-      <Text style={styles.centerText}>This is screen three</Text>
+      <Text style={styles.centerText}>This is the remaining task list</Text>
     </View>
   );
 }
