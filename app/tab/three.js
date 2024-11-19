@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import ExperienceButton from "@/components/TodaysExperience"; // Update the path if it's located elsewhere
+import ExperienceButton from "@/components/TodaysExperience"; 
 
 export default function Three() {
   return (
@@ -8,9 +8,9 @@ export default function Three() {
       <Text style={styles.centerText}>This is screen three</Text>
       <ExperienceButton
         name="Solve a Rubik's Cube"
-        xp="XP: 20"
-        photo={require("@/assets/rubiks_cube.jpg")} // Ensure the path to rubiks.jpg is correct
-        description="Solve a Rubik's Cube description"
+        xp="20"
+        photo={require("@/assets/rubiks_cube.jpg")} 
+        description="Learn how to solve a Rubik’s Cube! Then, challenge your friends"
         onPress={() => console.log("Go to Rubik's Cube Experience")}
       />
     </View>

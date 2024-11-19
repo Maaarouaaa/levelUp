@@ -7,7 +7,8 @@ export default function TodaysExperience({ name, xp, photo, description, onPress
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.content}>
         <Text style={styles.name}>{name}</Text>
-        <Text style={styles.xp}>{xp}</Text>
+        <FontAwesomeIcon icon="fa-solid fa-star" />
+        <Text style={styles.xp}>{xp} XP</Text>
         <View style={styles.details}>
           <Image source={photo} style={styles.image} />
           <Text style={styles.description}>{description}</Text>
@@ -20,15 +21,15 @@ export default function TodaysExperience({ name, xp, photo, description, onPress
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Theme.colors.backgroundPrimary,
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: 150, // Square size
-    height: 150, // Square size
+    width: 364, // Square size
+    height: 320, // Square size
     padding: 16,
     justifyContent: "space-between",
   },
@@ -37,14 +38,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   name: {
-    fontSize: Theme.sizes.textMedium,
+    fontSize: 24,
     fontWeight: "bold",
-    color: Theme.colors.textPrimary,
+    color: '#000000',
     textAlign: "left",
   },
   xp: {
-    fontSize: Theme.sizes.textSmall,
-    color: Theme.colors.textSecondary,
+    fontSize: 20,
+    color: '#000000',
     textAlign: "left",
   },
   details: {
@@ -53,15 +54,20 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   image: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 140, // Increased size
+    height: 140, // Increased size
+    borderRadius: 12, // Adjusted for larger size
+    borderLeft: 20,
     marginRight: 8,
   },
   description: {
-    fontSize: Theme.sizes.textSmall,
-    color: Theme.colors.textPrimary,
+    fontSize: 16, // Reduced size
+    color: '#4B4B4B',
     flexShrink: 1,
+    borderRightWidth: 20,
+    borderLeftWidth: 20,
+    borderRightColor: '#FFFFFF',
+    borderLeftColor: '#FFFFFF',
   },
   link: {
     fontSize: Theme.sizes.textSmall,
@@ -70,4 +76,5 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
 });
+
 
