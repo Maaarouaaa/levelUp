@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Redirect } from "expo-router";
 
 //import Login from "@/components/Login";
-import db from "@/database/db";
+//import db from "@/database/db";
 //import Loading from "@/components/Loading";
 
 export default function App() {
