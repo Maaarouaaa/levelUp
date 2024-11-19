@@ -1,16 +1,26 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import ExperienceButton from "@/components/TodaysExperience"; 
+import TodaysExperience from "@/components/TodaysExperience"; 
+import ExperienceCard from "@/components/ExperienceCard"; 
 
 export default function Three() {
   return (
     <View style={styles.container}>
       <Text style={styles.centerText}>This is screen three</Text>
-      <ExperienceButton
+      <TodaysExperience
         name="Solve a Rubik's Cube"
         xp="20"
         photo={require("@/assets/rubiks_cube.jpg")} 
         description="Learn how to solve a Rubik’s Cube! Then, challenge your friends"
+        onPress={() => console.log("Go to Rubik's Cube Experience")}
+      />
+      <View>
+        <Text>placeholder</Text>
+      </View>
+      <ExperienceCard
+        name="Solve a Rubik's Cube"
+        xp="20"
+        photo={require("@/assets/rubiks_cube.jpg")} 
         onPress={() => console.log("Go to Rubik's Cube Experience")}
       />
     </View>

@@ -1,19 +1,24 @@
 import React from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import Theme from "@/assets/theme";
+import Icon from 'react-native-vector-icons/Ionicons';
 
 export default function TodaysExperience({ name, xp, photo, description, onPress }) {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.content}>
         <Text style={styles.name}>{name}</Text>
-        <FontAwesomeIcon icon="fa-solid fa-star" />
-        <Text style={styles.xp}>{xp} XP</Text>
+        <View style={styles.xpRow}>
+          <Icon name="star" size={25} color="#509B9B" />
+          <Text style={styles.xp}>{xp} XP</Text>
+        </View>
         <View style={styles.details}>
           <Image source={photo} style={styles.image} />
           <Text style={styles.description}>{description}</Text>
         </View>
-        <Text style={styles.link}>Go to Experience</Text>
+        <TouchableOpacity style={styles.button} onPress={onPress}>
+          <Text style={styles.buttonText}>Go to Experience</Text>
+        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
@@ -28,8 +33,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: 364, // Square size
-    height: 320, // Square size
+    width: 364,
+    height: 320,
     padding: 16,
     justifyContent: "space-between",
   },
@@ -39,14 +44,18 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 24,
-    fontWeight: "bold",
     color: '#000000',
     textAlign: "left",
+  },
+  xpRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 1,
   },
   xp: {
     fontSize: 20,
     color: '#000000',
-    textAlign: "left",
+    marginLeft: 8,
   },
   details: {
     flexDirection: "row",
@@ -54,14 +63,13 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   image: {
-    width: 140, // Increased size
-    height: 140, // Increased size
-    borderRadius: 12, // Adjusted for larger size
-    borderLeft: 20,
+    width: 140,
+    height: 140,
+    borderRadius: 12,
     marginRight: 8,
   },
   description: {
-    fontSize: 16, // Reduced size
+    fontSize: 16,
     color: '#4B4B4B',
     flexShrink: 1,
     borderRightWidth: 20,
@@ -69,12 +77,24 @@ const styles = StyleSheet.create({
     borderRightColor: '#FFFFFF',
     borderLeftColor: '#FFFFFF',
   },
-  link: {
-    fontSize: Theme.sizes.textSmall,
-    color: Theme.colors.link,
-    textAlign: "center",
+  button: {
+    backgroundColor: '#509B9B',
+    paddingVertical: 10,
+    height: 40,
+    width: 250,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    alignItems: 'center',
+    alignSelf: 'center',
     marginTop: 8,
   },
+  buttonText: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    fontWeight: 'semibold',
+  },
 });
+
+
 
 
