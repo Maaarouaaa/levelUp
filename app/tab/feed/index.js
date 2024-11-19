@@ -1,11 +1,19 @@
 import { StyleSheet, Text, View } from "react-native";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { StatusBar } from "expo-status-bar";
+import { Link } from "expo-router";
 
 import Theme from "@/assets/theme";
 
 export default function Feed() {
   return (
     <View style={styles.container}>
-      <Text style={styles.mainText}>This is the main screen</Text>
+      <StatusBar style="light" />
+      <Link href="/tab/feed/newpost" style={styles.postButtonContainer}>
+        <View style={styles.postButton}>
+          <FontAwesome size={32} name="plus" color={Theme.colors.textPrimary} />
+        </View>
+      </Link>
     </View>
   );
 }

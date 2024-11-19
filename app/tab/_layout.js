@@ -83,7 +83,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="index"
+        name="one"
         options={{
           title: "LevelUp", // default title
           href: null,
