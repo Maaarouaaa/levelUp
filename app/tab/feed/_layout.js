@@ -11,8 +11,16 @@ export default function FeedStackLayout() {
       <Stack.Screen
         name="index" // Matches "feed/index.js"
         options={{
-          title: "Feed",
-          headerShown: false, // No header for this screen
+          //title: "Feed",
+          //headerShown: false, // No header for this screen
+          title: "home",
+
+          headerStyle: {
+            backgroundColor: Theme.colors.backgroundPrimary,
+          },
+
+          headerTintColor: "#fff",
+          headerShown: true,
           // Uncomment this if a header is needed:
           /*
           headerStyle: {
