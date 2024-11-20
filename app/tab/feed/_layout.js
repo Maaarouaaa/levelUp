@@ -20,7 +20,7 @@ export default function FeedStackLayout() {
           },
 
           headerTintColor: "#fff",
-          headerShown: true,
+          headerShown: false,
           // Uncomment this if a header is needed:
           /*
           headerStyle: {

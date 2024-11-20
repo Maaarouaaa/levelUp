@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, ScrollView, Image } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Octicons from "@expo/vector-icons/Octicons";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -17,54 +17,66 @@ export default function Feed() {
   };
   return (
     <View style={styles.container}>
-      <View style={styles.header}></View>
-      <StatusBar style="light" />
-      <View style={styles.postButton} onTouchEnd={navigateToDetails}>
-        {/*<FontAwesome size={32} name="plus" color="black" />*/}
-        <TodaysExperience
-          name="Solve a Rubik's Cube"
-          xp="20"
-          photo={require("@/assets/rubiks_cube.jpg")}
-          description="Learn how to solve a Rubik’s Cube! Then, challenge your friends"
-          //onPress={() => console.log("Go to Rubik's Cube Experience")}
-          onPress={() => console.log("Go to Rubik's Cube Experience")}
-        />
-      </View>
-      <View style={styles.skillsContainer}>
-        <View style={styles.pair}>
-          <View style={styles.problemContainer}>
-            <View style={styles.pIContainer}>
-              <Octicons name="gear" size={24} color="black" />
-            </View>
-            <Text style={styles.problem}>Problem Solving</Text>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Home screen</Text>
+        <View style={styles.withPic}>
+          <View style={styles.headerSubtitle}>
+            <Text style={styles.headerText}>Welcome, Varsha!</Text>
+            <Text style={styles.xp}>260 Xp</Text>
           </View>
-          <View style={styles.commContainer}>
-            <View style={styles.cIContainer}>
-              <Ionicons name="chatbubbles-outline" size={24} color="black" />
-            </View>
-            <Text style={styles.comm}>Communication</Text>
-          </View>
+          <Image source={require("@/assets/varsha.png")} style={styles.image} />
         </View>
+      </View>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <StatusBar style="light" />
+        <Text style={styles.miniTitle}>Today's experience</Text>
+        <View style={styles.postButton} onTouchEnd={navigateToDetails}>
+          <TodaysExperience
+            name="Solve a Rubik's Cube"
+            xp="20"
+            photo={require("@/assets/rubiks_cube.jpg")}
+            description="Learn how to solve a Rubik’s Cube! Then, challenge your friends"
+            //onPress={() => console.log("Go to Rubik's Cube Experience")}
+            //onPress={() => console.log("Go to Rubik's Cube Experience")}
+          />
+        </View>
+        <Text style={styles.miniTitle}>My skills</Text>
+        <View style={styles.skillsContainer}>
+          <View style={styles.pair}>
+            <View style={styles.problemContainer}>
+              <View style={styles.pIContainer}>
+                <Octicons name="gear" size={24} color="black" />
+              </View>
+              <Text style={styles.problem}>Problem Solving</Text>
+            </View>
+            <View style={styles.commContainer}>
+              <View style={styles.cIContainer}>
+                <Ionicons name="chatbubbles-outline" size={24} color="black" />
+              </View>
+              <Text style={styles.comm}>Communication</Text>
+            </View>
+          </View>
 
-        <View style={styles.pair}>
-          <View style={styles.leadershipContainer}>
-            <View style={styles.lIContainer}>
-              <Octicons name="graph" size={24} color="black" />
+          <View style={styles.pair}>
+            <View style={styles.leadershipContainer}>
+              <View style={styles.lIContainer}>
+                <Octicons name="graph" size={24} color="black" />
+              </View>
+              <Text style={styles.leadership}>Leadership</Text>
             </View>
-            <Text style={styles.leadership}>Leadership</Text>
-          </View>
-          <View style={styles.adaptContainer}>
-            <View style={styles.aIContainer}>
-              <Ionicons
-                name="extension-puzzle-outline"
-                size={24}
-                color="black"
-              />
+            <View style={styles.adaptContainer}>
+              <View style={styles.aIContainer}>
+                <Ionicons
+                  name="extension-puzzle-outline"
+                  size={24}
+                  color="black"
+                />
+              </View>
+              <Text style={styles.adaptability}>Adaptability</Text>
             </View>
-            <Text style={styles.adaptability}>Adaptability</Text>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -73,19 +85,62 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    //justifyContent: "center",
+    justifyContent: "flex-start",
     backgroundColor: "#fff",
   },
-  mainText: {
-    color: Theme.colors.textSecondary,
-    fontSize: Theme.sizes.textMedium,
+  scrollContainer: {
+    //flex: 1,
+    paddingBottom: 50, // Add padding at the bottom if needed
+    width: "100%",
   },
-  postButtonContainer: {},
+  header: {
+    backgroundColor: "#D0E4E4",
+    width: "100%",
+    height: 150,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  headerText: {
+    color: "#509B9B", // Set header text color
+    fontSize: 24, // Font size for header text
+    fontWeight: "bold",
+    flexDirection: "column",
+    marginTop: 15,
+    //alignItems: "center",
+    //justifyContent: "center",
+  },
+  headerSubtitle: {
+    alignItems: "center",
+    justifyContent: "flex-start",
+    marginRight: 31,
+  },
+  xp: {
+    fontSize: 17,
+  },
+  image: {
+    height: 61,
+    width: 61,
+    borderRadius: 25,
+  },
+  withPic: {
+    padding: 7,
+    flexDirection: "row",
+    alignItems: "center", // Align items vertically centered
+    justifyContent: "center",
+  },
+  miniTitle: {
+    fontSize: 17,
+    padding: 15,
+  },
+  postButton: {
+    flex: 1,
+  },
   skillsContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: 50,
+    padding: 15,
   },
   commContainer: {
     flex: 1, // Add this
