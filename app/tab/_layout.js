@@ -25,10 +25,10 @@ export default function TabLayout() {
             backgroundColor: Theme.colors.backgroundPrimary,
           },
           tabBarStyle: {
-            backgroundColor: "#fff", // Use tabBarColor for the tab bar itself
+            backgroundColor: "#D0E4E4", // Use tabBarColor for the tab bar itself
           },
           headerTintColor: "#fff",
-          headerShown: true,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -42,7 +42,7 @@ export default function TabLayout() {
             backgroundColor: Theme.colors.backgroundPrimary,
           },
           tabBarStyle: {
-            backgroundColor: "#fff", // Use tabBarColor for the tab bar itself
+            backgroundColor: "#D0E4E4", // Use tabBarColor for the tab bar itself
           },
           headerTintColor: "#fff",
           headerShown: true,
@@ -69,7 +69,7 @@ export default function TabLayout() {
             backgroundColor: "#fff",
           },
           tabBarStyle: {
-            backgroundColor: "#fff", // Use tabBarColor for the tab bar itself
+            backgroundColor: "#D0E4E4", // Use tabBarColor for the tab bar itself
           },
           headerTintColor: "#fff",
           headerShown: true,
@@ -86,7 +86,7 @@ export default function TabLayout() {
             backgroundColor: Theme.colors.backgroundPrimary,
           },
           tabBarStyle: {
-            backgroundColor: "#fff", // Use tabBarColor for the tab bar itself
+            backgroundColor: "#D0E4E4", // Use tabBarColor for the tab bar itself
           },
           headerTintColor: "#fff",
           headerShown: true,
@@ -117,7 +117,7 @@ export default function TabLayout() {
             </View>
           ), */
           tabBarStyle: {
-            backgroundColor: "#fff", // Customize the tab bar itself
+            backgroundColor: "#D0E4E4", // Customize the tab bar itself
           },
           headerShown: true,
         }}
