@@ -17,17 +17,21 @@ export default function Feed() {
   };
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Home screen</Text>
-        <View style={styles.withPic}>
-          <View style={styles.headerSubtitle}>
-            <Text style={styles.headerText}>Welcome, Varsha!</Text>
-            <Text style={styles.xp}>260 Xp</Text>
-          </View>
-          <Image source={require("@/assets/varsha.png")} style={styles.image} />
-        </View>
-      </View>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Level up.</Text>
+          <View style={styles.withPic}>
+            <View style={styles.headerSubtitle}>
+              <Text style={styles.headerText}>Welcome, Varsha!</Text>
+              <Text style={styles.xp}>260 Xp</Text>
+            </View>
+            <Image
+              source={require("@/assets/varsha.png")}
+              style={styles.image}
+            />
+          </View>
+        </View>
+        {/*<ScrollView contentContainerStyle={styles.scrollContainer}>*/}
         <StatusBar style="light" />
         <Text style={styles.miniTitle}>Today's experience</Text>
         <View style={styles.postButton} onTouchEnd={navigateToDetails}>
@@ -100,6 +104,7 @@ const styles = StyleSheet.create({
     height: 150,
     justifyContent: "center",
     alignItems: "center",
+    paddingRight: 75,
   },
   headerText: {
     color: "#509B9B", // Set header text color
@@ -111,17 +116,17 @@ const styles = StyleSheet.create({
     //justifyContent: "center",
   },
   headerSubtitle: {
-    alignItems: "center",
+    //alignItems: "center",
     justifyContent: "flex-start",
-    marginRight: 31,
+    marginRight: 25,
   },
   xp: {
     fontSize: 17,
   },
   image: {
-    height: 61,
-    width: 61,
-    borderRadius: 25,
+    height: 75,
+    width: 75,
+    borderRadius: 75,
   },
   withPic: {
     padding: 7,
