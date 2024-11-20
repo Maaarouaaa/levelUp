@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 
-export default function four() {
+export default function profile() {
   return (
     <View style={styles.container}>
       <Text style={styles.centerText}>This is the profile screen</Text>

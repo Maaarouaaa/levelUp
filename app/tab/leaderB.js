@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 
-export default function three() {
+export default function leaderB() {
   return (
     <View style={styles.container}>
       <Text style={styles.centerText}>This is the leaderboard screen</Text>
