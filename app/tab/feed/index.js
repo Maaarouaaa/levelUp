@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { StatusBar } from "expo-status-bar";
 import { Link } from "expo-router";
+import TodaysExperience from "@/components/TodaysExperience";
 
 import Theme from "@/assets/theme";
 
@@ -11,7 +12,14 @@ export default function Feed() {
       <StatusBar style="light" />
       <Link href="/tab/feed/newpost" style={styles.postButtonContainer}>
         <View style={styles.postButton}>
-          <FontAwesome size={32} name="plus" color="black" />
+          {/*<FontAwesome size={32} name="plus" color="black" /> */}
+          <TodaysExperience
+            name="Solve a Rubik's Cube"
+            xp="20"
+            photo={require("@/assets/rubiks_cube.jpg")}
+            description="Learn how to solve a Rubik’s Cube! Then, challenge your friends"
+            onPress={() => console.log("Go to Rubik's Cube Experience")}
+          />
         </View>
       </Link>
       <Link href="/tab/feed/details" style={styles.postButtonContainer}>
