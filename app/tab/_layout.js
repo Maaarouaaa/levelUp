@@ -25,7 +25,7 @@ export default function TabLayout() {
             backgroundColor: Theme.colors.backgroundPrimary,
           },
           tabBarStyle: {
-            backgroundColor: Theme.colors.backgroundPrimary, // Use tabBarColor for the tab bar itself
+            backgroundColor: "#fff", // Use tabBarColor for the tab bar itself
           },
           headerTintColor: "#fff",
           headerShown: true,
@@ -42,7 +42,7 @@ export default function TabLayout() {
             backgroundColor: Theme.colors.backgroundPrimary,
           },
           tabBarStyle: {
-            backgroundColor: Theme.colors.backgroundPrimary, // Use tabBarColor for the tab bar itself
+            backgroundColor: "#fff", // Use tabBarColor for the tab bar itself
           },
           headerTintColor: "#fff",
           headerShown: true,
@@ -66,10 +66,10 @@ export default function TabLayout() {
             <AntDesign name="smile-circle" size={24} color={color} />
           ),
           headerStyle: {
-            backgroundColor: Theme.colors.backgroundPrimary,
+            backgroundColor: "#fff",
           },
           tabBarStyle: {
-            backgroundColor: Theme.colors.backgroundPrimary, // Use tabBarColor for the tab bar itself
+            backgroundColor: "#fff", // Use tabBarColor for the tab bar itself
           },
           headerTintColor: "#fff",
           headerShown: true,
@@ -86,7 +86,7 @@ export default function TabLayout() {
             backgroundColor: Theme.colors.backgroundPrimary,
           },
           tabBarStyle: {
-            backgroundColor: Theme.colors.backgroundPrimary, // Use tabBarColor for the tab bar itself
+            backgroundColor: "#fff", // Use tabBarColor for the tab bar itself
           },
           headerTintColor: "#fff",
           headerShown: true,
@@ -117,7 +117,7 @@ export default function TabLayout() {
             </View>
           ), */
           tabBarStyle: {
-            backgroundColor: Theme.colors.backgroundPrimary, // Customize the tab bar itself
+            backgroundColor: "#fff", // Customize the tab bar itself
           },
           headerShown: true,
         }}

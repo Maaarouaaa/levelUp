@@ -14,7 +14,7 @@ export default function Exp() {
           <FontAwesome
             name="search-plus"
             size={24}
-            color={Theme.colors.textPrimary}
+            color={Theme.colors.backgroundPrimary}
           />
         </View>
       </Link>
@@ -23,7 +23,7 @@ export default function Exp() {
           <FontAwesome
             name="signal"
             size={24}
-            color={Theme.colors.textPrimary}
+            color={Theme.colors.backgroundPrimary}
           />
         </View>
       </Link>
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Theme.colors.backgroundPrimary,
+    backgroundColor: "#fff",
   },
   mainText: {
     color: Theme.colors.textSecondary,

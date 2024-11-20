@@ -12,7 +12,11 @@ export default function Home() {
       <StatusBar style="light" />
       <Link href="/tab/feed/newpost" style={styles.postButtonContainer}>
         <View style={styles.postButton}>
-          <FontAwesome size={32} name="plus" color={Theme.colors.textPrimary} />
+          <FontAwesome
+            size={32}
+            name="plus"
+            color={Theme.colors.backgroundPrimary}
+          />
         </View>
       </Link>
     </View>
@@ -23,7 +27,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: Theme.colors.backgroundPrimary,
+    backgroundColor: "#fff",
   },
   postButtonContainer: {
     position: "absolute",

@@ -11,12 +11,12 @@ export default function Feed() {
       <StatusBar style="light" />
       <Link href="/tab/feed/newpost" style={styles.postButtonContainer}>
         <View style={styles.postButton}>
-          <FontAwesome size={32} name="plus" color={Theme.colors.textPrimary} />
+          <FontAwesome size={32} name="plus" color="black" />
         </View>
       </Link>
       <Link href="/tab/feed/details" style={styles.postButtonContainer}>
         <View style={styles.postButton}>
-          <FontAwesome size={32} name="cog" color={Theme.colors.textPrimary} />
+          <FontAwesome size={32} name="cog" color="black" />
         </View>
       </Link>
     </View>
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Theme.colors.backgroundPrimary,
+    backgroundColor: "#fff",
   },
   mainText: {
     color: Theme.colors.textSecondary,
