@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import TodaysExperience from "@/components/TodaysExperience"; 
 import ExperienceCard from "@/components/ExperienceCard"; 
 
-export default function Three() {
+export default function Three({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.centerText}>This is screen three</Text>
@@ -12,7 +12,12 @@ export default function Three() {
         xp="20"
         photo={require("@/assets/rubiks_cube.jpg")} 
         description="Learn how to solve a Rubik’s Cube! Then, challenge your friends"
-        onPress={() => console.log("Go to Rubik's Cube Experience")}
+        onPress={() => navigation.navigate("Details", {
+          name: "Solve a Rubik's Cube",
+          xp: "20",
+          photo: "@/assets/rubiks_cube.jpg",
+          description: "Learn how to solve a Rubik’s Cube! Then, challenge your friends",
+        })}
       />
       <View>
         <Text>placeholder</Text>
@@ -40,4 +45,5 @@ const styles = StyleSheet.create({
     marginBottom: 20, // Add spacing between text and the button
   },
 });
+
 

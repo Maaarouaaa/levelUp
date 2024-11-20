@@ -1,3 +1,4 @@
+
 import { StyleSheet, Text, View, ScrollView, Image } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Octicons from "@expo/vector-icons/Octicons";
