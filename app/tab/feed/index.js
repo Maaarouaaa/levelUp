@@ -17,6 +17,7 @@ export default function Feed() {
   };
   return (
     <View style={styles.container}>
+      <View style={styles.header}></View>
       <StatusBar style="light" />
       <View style={styles.postButton} onTouchEnd={navigateToDetails}>
         {/*<FontAwesome size={32} name="plus" color="black" />*/}
@@ -32,13 +33,13 @@ export default function Feed() {
       <View style={styles.skillsContainer}>
         <View style={styles.pair}>
           <View style={styles.problemContainer}>
-            <View style={styles.IContainer}>
+            <View style={styles.pIContainer}>
               <Octicons name="gear" size={24} color="black" />
             </View>
             <Text style={styles.problem}>Problem Solving</Text>
           </View>
           <View style={styles.commContainer}>
-            <View style={styles.IContainer}>
+            <View style={styles.cIContainer}>
               <Ionicons name="chatbubbles-outline" size={24} color="black" />
             </View>
             <Text style={styles.comm}>Communication</Text>
@@ -47,13 +48,13 @@ export default function Feed() {
 
         <View style={styles.pair}>
           <View style={styles.leadershipContainer}>
-            <View style={styles.IContainer}>
+            <View style={styles.lIContainer}>
               <Octicons name="graph" size={24} color="black" />
             </View>
             <Text style={styles.leadership}>Leadership</Text>
           </View>
           <View style={styles.adaptContainer}>
-            <View style={styles.IContainer}>
+            <View style={styles.aIContainer}>
               <Ionicons
                 name="extension-puzzle-outline"
                 size={24}
@@ -87,22 +88,22 @@ const styles = StyleSheet.create({
     padding: 50,
   },
   commContainer: {
-    //flex: 1, // Add this
+    flex: 1, // Add this
     alignItems: "center",
     justifyContent: "center",
   },
   leadershipContainer: {
-    //flex: 1, // Ensure it takes equal space in the row
+    flex: 1, // Ensure it takes equal space in the row
     alignItems: "center",
     justifyContent: "center",
   },
   adaptContainer: {
-    //flex: 1, // Add this to make it align in the same row
+    flex: 1, // Add this to make it align in the same row
     alignItems: "center",
     justifyContent: "center",
   },
   problemContainer: {
-    //flex: 1, // Add this
+    flex: 1, // Add this
     alignItems: "center",
     justifyContent: "center",
   },
@@ -111,21 +112,46 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     //justifyContent: "flex-start",
     width: "100%", // Ensure the pair takes full width
+    margin: 5,
   },
   problem: {
     fontSize: 16, // Adjust as needed
     textAlign: "center",
+    color: "#EE4B2B",
   },
   comm: {
     fontSize: 16, // Adjust as needed
     textAlign: "center",
+    color: "#1F75FE",
   },
   leadership: {
     fontSize: 16, // Adjust as needed
     textAlign: "center",
+    color: "#4F7942",
   },
   adaptability: {
     fontSize: 16, // Adjust as needed
     textAlign: "center",
+    color: "#FFBF00",
+  },
+  pIContainer: {
+    backgroundColor: "#FAA0A0",
+    padding: 9,
+    borderRadius: 25,
+  },
+  cIContainer: {
+    backgroundColor: "#B9D9EB",
+    padding: 9,
+    borderRadius: 25,
+  },
+  lIContainer: {
+    backgroundColor: "#AFE1AF",
+    padding: 9,
+    borderRadius: 25,
+  },
+  aIContainer: {
+    backgroundColor: "#FFFF8F",
+    padding: 9,
+    borderRadius: 25,
   },
 });
