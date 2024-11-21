@@ -26,40 +26,39 @@ export default function Three({ navigation }) {
         onChangeText={setSearchText}
       />
 
-      {/* Large Toggle */}
-      <View style={styles.toggleContainer}>
-        <TouchableOpacity
-          style={[
-            styles.toggleButton,
-            { backgroundColor: !isToggled ? "#2196F3" : "#ccc" },
-          ]}
-          onPress={() => !isToggled && handleToggle()}
-        >
-          <Text style={styles.toggleText}>Remaining</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.toggleButton,
-            { backgroundColor: isToggled ? "#2196F3" : "#ccc" },
-          ]}
-          onPress={() => isToggled && handleToggle()}
-        >
-          <Text style={styles.toggleText}>Completed</Text>
+      {/* Oval Toggle */}
+      <View style={styles.toggleWrapper}>
+        <TouchableOpacity style={styles.toggleContainer} onPress={handleToggle}>
+          <View
+            style={[
+              styles.toggleIndicator,
+              isToggled ? styles.toggleRight : styles.toggleLeft,
+            ]}
+          />
+          <Text style={[styles.toggleText, !isToggled && styles.activeText]}>
+            Remaining
+          </Text>
+          <Text style={[styles.toggleText, isToggled && styles.activeText]}>
+            Completed
+          </Text>
         </TouchableOpacity>
       </View>
+
 
       {/* Scrollable Cards */}
       <ScrollView contentContainerStyle={styles.cardsContainer}>
         {[...Array(5)].map((_, index) => (
-          <ExperienceCard
-            key={index}
-            name="Solve a Rubik's Cube"
-            xp="20"
-            photo={require("@/assets/rubiks_cube.jpg")}
-            onPress={() => console.log("Go to Rubik's Cube Experience")}
-          />
+          <View key={index} style={styles.cardWrapper}>
+            <ExperienceCard
+              name="Solve a Rubik's Cube"
+              xp="20"
+              photo={require("@/assets/rubiks_cube.jpg")}
+              onPress={() => console.log("Go to Rubik's Cube Experience")}
+            />
+          </View>
         ))}
       </ScrollView>
+
     </View>
   );
 }
@@ -70,53 +69,74 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   blueBackground: {
-    height: "25%", // 1/4 of the screen
-    backgroundColor: 'rgba(80, 155, 155, 1)', 
+    height: "18%",
+    backgroundColor: "rgba(80, 155, 155, .27)",
     justifyContent: "center",
     alignItems: "center",
   },
   headerText: {
     fontSize: 40,
-    color: "#fff",
+    color: "#509B9B",
     fontWeight: "bold",
   },
   searchBar: {
     position: "absolute",
-    top: "22%", // Positioned slightly below the center of the blue background
+    top: "15%",
     alignSelf: "center",
     height: 40,
-    width: "80%", // Adjust width as needed
+    width: "80%",
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
     paddingHorizontal: 10,
-    backgroundColor: "#fff", // White background for the search bar
+    backgroundColor: "#fff",
     color: "#000",
   },
-  toggleContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
+  toggleWrapper: {
     alignItems: "center",
-    marginVertical: 20,
-    paddingHorizontal: 10,
+    marginVertical: 30,
   },
-  toggleButton: {
-    flex: 1,
-    paddingVertical: 15,
-    borderRadius: 25,
-    marginHorizontal: 5,
-    justifyContent: "center",
+  toggleContainer: {
+    position: "relative",
+    backgroundColor: "#fff", // White background
+    borderRadius: 20,
+    width: 200,
+    height: 40,
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 8,
+    elevation: 3, // Drop shadow on Android
+    shadowColor: "#000", // Drop shadow on iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  toggleIndicator: {
+    position: "absolute",
+    width: 100,
+    height: 32,
+    backgroundColor: "rgba(80, 155, 155, 0.27)", // Light blue toggle
+    borderRadius: 16,
+    elevation: 2, // Slight elevation for toggle
+  },
+  toggleLeft: {
+    left: 4,
+  },
+  toggleRight: {
+    right: 4,
   },
   toggleText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#fff",
+    fontSize: 16,
+    color: "#509B9B", // Light blue text color when against white
+    zIndex: 1,
   },
-  cardsContainer: {
-    paddingHorizontal: 10,
-    paddingBottom: 20,
+  activeText: {
+    color: "#fff", // Blue text when against the light blue toggle
+    fontWeight: "bold",
+  },
+  cardWrapper: {
+    marginBottom: 15, // Adds padding between cards
   },
 });
-
 

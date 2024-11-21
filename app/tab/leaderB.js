@@ -45,5 +45,3 @@ const styles = StyleSheet.create({
     marginBottom: 20, // Add spacing between text and the button
   },
 });
-
-
