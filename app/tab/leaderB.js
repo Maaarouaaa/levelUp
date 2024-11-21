@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import TodaysExperience from "@/components/TodaysExperience"; 
 import ExperienceCard from "@/components/ExperienceCard"; 
+import LockedExperience from "@/components/LockedExperience"; 
 
 export default function Three({ navigation }) {
   return (
@@ -28,6 +29,7 @@ export default function Three({ navigation }) {
         photo={require("@/assets/rubiks_cube.jpg")} 
         onPress={() => console.log("Go to Rubik's Cube Experience")}
       />
+      <LockedExperience/>
     </View>
   );
 }
