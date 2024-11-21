@@ -8,6 +8,7 @@ import Theme from "@/assets/theme";
 export default function Exp() {
   return (
     <View style={styles.container}>
+      <Text>hello</Text>
       <StatusBar style="light" />
       <Link href="/tab/experience/completed" style={styles.postButtonContainer}>
         <View style={styles.postButton}>
