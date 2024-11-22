@@ -29,7 +29,7 @@ export default function Three({ navigation }) {
 
       {/* Scrollable Cards */}
       <ScrollView contentContainerStyle={styles.cardsContainer}>
-        {[16].map((id) => (
+        {[31, 32, 33, 34, 35, 36, 37, 38, 39, 40].map((id) => (
           <View key={id} style={styles.cardWrapper}>
             <ExperienceCard
               id={id} // Set the ID for the experience
