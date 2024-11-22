@@ -27,27 +27,11 @@ export default function Three({ navigation }) {
         onChangeText={setSearchText}
       />
 
-      {/* Oval Toggle */}
-      <View style={styles.toggleWrapper}>
-        <TouchableOpacity style={styles.toggleContainer} onPress={handleToggle}>
-          <View
-            style={[
-              styles.toggleIndicator,
-              isToggled ? styles.toggleRight : styles.toggleLeft,
-            ]}
-          />
-          <Text style={[styles.toggleText, !isToggled && styles.activeText]}>
-            Remaining
-          </Text>
-          <Text style={[styles.toggleText, isToggled && styles.activeText]}>
-            Completed
-          </Text>
-        </TouchableOpacity>
-      </View>
+      
 
       {/* Scrollable Cards */}
       <ScrollView contentContainerStyle={styles.cardsContainer}>
-        {[1, 2, 3, 4, 5].map((id) => (
+        {[6, 7, 8, 9, 10, 11].map((id) => (
           <View key={id} style={styles.cardWrapper}>
             <ExperienceCard
               id={id} // Set the ID for the experience
@@ -135,5 +119,8 @@ const styles = StyleSheet.create({
   },
   cardWrapper: {
     marginBottom: 15, // Adds padding between cards
+  },
+  cardsContainer: {
+    paddingTop: 40,
   },
 });
