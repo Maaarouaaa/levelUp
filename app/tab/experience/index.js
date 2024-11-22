@@ -44,21 +44,18 @@ export default function Three({ navigation }) {
         </TouchableOpacity>
       </View>
 
-
       {/* Scrollable Cards */}
       <ScrollView contentContainerStyle={styles.cardsContainer}>
         {[...Array(5)].map((_, index) => (
           <View key={index} style={styles.cardWrapper}>
             <ExperienceCard
-              name="Solve a Rubik's Cube"
-              xp="20"
-              photo={require("@/assets/rubiks_cube.jpg")}
+              id={1} // Pass ID 1 to fetch data for each card
+              photo={require("@/assets/rubiks_cube.jpg")} // Example placeholder image
               onPress={() => console.log("Go to Rubik's Cube Experience")}
             />
           </View>
         ))}
       </ScrollView>
-
     </View>
   );
 }
@@ -139,3 +136,4 @@ const styles = StyleSheet.create({
     marginBottom: 15, // Adds padding between cards
   },
 });
+
