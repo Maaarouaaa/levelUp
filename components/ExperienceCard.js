@@ -2,10 +2,16 @@ import React from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import Theme from "@/assets/theme";
 import Icon from "react-native-vector-icons/Ionicons";
+import { useRouter } from "expo-router";
 
 export default function ExperienceCard({ name, xp, photo, onPress }) {
+  const router = useRouter();
+
+  const navigateToDetails = () => {
+    router.push("/tab/feed/details"); // Directly navigate to the screen
+  };
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity style={styles.container} onPress={navigateToDetails}>
       <View style={styles.content}>
         <View style={styles.details}>
           <Image source={photo} style={styles.image} />
