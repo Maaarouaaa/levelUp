@@ -21,7 +21,7 @@ export default function FeedStackLayout() {
         name="myFriends" // Matches "feed/newpost.js"
         options={{
           title: "My Friends",
-          headerShown: true, // Show header for this screen
+          headerShown: false, // Show header for this screen
           presentation: "modal", // Modal presentation for this screen
           headerStyle: {
             backgroundColor: Theme.colors.backgroundPrimary,
@@ -29,19 +29,19 @@ export default function FeedStackLayout() {
           headerTintColor: "#fff",
         }}
       />
-      {/*}
+      {}
       <Stack.Screen
         name="myProgress" // Matches "feed/newpost.js"
         options={{
           title: "My Progress",
-          headerShown: true, // Show header for this screen
+          headerShown: false, // Show header for this screen
           presentation: "modal", // Modal presentation for this screen
           headerStyle: {
             backgroundColor: Theme.colors.backgroundPrimary,
           },
           headerTintColor: "#fff",
         }}
-      /> */}
+      /> 
     </Stack>
   );
 }
