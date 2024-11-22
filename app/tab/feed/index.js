@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     height: 150,
     justifyContent: "center",
     alignItems: "center",
-    paddingRight: 75,
+    padding: 31,
   },
   headerText: {
     color: "#509B9B", // Set header text color
