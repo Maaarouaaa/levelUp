@@ -3,8 +3,9 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator } fr
 import Icon from "react-native-vector-icons/Ionicons";
 
 import db from "@/database/db";
+import { detailFromExperience } from "@/app/tab/experience/index"; // Import the function
 
-export default function ExperienceCard({ id, photo, onPress }) {
+export default function ExperienceCard({ id, photo, navigate }) {
   const [name, setName] = useState(null);
   const [xp, setXp] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -39,8 +40,23 @@ export default function ExperienceCard({ id, photo, onPress }) {
     );
   }
 
+  const handleNavigation = () => {
+    switch (navigate) {
+      case "home":
+        return detailFromHome();
+      case "experience":
+        return detailFromExperience(); // Use imported function
+      case "challenge":
+        return detailFromChallenge();
+      case "leaderboard":
+        return detailFromLeaderboard();
+      default:
+        return detailFromProfile();
+    }
+  };
+
   return (
-    <TouchableOpacity style={styles.container} onPress={navigateToDetails}>
+    <TouchableOpacity style={styles.container} onPress={handleNavigation}>
       <View style={styles.content}>
         <View style={styles.details}>
           <Image source={photo} style={styles.image} />
@@ -110,5 +126,11 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
 });
+
+
+
+
+
+
 
 

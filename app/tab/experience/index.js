@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity } from "react-native";
 import ExperienceCard from "@/components/ExperienceCard";
+import { useRouter } from "expo-router";
+
+const router = useRouter();
+export const detailFromExperience = () => {
+  router.push("/tab/experience/details"); // Directly navigate to the screen
+};
 
 export default function Three({ navigation }) {
   const [searchText, setSearchText] = useState("");
@@ -9,7 +15,6 @@ export default function Three({ navigation }) {
   const handleToggle = () => {
     setIsToggled((prev) => !prev);
   };
-
   return (
     <View style={styles.container}>
       {/* Blue Background */}
@@ -46,12 +51,12 @@ export default function Three({ navigation }) {
 
       {/* Scrollable Cards */}
       <ScrollView contentContainerStyle={styles.cardsContainer}>
-        {[...Array(5)].map((_, index) => (
-          <View key={index} style={styles.cardWrapper}>
+        {[1, 2, 3, 4, 5].map((id) => (
+          <View key={id} style={styles.cardWrapper}>
             <ExperienceCard
-              id={1} // Pass ID 1 to fetch data for each card
+              id={id} // Set the ID for the experience
+              navigate="experience" // Set the ID for the experience
               photo={require("@/assets/rubiks_cube.jpg")} // Example placeholder image
-              onPress={() => console.log("Go to Rubik's Cube Experience")}
             />
           </View>
         ))}
@@ -136,4 +141,5 @@ const styles = StyleSheet.create({
     marginBottom: 15, // Adds padding between cards
   },
 });
+
 

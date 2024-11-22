@@ -13,7 +13,7 @@ import { TouchableOpacity } from "react-native";
 export default function Feed() {
   const router = useRouter();
 
-  const navigateToDetails = () => {
+  const detailFromHome = () => {
     router.push("/tab/feed/details"); // Directly navigate to the screen
   };
   const navigateToAdapt = () => {
@@ -38,7 +38,7 @@ export default function Feed() {
         {/*<ScrollView contentContainerStyle={styles.scrollContainer}>*/}
         <StatusBar style="light" />
         <Text style={styles.miniTitle}>Today's experience</Text>
-        <View style={styles.postButton} onTouchEnd={navigateToDetails}>
+        <View style={styles.postButton} onTouchEnd={detailFromHome}>
           <TodaysExperience
             name="Solve a Rubik's Cube"
             xp="20"
