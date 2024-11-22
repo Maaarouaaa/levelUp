@@ -15,7 +15,7 @@ export default function Three({ navigation }) {
     <View style={styles.container}>
       {/* Blue Background */}
       <View style={styles.blueBackground}>
-        <Text style={styles.headerText}>[My Experiences]</Text>
+        <Text style={styles.headerText}>Leadership</Text>
       </View>
 
       {/* Search Bar */}
@@ -68,13 +68,13 @@ const styles = StyleSheet.create({
   },
   blueBackground: {
     height: "18%",
-    backgroundColor: "rgba(80, 155, 155, .27)",
+    backgroundColor: "#C9F0E7",
     justifyContent: "center",
     alignItems: "center",
   },
   headerText: {
     fontSize: 40,
-    color: "#509B9B",
+    color: "#58CDB0",
     fontWeight: "bold",
   },
   searchBar: {
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: 100,
     height: 32,
-    backgroundColor: "rgba(80, 155, 155, 0.27)", // Light blue toggle
+    backgroundColor: "#509B9B", // Light blue toggle
     borderRadius: 16,
     elevation: 2, // Slight elevation for toggle
   },

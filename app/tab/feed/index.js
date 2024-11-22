@@ -1,16 +1,10 @@
-import { StyleSheet, Text, View, ScrollView, Image } from "react-native";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import Octicons from "@expo/vector-icons/Octicons";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import TodaysExperience from "@/components/TodaysExperience";
-import Theme from "@/assets/theme";
-import { TouchableOpacity } from "react-native";
 
 export default function Feed() {
   const router = useRouter();
-
   const detailFromHome = () => {
     router.push("/tab/feed/details");
   };
@@ -33,7 +27,9 @@ export default function Feed() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {/* Header */}
+        <View style={styles.header}>
           <Text style={styles.headerText}>Level up.</Text>
           <View style={styles.withPic}>
             <View style={styles.headerSubtitle}>
@@ -41,7 +37,7 @@ export default function Feed() {
               <Text style={styles.xp}>260 Xp</Text>
             </View>
             <Image
-              source={require("@/assets/varsha.png")}
+              source={require("@/assets/varshapic-profilepage.png")}
               style={styles.image}
             />
           </View>
@@ -49,7 +45,7 @@ export default function Feed() {
 
         <StatusBar style="light" />
 
-        {/* Today's experience section */}
+        {/* Today's Experience Section */}
         <Text style={styles.miniTitle}>Today's experience</Text>
         <View style={styles.postButton} onTouchEnd={detailFromHome}>
           <TodaysExperience
@@ -60,78 +56,42 @@ export default function Feed() {
           />
         </View>
 
-        {/* Skills section */}
+        {/* Skills Section */}
         <View style={styles.skillsContainer}>
           <Text style={styles.miniTitle}>My skills</Text>
+          <View style={styles.pair}>
+            <TouchableOpacity onPress={navigateToProblemSolving}>
+              <Image
+                source={require("@/assets/probIcon.png")}
+                style={styles.skillIcon}
+              />
+            </TouchableOpacity>
 
+            <TouchableOpacity onPress={navigateToCommunication}>
+              <Image
+                source={require("@/assets/commIcon.png")}
+                style={styles.skillIcon}
+              />
+            </TouchableOpacity>
+          </View>
 
           <View style={styles.pair}>
-
-            <TouchableOpacity
-              style={styles.adaptContainer}
-              onPress={navigateToProblemSolving}
-            >
-              <View style={styles.aIContainer}>
-                <Ionicons
-                  name="gear"
-                  size={24}
-                  color="black"
-                />
-              </View>
-              <Text style={styles.adaptability}>Problem Solving</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity
-              style={styles.adaptContainer}
-              onPress={navigateToCommunication}
-            >
-              <View style={styles.aIContainer}>
-                <Ionicons
-                  name="chatbubbles-outline"
-                  size={24}
-                  color="black"
-                />
-              </View>
-              <Text style={styles.adaptability}>Communication</Text>
+            <TouchableOpacity onPress={navigateToLeadership}>
+              <Image
+                source={require("@/assets/Leadicon.png")}
+                style={styles.skillIcon}
+              />
             </TouchableOpacity>
 
+            <TouchableOpacity onPress={navigateToAdapt}>
+              <Image
+                source={require("@/assets/AdaptIcon.png")}
+                style={styles.skillIcon}
+              />
+            </TouchableOpacity>
           </View>
-
-        <View style={styles.pair}>
-
-          <TouchableOpacity
-              style={styles.adaptContainer}
-              onPress={navigateToLeadership}
-            >
-              <View style={styles.aIContainer}>
-                <Ionicons
-                  name="graph"
-                  size={24}
-                  color="black"
-                />
-              </View>
-              <Text style={styles.adaptability}>Leadership</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.adaptContainer}
-              onPress={navigateToAdapt}
-            >
-              <View style={styles.aIContainer}>
-                <Ionicons
-                  name="extension-puzzle-outline"
-                  size={24}
-                  color="black"
-                />
-              </View>
-              <Text style={styles.adaptability}>Adaptability</Text>
-            </TouchableOpacity>
-
-
-          </View>
-
         </View>
-        
+      </ScrollView>
     </View>
   );
 }
@@ -139,14 +99,13 @@ export default function Feed() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "flex-start",
     backgroundColor: "#fff",
   },
   scrollContainer: {
     flexGrow: 1,
-    width: "100%", // Ensure the ScrollView container does not exceed screen width
-    paddingBottom: 50, // Add padding at the bottom if needed
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingBottom: 50, // Extra padding for scrollable content
   },
   header: {
     backgroundColor: "#D0E4E4",
@@ -183,85 +142,33 @@ const styles = StyleSheet.create({
   miniTitle: {
     fontSize: 17,
     padding: 15,
-    alignSelf: 'left',
+    alignSelf: "flex-start",
   },
   postButton: {
     flex: 1,
+    width: "90%",
   },
   skillsContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 80,
-    width: "100%", // Ensure container fits the screen width
-  },
-  commContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  leadershipContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  adaptContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  problemContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    paddingTop: 30,
+    width: "100%",
   },
   pair: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: "100%",
-    margin: 5,
+    width: "62%",
+    marginVertical: 10,
   },
-  problem: {
+  skillIcon: {
+    width: 60,
+    height: 60,
+    marginBottom: 4,
+  },
+  skillText: {
     fontSize: 16,
     textAlign: "center",
-    color: "#EE4B2B",
-  },
-  comm: {
-    fontSize: 16,
-    textAlign: "center",
-    color: "#1F75FE",
-  },
-  leadership: {
-    fontSize: 16,
-    textAlign: "center",
-    color: "#4F7942",
-  },
-  adaptability: {
-    fontSize: 16,
-    textAlign: "center",
-    color: "#FFBF00",
-  },
-  pIContainer: {
-    backgroundColor: "#FAA0A0",
-    padding: 9,
-    borderRadius: 25,
-  },
-  cIContainer: {
-    backgroundColor: "#B9D9EB",
-    padding: 9,
-    borderRadius: 25,
-  },
-  lIContainer: {
-    backgroundColor: "#AFE1AF",
-    padding: 9,
-    borderRadius: 25,
-  },
-  aIContainer: {
-    backgroundColor: "#FFFF8F",
-    padding: 9,
-    borderRadius: 25,
+    color: "#333",
   },
 });
-
-
-

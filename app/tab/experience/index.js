@@ -3,11 +3,6 @@ import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity } from 
 import ExperienceCard from "@/components/ExperienceCard";
 import { useRouter } from "expo-router";
 
-const router = useRouter();
-export const detailFromExperience = () => {
-  router.push("/tab/experience/details"); // Directly navigate to the screen
-};
-
 export default function Three({ navigation }) {
   const [searchText, setSearchText] = useState("");
   const [isToggled, setIsToggled] = useState(false);
@@ -19,7 +14,7 @@ export default function Three({ navigation }) {
     <View style={styles.container}>
       {/* Blue Background */}
       <View style={styles.blueBackground}>
-        <Text style={styles.headerText}>[My Experiences]</Text>
+        <Text style={styles.headerText}>My Experiences</Text>
       </View>
 
       {/* Search Bar */}
@@ -118,7 +113,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: 100,
     height: 32,
-    backgroundColor: "rgba(80, 155, 155, 0.27)", // Light blue toggle
+    backgroundColor: "#509B9B", // Light blue toggle
     borderRadius: 16,
     elevation: 2, // Slight elevation for toggle
   },
