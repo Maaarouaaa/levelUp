@@ -10,6 +10,10 @@ export default function Three({ navigation }) {
   const handleToggle = () => {
     setIsToggled((prev) => !prev);
   };
+
+  // Filtered IDs for Remaining state
+  const remainingIds = [1, 5, 4, 12, 13, 2, 3, 11];
+
   return (
     <View style={styles.container}>
       {/* Blue Background */}
@@ -46,21 +50,23 @@ export default function Three({ navigation }) {
 
       {/* Scrollable Cards */}
       <ScrollView contentContainerStyle={styles.cardsContainer}>
-        {[1, 2, 3, 4, 5].map((id) => (
-          <View key={id} style={styles.cardWrapper}>
-            <ExperienceCard
-              id={id} // Set the ID for the experience
-              navigate="experience" // Set the ID for the experience
-              photo={require("@/assets/rubiks_cube.jpg")} // Example placeholder image
-            />
-          </View>
-        ))}
+        {!isToggled &&
+          remainingIds.map((id) => (
+            <View key={id} style={styles.cardWrapper}>
+              <ExperienceCard
+                id={id} // Set the ID for the experience
+                navigate="experience" // Set the ID for the experience
+                photo={require("@/assets/rubiks_cube.jpg")} // Example placeholder image
+              />
+            </View>
+          ))}
       </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  // Style definitions remain the same as your original code
   container: {
     flex: 1,
     backgroundColor: "#fff",
@@ -136,5 +142,6 @@ const styles = StyleSheet.create({
     marginBottom: 15, // Adds padding between cards
   },
 });
+
 
 
