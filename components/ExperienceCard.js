@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+
 import db from "@/database/db";
 
 export default function ExperienceCard({ id, photo, onPress }) {
@@ -39,7 +40,7 @@ export default function ExperienceCard({ id, photo, onPress }) {
   }
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity style={styles.container} onPress={navigateToDetails}>
       <View style={styles.content}>
         <View style={styles.details}>
           <Image source={photo} style={styles.image} />
