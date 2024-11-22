@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import { useRouter } from "expo-router";
 
 import db from "@/database/db";
 import { detailFromExperience } from "@/app/tab/experience/index"; // Import the function
 
 export default function ExperienceCard({ id, photo, navigate }) {
+  const router = useRouter();
+  const detailFromHome = () => {
+    router.push("/tab/feed/details"); // Directly navigate to the screen
+  };
   const [name, setName] = useState(null);
   const [xp, setXp] = useState(null);
   const [loading, setLoading] = useState(true);

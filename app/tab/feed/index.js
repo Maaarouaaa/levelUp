@@ -63,29 +63,56 @@ export default function Feed() {
         {/* Skills section */}
         <View style={styles.skillsContainer}>
           <Text style={styles.miniTitle}>My skills</Text>
-          <View style={styles.pair}>
-            <View style={styles.problemContainer}>
-              <View style={styles.pIContainer}>
-                <Octicons name="gear" size={24} color="black" />
-              </View>
-              <Text style={styles.problem}>Problem Solving</Text>
-            </View>
-            
-            <View style={styles.commContainer}>
-              <View style={styles.cIContainer}>
-                <Ionicons name="chatbubbles-outline" size={24} color="black" />
-              </View>
-              <Text style={styles.comm}>Communication</Text>
-            </View>
-          </View>
+
 
           <View style={styles.pair}>
-            <View style={styles.leadershipContainer}>
-              <View style={styles.lIContainer}>
-                <Octicons name="graph" size={24} color="black" />
+
+            <TouchableOpacity
+              style={styles.adaptContainer}
+              onPress={navigateToProblemSolving}
+            >
+              <View style={styles.aIContainer}>
+                <Ionicons
+                  name="gear"
+                  size={24}
+                  color="black"
+                />
               </View>
-              <Text style={styles.leadership}>Leadership</Text>
-            </View>
+              <Text style={styles.adaptability}>Problem Solving</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              style={styles.adaptContainer}
+              onPress={navigateToCommunication}
+            >
+              <View style={styles.aIContainer}>
+                <Ionicons
+                  name="chatbubbles-outline"
+                  size={24}
+                  color="black"
+                />
+              </View>
+              <Text style={styles.adaptability}>Communication</Text>
+            </TouchableOpacity>
+
+          </View>
+
+        <View style={styles.pair}>
+
+          <TouchableOpacity
+              style={styles.adaptContainer}
+              onPress={navigateToLeadership}
+            >
+              <View style={styles.aIContainer}>
+                <Ionicons
+                  name="graph"
+                  size={24}
+                  color="black"
+                />
+              </View>
+              <Text style={styles.adaptability}>Leadership</Text>
+            </TouchableOpacity>
+
             <TouchableOpacity
               style={styles.adaptContainer}
               onPress={navigateToAdapt}
@@ -99,7 +126,10 @@ export default function Feed() {
               </View>
               <Text style={styles.adaptability}>Adaptability</Text>
             </TouchableOpacity>
+
+
           </View>
+
         </View>
         
     </View>
