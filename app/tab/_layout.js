@@ -59,6 +59,16 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="profile"
+        options={{
+          title: "LevelUp", // default title
+          href: null,
+          headerStyle: {
+            backgroundColor: Theme.colors.backgroundPrimary, // Customize the header background color
+          },
+        }}
+      />
+      <Tabs.Screen
         name="leaderB"
         options={{
           title: "leaderboard",
@@ -76,7 +86,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="Profile"
         options={{
           title: "profile",
           tabBarIcon: ({ size, color }) => (
@@ -89,7 +99,7 @@ export default function TabLayout() {
             backgroundColor: "#D0E4E4", // Use tabBarColor for the tab bar itself
           },
           headerTintColor: "#fff",
-          headerShown: true,
+          headerShown: false,
         }}
       />
       <Tabs.Screen

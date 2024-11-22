@@ -8,12 +8,16 @@ import TodaysExperience from "@/components/TodaysExperience";
 import { useRouter } from "expo-router";
 
 import Theme from "@/assets/theme";
+import { TouchableOpacity } from "react-native";
 
 export default function Feed() {
   const router = useRouter();
 
   const navigateToDetails = () => {
     router.push("/tab/feed/details"); // Directly navigate to the screen
+  };
+  const navigateToAdapt = () => {
+    router.push("/tab/feed/adaptability"); // Directly navigate to the screen
   };
   return (
     <View style={styles.container}>
@@ -68,7 +72,10 @@ export default function Feed() {
               </View>
               <Text style={styles.leadership}>Leadership</Text>
             </View>
-            <View style={styles.adaptContainer}>
+            <TouchableOpacity
+              style={styles.adaptContainer}
+              onPress={navigateToAdapt}
+            >
               <View style={styles.aIContainer}>
                 <Ionicons
                   name="extension-puzzle-outline"
@@ -77,7 +84,7 @@ export default function Feed() {
                 />
               </View>
               <Text style={styles.adaptability}>Adaptability</Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
@@ -104,7 +111,7 @@ const styles = StyleSheet.create({
     height: 150,
     justifyContent: "center",
     alignItems: "center",
-    paddingRight: 75,
+    padding: 31,
   },
   headerText: {
     color: "#509B9B", // Set header text color
