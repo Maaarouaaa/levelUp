@@ -1,9 +1,43 @@
-import React from "react";
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
-import Theme from "@/assets/theme";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import db from "@/database/db";
 
-export default function ExperienceCard({ name, xp, photo, onPress }) {
+export default function ExperienceCard({ id, photo, onPress }) {
+  const [name, setName] = useState(null);
+  const [xp, setXp] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchExperienceData = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await db.from("tasks").select("name, xp").eq("id", id).single();
+
+        if (error) {
+          console.error("Error fetching experience data:", error.message);
+        } else if (data) {
+          setName(data.name);
+          setXp(data.xp);
+        }
+      } catch (err) {
+        console.error("Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchExperienceData();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.loadingContainer]}>
+        <ActivityIndicator size="large" color="#509B9B" />
+      </View>
+    );
+  }
+
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.content}>
@@ -11,10 +45,10 @@ export default function ExperienceCard({ name, xp, photo, onPress }) {
           <Image source={photo} style={styles.image} />
         </View>
         <View style={styles.words}>
-          <Text style={styles.name}>{name}</Text>
+          <Text style={styles.name}>{name || "No Name"}</Text>
           <View style={styles.xpRow}>
             <Icon name="star" size={25} color="#509B9B" />
-            <Text style={styles.xp}>{xp} XP</Text>
+            <Text style={styles.xp}>{xp !== null ? `${xp} XP` : "No XP"}</Text>
           </View>
         </View>
       </View>
@@ -35,6 +69,10 @@ const styles = StyleSheet.create({
     height: 96,
     padding: 16,
     justifyContent: "space-between",
+  },
+  loadingContainer: {
+    justifyContent: "center",
+    alignItems: "center",
   },
   content: {
     flex: 1,
@@ -71,3 +109,5 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
 });
+
+

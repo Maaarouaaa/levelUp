@@ -33,47 +33,6 @@ export default function Three({ navigation }) {
     </View>
   );
 
-  /*
-  return (
-    <View style={styles.container}>
-      <Text style={styles.centerText}>This is screen three</Text>
-      <TodaysExperience
-        name="Solve a Rubik's Cube"
-        xp="20"
-        photo={require("@/assets/rubiks_cube.jpg")}
-        description="Learn how to solve a Rubik’s Cube! Then, challenge your friends"
-        onPress={() =>
-          navigation.navigate("Details", {
-            name: "Solve a Rubik's Cube",
-            xp: "20",
-            photo: "@/assets/rubiks_cube.jpg",
-            description:
-              "Learn how to solve a Rubik’s Cube! Then, challenge your friends",
-          })
-        }
-      />
-      <View>
-        <Text>placeholder</Text>
-        {loading ? (
-          <Text>Loading users...</Text>
-        ) : (
-          <FlatList
-            data={users}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItem}
-          />
-        )}
-      </View>
-      <ExperienceCard
-        name="Solve a Rubik's Cube"
-        xp="20"
-        photo={require("@/assets/rubiks_cube.jpg")}
-        onPress={() => console.log("Go to Rubik's Cube Experience")}
-      />
-    </View>
-  );
-*/
-
   return (
     <FlatList
       ListHeaderComponent={
@@ -142,6 +101,47 @@ const styles = StyleSheet.create({
     color: "#888",
   },
 });
+
+/*
+  return (
+    <View style={styles.container}>
+      <Text style={styles.centerText}>This is screen three</Text>
+      <TodaysExperience
+        name="Solve a Rubik's Cube"
+        xp="20"
+        photo={require("@/assets/rubiks_cube.jpg")}
+        description="Learn how to solve a Rubik’s Cube! Then, challenge your friends"
+        onPress={() =>
+          navigation.navigate("Details", {
+            name: "Solve a Rubik's Cube",
+            xp: "20",
+            photo: "@/assets/rubiks_cube.jpg",
+            description:
+              "Learn how to solve a Rubik’s Cube! Then, challenge your friends",
+          })
+        }
+      />
+      <View>
+        <Text>placeholder</Text>
+        {loading ? (
+          <Text>Loading users...</Text>
+        ) : (
+          <FlatList
+            data={users}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItem}
+          />
+        )}
+      </View>
+      <ExperienceCard
+        name="Solve a Rubik's Cube"
+        xp="20"
+        photo={require("@/assets/rubiks_cube.jpg")}
+        onPress={() => console.log("Go to Rubik's Cube Experience")}
+      />
+    </View>
+  );
+*/
 
 /*
 import React from "react";
