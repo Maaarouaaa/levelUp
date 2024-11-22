@@ -3,10 +3,8 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Octicons from "@expo/vector-icons/Octicons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { StatusBar } from "expo-status-bar";
-import { Link } from "expo-router";
-import TodaysExperience from "@/components/TodaysExperience";
 import { useRouter } from "expo-router";
-
+import TodaysExperience from "@/components/TodaysExperience";
 import Theme from "@/assets/theme";
 import { TouchableOpacity } from "react-native";
 
@@ -14,15 +12,16 @@ export default function Feed() {
   const router = useRouter();
 
   const detailFromHome = () => {
-    router.push("/tab/feed/details"); // Directly navigate to the screen
+    router.push("/tab/feed/details");
   };
+
   const navigateToAdapt = () => {
-    router.push("/tab/feed/adaptability"); // Directly navigate to the screen
+    router.push("/tab/feed/adaptability");
   };
+
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.header}>
+      <View style={styles.header}>
           <Text style={styles.headerText}>Level up.</Text>
           <View style={styles.withPic}>
             <View style={styles.headerSubtitle}>
@@ -35,8 +34,10 @@ export default function Feed() {
             />
           </View>
         </View>
-        {/*<ScrollView contentContainerStyle={styles.scrollContainer}>*/}
+
         <StatusBar style="light" />
+
+        {/* Today's experience section */}
         <Text style={styles.miniTitle}>Today's experience</Text>
         <View style={styles.postButton} onTouchEnd={detailFromHome}>
           <TodaysExperience
@@ -44,12 +45,12 @@ export default function Feed() {
             xp="20"
             photo={require("@/assets/rubiks_cube.jpg")}
             description="Learn how to solve a Rubik’s Cube! Then, challenge your friends"
-            //onPress={() => console.log("Go to Rubik's Cube Experience")}
-            //onPress={() => console.log("Go to Rubik's Cube Experience")}
           />
         </View>
-        <Text style={styles.miniTitle}>My skills</Text>
+
+        {/* Skills section */}
         <View style={styles.skillsContainer}>
+          <Text style={styles.miniTitle}>My skills</Text>
           <View style={styles.pair}>
             <View style={styles.problemContainer}>
               <View style={styles.pIContainer}>
@@ -87,7 +88,7 @@ export default function Feed() {
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
+        
     </View>
   );
 }
@@ -96,14 +97,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    //justifyContent: "center",
     justifyContent: "flex-start",
     backgroundColor: "#fff",
   },
   scrollContainer: {
-    //flex: 1,
+    flexGrow: 1,
+    width: "100%", // Ensure the ScrollView container does not exceed screen width
     paddingBottom: 50, // Add padding at the bottom if needed
-    width: "100%",
   },
   header: {
     backgroundColor: "#D0E4E4",
@@ -114,16 +114,12 @@ const styles = StyleSheet.create({
     padding: 31,
   },
   headerText: {
-    color: "#509B9B", // Set header text color
-    fontSize: 24, // Font size for header text
+    color: "#509B9B",
+    fontSize: 24,
     fontWeight: "bold",
-    flexDirection: "column",
-    marginTop: 15,
-    //alignItems: "center",
-    //justifyContent: "center",
+    paddingTop: 20,
   },
   headerSubtitle: {
-    //alignItems: "center",
     justifyContent: "flex-start",
     marginRight: 25,
   },
@@ -138,12 +134,13 @@ const styles = StyleSheet.create({
   withPic: {
     padding: 7,
     flexDirection: "row",
-    alignItems: "center", // Align items vertically centered
+    alignItems: "center",
     justifyContent: "center",
   },
   miniTitle: {
     fontSize: 17,
     padding: 15,
+    alignSelf: 'left',
   },
   postButton: {
     flex: 1,
@@ -152,52 +149,52 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: 15,
+    paddingTop: 80,
+    width: "100%", // Ensure container fits the screen width
   },
   commContainer: {
-    flex: 1, // Add this
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
   leadershipContainer: {
-    flex: 1, // Ensure it takes equal space in the row
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
   adaptContainer: {
-    flex: 1, // Add this to make it align in the same row
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
   problemContainer: {
-    flex: 1, // Add this
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
   pair: {
     flexDirection: "row",
     justifyContent: "space-between",
-    //justifyContent: "flex-start",
-    width: "100%", // Ensure the pair takes full width
+    width: "100%",
     margin: 5,
   },
   problem: {
-    fontSize: 16, // Adjust as needed
+    fontSize: 16,
     textAlign: "center",
     color: "#EE4B2B",
   },
   comm: {
-    fontSize: 16, // Adjust as needed
+    fontSize: 16,
     textAlign: "center",
     color: "#1F75FE",
   },
   leadership: {
-    fontSize: 16, // Adjust as needed
+    fontSize: 16,
     textAlign: "center",
     color: "#4F7942",
   },
   adaptability: {
-    fontSize: 16, // Adjust as needed
+    fontSize: 16,
     textAlign: "center",
     color: "#FFBF00",
   },
@@ -222,3 +219,6 @@ const styles = StyleSheet.create({
     borderRadius: 25,
   },
 });
+
+
+
