@@ -15,6 +15,18 @@ export default function Feed() {
     router.push("/tab/feed/details");
   };
 
+  const navigateToProblemSolving = () => {
+    router.push("/tab/feed/problemS");
+  };
+
+  const navigateToCommunication = () => {
+    router.push("/tab/feed/communication");
+  };
+
+  const navigateToLeadership = () => {
+    router.push("/tab/feed/leadership");
+  };
+
   const navigateToAdapt = () => {
     router.push("/tab/feed/adaptability");
   };
@@ -58,6 +70,7 @@ export default function Feed() {
               </View>
               <Text style={styles.problem}>Problem Solving</Text>
             </View>
+            
             <View style={styles.commContainer}>
               <View style={styles.cIContainer}>
                 <Ionicons name="chatbubbles-outline" size={24} color="black" />
