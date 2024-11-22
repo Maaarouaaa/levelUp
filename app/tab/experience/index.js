@@ -1,32 +1,64 @@
-import { StyleSheet, Text, View } from "react-native";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { StatusBar } from "expo-status-bar";
-import { Link } from "expo-router";
+import React, { useState } from "react";
+import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity } from "react-native";
+import ExperienceCard from "@/components/ExperienceCard";
 
-import Theme from "@/assets/theme";
+export default function Three({ navigation }) {
+  const [searchText, setSearchText] = useState("");
+  const [isToggled, setIsToggled] = useState(false);
 
-export default function Exp() {
+  const handleToggle = () => {
+    setIsToggled((prev) => !prev);
+  };
+
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
-      <Link href="/tab/experience/completed" style={styles.postButtonContainer}>
-        <View style={styles.postButton}>
-          <FontAwesome
-            name="search-plus"
-            size={24}
-            color={Theme.colors.backgroundPrimary}
+      {/* Blue Background */}
+      <View style={styles.blueBackground}>
+        <Text style={styles.headerText}>[My Experiences]</Text>
+      </View>
+
+      {/* Search Bar */}
+      <TextInput
+        style={styles.searchBar}
+        placeholder="Search experiences..."
+        placeholderTextColor="#aaa"
+        value={searchText}
+        onChangeText={setSearchText}
+      />
+
+      {/* Oval Toggle */}
+      <View style={styles.toggleWrapper}>
+        <TouchableOpacity style={styles.toggleContainer} onPress={handleToggle}>
+          <View
+            style={[
+              styles.toggleIndicator,
+              isToggled ? styles.toggleRight : styles.toggleLeft,
+            ]}
           />
-        </View>
-      </Link>
-      <Link href="/tab/experience/remaining" style={styles.postButtonContainer}>
-        <View style={styles.postButton}>
-          <FontAwesome
-            name="signal"
-            size={24}
-            color={Theme.colors.backgroundPrimary}
-          />
-        </View>
-      </Link>
+          <Text style={[styles.toggleText, !isToggled && styles.activeText]}>
+            Remaining
+          </Text>
+          <Text style={[styles.toggleText, isToggled && styles.activeText]}>
+            Completed
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+
+      {/* Scrollable Cards */}
+      <ScrollView contentContainerStyle={styles.cardsContainer}>
+        {[...Array(5)].map((_, index) => (
+          <View key={index} style={styles.cardWrapper}>
+            <ExperienceCard
+              name="Solve a Rubik's Cube"
+              xp="20"
+              photo={require("@/assets/rubiks_cube.jpg")}
+              onPress={() => console.log("Go to Rubik's Cube Experience")}
+            />
+          </View>
+        ))}
+      </ScrollView>
+
     </View>
   );
 }
@@ -34,13 +66,76 @@ export default function Exp() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
     backgroundColor: "#fff",
   },
-  mainText: {
-    color: Theme.colors.textSecondary,
-    fontSize: Theme.sizes.textMedium,
+  blueBackground: {
+    height: "18%",
+    backgroundColor: "rgba(80, 155, 155, .27)",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  postButtonContainer: {},
+  headerText: {
+    fontSize: 40,
+    color: "#509B9B",
+    fontWeight: "bold",
+  },
+  searchBar: {
+    position: "absolute",
+    top: "15%",
+    alignSelf: "center",
+    height: 40,
+    width: "80%",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    backgroundColor: "#fff",
+    color: "#000",
+  },
+  toggleWrapper: {
+    alignItems: "center",
+    marginVertical: 30,
+  },
+  toggleContainer: {
+    position: "relative",
+    backgroundColor: "#fff", // White background
+    borderRadius: 20,
+    width: 200,
+    height: 40,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 8,
+    elevation: 3, // Drop shadow on Android
+    shadowColor: "#000", // Drop shadow on iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  toggleIndicator: {
+    position: "absolute",
+    width: 100,
+    height: 32,
+    backgroundColor: "rgba(80, 155, 155, 0.27)", // Light blue toggle
+    borderRadius: 16,
+    elevation: 2, // Slight elevation for toggle
+  },
+  toggleLeft: {
+    left: 4,
+  },
+  toggleRight: {
+    right: 4,
+  },
+  toggleText: {
+    fontSize: 16,
+    color: "#509B9B", // Light blue text color when against white
+    zIndex: 1,
+  },
+  activeText: {
+    color: "#fff", // Blue text when against the light blue toggle
+    fontWeight: "bold",
+  },
+  cardWrapper: {
+    marginBottom: 15, // Adds padding between cards
+  },
 });
