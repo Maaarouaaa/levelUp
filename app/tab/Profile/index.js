@@ -9,9 +9,6 @@ export default function Profile() {
   const navigateToProgress = () => {
     router.push("/tab/Profile/myProgress"); // Directly navigate to the screen
   };
-  const navigateToFriends = () => {
-    router.push("/tab/Profile/myFriends"); // Directly navigate to the screen
-  };
   return (
     <View style={styles.container}>
       {/* Header Background */}
@@ -115,7 +112,7 @@ export default function Profile() {
         </TouchableOpacity>
 
         {/* My Friends Button */}
-        <TouchableOpacity style={styles.button} onPress={navigateToFriends}>
+        <TouchableOpacity style={styles.button}>
           <Image
             source={require("@/assets/Myfriends-profilepage.png")}
             style={styles.buttonImage}
