@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 
@@ -12,25 +19,31 @@ export default function ExperienceCard({ id, photo, navigate }) {
     router.push("/tab/feed/details"); // Directly navigate to the screen
   };
   const detailFromExperience = () => {
-    router.push("/tab/experience/details"); // Directly navigate to the screen
+    router.push({ pathname: "/tab/experience/details", params: { id: id } }); // Directly navigate to the screen
   };
   const [name, setName] = useState(null);
   const [xp, setXp] = useState(null);
   const [locked, setLocked] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  console.log("EXPERIENCECARD ID", { id });
+
   useEffect(() => {
     const fetchExperienceData = async () => {
       try {
         setLoading(true);
-        const { data, error } = await db.from("tasks").select("name, xp, locked").eq("id", id).single();
+        const { data, error } = await db
+          .from("tasks")
+          .select("name, xp, locked")
+          .eq("id", id)
+          .single();
 
         if (error) {
           console.error("Error fetching experience data:", error.message);
         } else if (data) {
           setName(data.name);
           setXp(data.xp);
-          setLocked(data.locked)
+          setLocked(data.locked);
         }
       } catch (err) {
         console.error("Error:", err);
@@ -50,22 +63,22 @@ export default function ExperienceCard({ id, photo, navigate }) {
     );
   }
 
-  const handleNavigation = () => {
+  const handleNavigation = (params) => {
     switch (navigate) {
       case "home":
-        return detailFromHome();
+        return detailFromHome(params);
       case "experience":
-        return detailFromExperience(); // Use imported function
+        return detailFromExperience(params); // Use imported function
       case "challenge":
-        return detailFromChallenge();
+        return detailFromChallenge(params);
       case "leaderboard":
-        return detailFromLeaderboard();
+        return detailFromLeaderboard(params);
       default:
-        return detailFromProfile();
+        return detailFromProfile(params);
     }
   };
 
-  if (!locked){
+  if (!locked) {
     return (
       <TouchableOpacity style={styles.container} onPress={handleNavigation}>
         <View style={styles.content}>
@@ -76,21 +89,22 @@ export default function ExperienceCard({ id, photo, navigate }) {
             <Text style={styles.name}>{name || "No Name"}</Text>
             <View style={styles.xpRow}>
               <Icon name="star" size={25} color="#509B9B" />
-              <Text style={styles.xp}>{xp !== null ? `${xp} XP` : "No XP"}</Text>
+              <Text style={styles.xp}>
+                {xp !== null ? `${xp} XP` : "No XP"}
+              </Text>
             </View>
           </View>
         </View>
       </TouchableOpacity>
     );
-  }
-  else{
+  } else {
     return (
       <TouchableOpacity style={styles.containerL}>
         <View style={styles.contentL}>
           <Icon name="lock-closed" size={30} color="#000000" />
         </View>
       </TouchableOpacity>
-    ); 
+    );
   }
 }
 
@@ -163,15 +177,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignSelf: 'center',
+    alignSelf: "center",
     paddingTop: 14,
   },
 });
-
-
-
-
-
-
-
-

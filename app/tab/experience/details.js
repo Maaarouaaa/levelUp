@@ -1,4 +1,5 @@
 // detail from experience
+import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import {
   StyleSheet,
@@ -11,9 +12,13 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 
 export default function Details() {
+  const param = useLocalSearchParams();
+  //const {id} = useLocalSearchParams();
+  console.log("this is ID", param.id);
   return (
     <View style={styles.container}>
       {/* Image on the top 20% */}
+      <Text style={styles.skillTagText}>THIS IS ID {param.id}</Text>
       <View style={styles.imageContainer}>
         <Image
           source={require("@/assets/rubiks_cube.jpg")}
@@ -40,10 +45,10 @@ export default function Details() {
 
         {/* Description */}
         <Text style={styles.description}>
-          Solve the Rubik's Cube by aligning all the colors so that each face is a
-          single, solid color. Use logic, strategy, and focus to crack the code of
-          this classic puzzle. Time yourself or challenge a friend if you’re
-          feeling competitive—can you beat your personal best?
+          Solve the Rubik's Cube by aligning all the colors so that each face is
+          a single, solid color. Use logic, strategy, and focus to crack the
+          code of this classic puzzle. Time yourself or challenge a friend if
+          you’re feeling competitive—can you beat your personal best?
         </Text>
 
         {/* Custom Text Input */}
@@ -65,7 +70,12 @@ export default function Details() {
             <Text style={styles.buttonText}>Mark as Done</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button}>
-            <Icon name="paper-plane" size={20} color="#fff" style={styles.icon} />
+            <Icon
+              name="paper-plane"
+              size={20}
+              color="#fff"
+              style={styles.icon}
+            />
             <Text style={styles.buttonText}>Challenge Friend</Text>
           </TouchableOpacity>
         </View>

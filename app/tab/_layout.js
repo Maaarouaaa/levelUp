@@ -40,6 +40,7 @@ export default function TabLayout() {
           ),
           headerStyle: {
             backgroundColor: Theme.colors.backgroundPrimary,
+            height: 71,
           },
           tabBarStyle: {
             backgroundColor: "#D0E4E4", // Use tabBarColor for the tab bar itself
