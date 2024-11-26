@@ -1,5 +1,5 @@
-// detail from experience
-import React from "react";
+import { useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,26 +7,65 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import db from "@/database/db";
 
 export default function Details() {
   const param = useLocalSearchParams();
-  //const {id} = useLocalSearchParams();
-  console.log("this is ID", param.id);
-  
+  const id = param.id;
+
+  const [name, setName] = useState(null);
+  const [xp, setXp] = useState(null);
+  const [locked, setLocked] = useState(null);
+  const [photo, setPhoto] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchExperienceData = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await db
+          .from("tasks")
+          .select("name, xp, locked, photo")
+          .eq("id", id)
+          .single();
+
+        if (error) {
+          console.error("Error fetching experience data:", error.message);
+        } else if (data) {
+          setName(data.name);
+          setXp(data.xp);
+          setLocked(data.locked);
+          setPhoto(data.photo);
+        }
+      } catch (err) {
+        console.error("Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchExperienceData();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.loadingContainer]}>
+        <ActivityIndicator size="large" color="#509B9B" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      {/* Image on the top 20% */}
+      {/* Image on the top 33% */}
       <View style={styles.imageContainer}>
-        <Image
-          source={require("@/assets/rubiks_cube.jpg")}
-          style={styles.photo}
-          resizeMode="cover"
-        />
+        <Image source={{ uri: photo }} style={styles.image} />
       </View>
 
-      {/* Content in the bottom 80% */}
+      {/* Content in the bottom 67% */}
       <View style={styles.contentContainer}>
         {/* Skill Tag */}
         <View style={styles.skillTag}>
@@ -34,12 +73,14 @@ export default function Details() {
         </View>
 
         {/* Name of the task */}
-        <Text style={styles.taskName}>Solve a Rubik's Cube</Text>
+        <Text style={styles.taskName}>{name || "No Name"}</Text>
 
         {/* XP subtitle */}
         <View style={styles.xpRow}>
           <Icon name="star" size={16} color="#509B9B" />
-          <Text style={styles.xpText}>{20} XP</Text>
+          <Text style={styles.xpText}>
+            {xp !== null ? `${xp} XP` : "No XP"}
+          </Text>
         </View>
 
         {/* Description */}
@@ -84,9 +125,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   imageContainer: {
-    height: "33%", // Explicit height for top 20%
+    height: "33%", // Explicit height for top 33%
   },
-  photo: {
+  image: {
     width: "100%",
     height: "100%", // Fill the image container
     borderRadius: 0,
@@ -94,7 +135,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1, // This will take up the remaining space
     padding: 16,
-    height: "67%", // Explicit height for bottom 80%
+    height: "67%", // Explicit height for bottom 67%
   },
   skillTag: {
     alignSelf: "flex-start",
@@ -186,3 +227,4 @@ const styles = StyleSheet.create({
     marginRight: 8, // Space between icon and text
   },
 });
+
