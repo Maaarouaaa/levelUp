@@ -18,9 +18,23 @@ export default function Details() {
 
   const [name, setName] = useState(null);
   const [xp, setXp] = useState(null);
-  const [locked, setLocked] = useState(null);
+  const [skill, setSkill] = useState(null);
   const [photo, setPhoto] = useState(null);
+  const [description, setDescription] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Define the color mapping for skills
+  const skillColors = {
+    "problem solving": "#FF6030",
+    leadership: "#37C9A5",
+    communication: "#4CA8FF",
+    adaptability: "#FFAB45",
+  };
+
+  // Determine the color based on the current skill
+  const getSkillColor = (skillName) => {
+    return skillColors[skillName] || "#000000"; // Default to black if skill not found
+  };
 
   useEffect(() => {
     const fetchExperienceData = async () => {
@@ -28,7 +42,7 @@ export default function Details() {
         setLoading(true);
         const { data, error } = await db
           .from("tasks")
-          .select("name, xp, locked, photo")
+          .select("name, xp, skill, photo, description")
           .eq("id", id)
           .single();
 
@@ -37,8 +51,9 @@ export default function Details() {
         } else if (data) {
           setName(data.name);
           setXp(data.xp);
-          setLocked(data.locked);
+          setSkill(data.skill);
           setPhoto(data.photo);
+          setDescription(data.description);
         }
       } catch (err) {
         console.error("Error:", err);
@@ -69,7 +84,9 @@ export default function Details() {
       <View style={styles.contentContainer}>
         {/* Skill Tag */}
         <View style={styles.skillTag}>
-          <Text style={styles.skillTagText}>Problem Solving</Text>
+          <Text style={[styles.skillTagText, { color: getSkillColor(skill) }]}>
+            {skill || "No Name"}
+          </Text>
         </View>
 
         {/* Name of the task */}
@@ -84,12 +101,7 @@ export default function Details() {
         </View>
 
         {/* Description */}
-        <Text style={styles.description}>
-          Solve the Rubik's Cube by aligning all the colors so that each face is a
-          single, solid color. Use logic, strategy, and focus to crack the code of
-          this classic puzzle. Time yourself or challenge a friend if you’re
-          feeling competitive—can you beat your personal best?
-        </Text>
+        <Text style={styles.description}>{description || "No Description"}</Text>
 
         {/* Custom Text Input */}
         <View style={styles.inputContainer}>
@@ -124,6 +136,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
+  loadingContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
   imageContainer: {
     height: "33%", // Explicit height for top 33%
   },
@@ -135,7 +151,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1, // This will take up the remaining space
     padding: 16,
-    height: "67%", // Explicit height for bottom 67%
+    // height: "67%", // Removed explicit height to let flex handle sizing
   },
   skillTag: {
     alignSelf: "flex-start",
@@ -148,7 +164,8 @@ const styles = StyleSheet.create({
   skillTagText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#509B9B",
+    // color is now dynamically set, so you can remove or keep a default color
+    // color: "#509B9B",
   },
   taskName: {
     fontSize: 24,
@@ -227,4 +244,5 @@ const styles = StyleSheet.create({
     marginRight: 8, // Space between icon and text
   },
 });
+
 

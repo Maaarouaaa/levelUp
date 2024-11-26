@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,48 +7,101 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import db from "@/database/db";
 
 export default function Details() {
   const param = useLocalSearchParams();
-  //const {id} = useLocalSearchParams();
-  console.log("this is ID", param.id);
-  
+  const id = param.id;
+
+  const [name, setName] = useState(null);
+  const [xp, setXp] = useState(null);
+  const [skill, setSkill] = useState(null);
+  const [photo, setPhoto] = useState(null);
+  const [description, setDescription] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Define the color mapping for skills
+  const skillColors = {
+    "problem solving": "#FF6030",
+    leadership: "#37C9A5",
+    communication: "#4CA8FF",
+    adaptability: "#FFAB45",
+  };
+
+  // Determine the color based on the current skill
+  const getSkillColor = (skillName) => {
+    return skillColors[skillName] || "#000000"; // Default to black if skill not found
+  };
+
+  useEffect(() => {
+    const fetchExperienceData = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await db
+          .from("tasks")
+          .select("name, xp, skill, photo, description")
+          .eq("id", id)
+          .single();
+
+        if (error) {
+          console.error("Error fetching experience data:", error.message);
+        } else if (data) {
+          setName(data.name);
+          setXp(data.xp);
+          setSkill(data.skill);
+          setPhoto(data.photo);
+          setDescription(data.description);
+        }
+      } catch (err) {
+        console.error("Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchExperienceData();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.loadingContainer]}>
+        <ActivityIndicator size="large" color="#509B9B" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      {/* Image on the top 20% */}
+      {/* Image on the top 33% */}
       <View style={styles.imageContainer}>
-        <Image
-          source={require("@/assets/rubiks_cube.jpg")}
-          style={styles.photo}
-          resizeMode="cover"
-        />
+        <Image source={{ uri: photo }} style={styles.image} />
       </View>
 
-      {/* Content in the bottom 80% */}
+      {/* Content in the bottom 67% */}
       <View style={styles.contentContainer}>
         {/* Skill Tag */}
         <View style={styles.skillTag}>
-          <Text style={styles.skillTagText}>Problem Solving</Text>
+          <Text style={[styles.skillTagText, { color: getSkillColor(skill) }]}>
+            {skill || "No Name"}
+          </Text>
         </View>
 
         {/* Name of the task */}
-        <Text style={styles.taskName}>Solve a Rubik's Cube</Text>
+        <Text style={styles.taskName}>{name || "No Name"}</Text>
 
         {/* XP subtitle */}
         <View style={styles.xpRow}>
           <Icon name="star" size={16} color="#509B9B" />
-          <Text style={styles.xpText}>{20} XP</Text>
+          <Text style={styles.xpText}>
+            {xp !== null ? `${xp} XP` : "No XP"}
+          </Text>
         </View>
 
         {/* Description */}
-        <Text style={styles.description}>
-          Solve the Rubik's Cube by aligning all the colors so that each face is a
-          single, solid color. Use logic, strategy, and focus to crack the code of
-          this classic puzzle. Time yourself or challenge a friend if you’re
-          feeling competitive—can you beat your personal best?
-        </Text>
+        <Text style={styles.description}>{description || "No Description"}</Text>
 
         {/* Custom Text Input */}
         <View style={styles.inputContainer}>
@@ -83,10 +136,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  imageContainer: {
-    height: "33%", // Explicit height for top 20%
+  loadingContainer: {
+    justifyContent: "center",
+    alignItems: "center",
   },
-  photo: {
+  imageContainer: {
+    height: "33%", // Explicit height for top 33%
+  },
+  image: {
     width: "100%",
     height: "100%", // Fill the image container
     borderRadius: 0,
@@ -94,7 +151,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1, // This will take up the remaining space
     padding: 16,
-    height: "67%", // Explicit height for bottom 80%
+    // height: "67%", // Removed explicit height to let flex handle sizing
   },
   skillTag: {
     alignSelf: "flex-start",
@@ -107,7 +164,8 @@ const styles = StyleSheet.create({
   skillTagText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#509B9B",
+    // color is now dynamically set, so you can remove or keep a default color
+    // color: "#509B9B",
   },
   taskName: {
     fontSize: 24,
@@ -186,147 +244,3 @@ const styles = StyleSheet.create({
     marginRight: 8, // Space between icon and text
   },
 });
-
-
-
-
-
-
-
-
-
-
-/*import { useState } from "react";
-import {
-  StyleSheet,
-  Platform,
-  View,
-  TouchableOpacity,
-  TextInput,
-  KeyboardAvoidingView,
-  Keyboard,
-} from "react-native";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-
-import Theme from "@/assets/theme";
-import Post from "@/components/Post";
-import CommentFeed from "@/components/CommentFeed";
-import db from "@/database/db";
-import { useRoute } from "@react-navigation/native";
-
-export default function Details() {
-  const route = useRoute();
-  const { id, username, timestamp, text, score, vote, commentCount } =
-    route.params;
-
-  const [inputText, setInputText] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const submitComment = async () => {
-    setIsLoading(true);
-
-    try {
-      const { data, error } = await db
-        .from("comments") // Make sure this matches your actual comments table name
-        .insert([
-          {
-            post_id: id,
-            username: username || "Anonymous",
-            text: inputText,
-            timestamp: new Date().toISOString(), // Assuming your DB can handle ISO format timestamps
-          },
-        ]);
-
-      if (error) {
-        console.error("Error submitting comment:", error);
-      } else {
-        console.log("Comment submitted:", data);
-      }
-    } catch (err) {
-      console.error("Unexpected error:", err);
-    } finally {
-      /////////////////////////////////////////////////////////////////////////////////////
-      setIsLoading(false);
-      setInputText("");
-      Keyboard.dismiss();
-    }
-  };
-
-  const submitDisabled = isLoading || inputText.length === 0;
-
-  return (
-    <View style={styles.container}>
-      <Post
-        id={id}
-        username={username}
-        timestamp={timestamp}
-        text={text}
-        score={score}
-        vote={vote}
-        commentCount={commentCount}
-      />
-
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 65 : 0}
-        style={styles.keyboardContainer}
-      >
-        <CommentFeed postId={id} />
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            value={inputText}
-            onChangeText={setInputText}
-            placeholder={"Write a comment..."}
-            placeholderTextColor={Theme.colors.textSecondary}
-          />
-          <TouchableOpacity
-            style={styles.sendButton}
-            onPress={() => submitComment()}
-            disabled={submitDisabled}
-          >
-            <FontAwesome
-              size={24}
-              name="send"
-              color={
-                submitDisabled
-                  ? Theme.colors.iconSecondary
-                  : Theme.colors.iconHighlighted
-              }
-            />
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: Theme.colors.backgroundPrimary,
-  },
-  keyboardContainer: {
-    flex: 1,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    width: "100%",
-    padding: 8,
-    alignItems: "center",
-  },
-  input: {
-    paddingLeft: 12,
-    marginRight: 8,
-    height: 48,
-    borderRadius: 24,
-    color: Theme.colors.textPrimary,
-    backgroundColor: Theme.colors.backgroundSecondary,
-    flex: 1,
-  },
-  sendButton: {
-    padding: 4,
-  },
-});
-*/
