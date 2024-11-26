@@ -36,7 +36,6 @@ export default function Three({ navigation }) {
             <ExperienceCard
               id={id} // Set the ID for the experience
               navigate="home" // Set the ID for the experience
-              photo={require("@/assets/rubiks_cube.jpg")} // Example placeholder image
             />
           </View>
         ))}

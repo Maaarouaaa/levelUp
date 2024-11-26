@@ -6,7 +6,7 @@ import { useRouter } from "expo-router";
 import db from "@/database/db";
 //import { detailFromExperience } from "@/app/tab/experience/index"; // Import the function
 
-export default function ExperienceCard({ id, photo, navigate }) {
+export default function ExperienceCard({ id, navigate }) {
   const router = useRouter();
   const detailFromHome = () => {
     router.push("/tab/feed/details"); // Directly navigate to the screen
@@ -17,13 +17,14 @@ export default function ExperienceCard({ id, photo, navigate }) {
   const [name, setName] = useState(null);
   const [xp, setXp] = useState(null);
   const [locked, setLocked] = useState(null);
+  const [photo, setPhoto] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchExperienceData = async () => {
       try {
         setLoading(true);
-        const { data, error } = await db.from("tasks").select("name, xp, locked").eq("id", id).single();
+        const { data, error } = await db.from("tasks").select("name, xp, locked, photo").eq("id", id).single();
 
         if (error) {
           console.error("Error fetching experience data:", error.message);
@@ -31,6 +32,7 @@ export default function ExperienceCard({ id, photo, navigate }) {
           setName(data.name);
           setXp(data.xp);
           setLocked(data.locked)
+          setPhoto(data.photo)
         }
       } catch (err) {
         console.error("Error:", err);
@@ -70,7 +72,7 @@ export default function ExperienceCard({ id, photo, navigate }) {
       <TouchableOpacity style={styles.container} onPress={handleNavigation}>
         <View style={styles.content}>
           <View style={styles.details}>
-            <Image source={photo} style={styles.image} />
+            <Image source={{ uri: photo }} style={styles.image} />
           </View>
           <View style={styles.words}>
             <Text style={styles.name}>{name || "No Name"}</Text>
