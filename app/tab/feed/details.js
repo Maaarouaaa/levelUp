@@ -1,5 +1,5 @@
-import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
+import { useLocalSearchParams } from "expo-router";
 import {
   StyleSheet,
   Text,
@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   TextInput,
   ActivityIndicator,
+  Modal,
+  Dimensions,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import db from "@/database/db";
@@ -23,7 +25,6 @@ export default function Details() {
   const [description, setDescription] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Define the color mapping for skills
   const skillColors = {
     "problem solving": "#FF6030",
     leadership: "#37C9A5",
@@ -31,9 +32,26 @@ export default function Details() {
     adaptability: "#FFAB45",
   };
 
-  // Determine the color based on the current skill
   const getSkillColor = (skillName) => {
-    return skillColors[skillName] || "#000000"; // Default to black if skill not found
+    return skillColors[skillName] || "#000000";
+  };
+
+  const [isDone, setIsDone] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+
+  const handleMarkAsDone = () => {
+    setIsDone(true);
+    setShowPopup(true); // Show the popup
+    console.log("Task marked as done.");
+  };
+
+  const handleMarkAsNotDone = () => {
+    setIsDone(false);
+    console.log("Task marked as not done.");
+  };
+
+  const closePopup = () => {
+    setShowPopup(false); // Close the popup
   };
 
   useEffect(() => {
@@ -75,24 +93,26 @@ export default function Details() {
 
   return (
     <View style={styles.container}>
-      {/* Image on the top 33% */}
       <View style={styles.imageContainer}>
         <Image source={{ uri: photo }} style={styles.image} />
       </View>
 
-      {/* Content in the bottom 67% */}
+      {isDone && (
+        <View style={styles.doneIndicator}>
+          <View style={styles.blueDot}>
+            <Icon name="checkmark" size={40} color="#fff" />
+          </View>
+        </View>
+      )}
+
       <View style={styles.contentContainer}>
-        {/* Skill Tag */}
         <View style={styles.skillTag}>
           <Text style={[styles.skillTagText, { color: getSkillColor(skill) }]}>
             {skill || "No Name"}
           </Text>
         </View>
 
-        {/* Name of the task */}
         <Text style={styles.taskName}>{name || "No Name"}</Text>
-
-        {/* XP subtitle */}
         <View style={styles.xpRow}>
           <Icon name="star" size={16} color="#509B9B" />
           <Text style={styles.xpText}>
@@ -100,10 +120,10 @@ export default function Details() {
           </Text>
         </View>
 
-        {/* Description */}
-        <Text style={styles.description}>{description || "No Description"}</Text>
+        <Text style={styles.description}>
+          {description || "No Description"}
+        </Text>
 
-        {/* Custom Text Input */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Reflection</Text>
           <TextInput
@@ -115,21 +135,65 @@ export default function Details() {
           />
         </View>
 
-        {/* Buttons */}
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button}>
-            <Icon name="checkmark" size={20} color="#fff" style={styles.icon} />
-            <Text style={styles.buttonText}>Mark as Done</Text>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              { backgroundColor: isDone ? "#509B9B" : "#fff" },
+            ]}
+            onPress={isDone ? handleMarkAsNotDone : handleMarkAsDone}
+          >
+            <Icon
+              name="checkmark"
+              size={20}
+              color={isDone ? "#fff" : "#509B9B"}
+              style={styles.icon}
+            />
+            <Text
+              style={[
+                styles.buttonText,
+                { color: isDone ? "#fff" : "#509B9B" },
+              ]}
+            >
+              {isDone ? "Done!" : "Mark as Done"}
+            </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <Icon name="paper-plane" size={20} color="#fff" style={styles.icon} />
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => console.log("Challenge Friend functionality")}
+          >
+            <Icon
+              name="paper-plane"
+              size={20}
+              color="#509B9B"
+              style={styles.icon}
+            />
             <Text style={styles.buttonText}>Challenge Friend</Text>
           </TouchableOpacity>
         </View>
       </View>
+
+      {/* Popup Modal */}
+      <Modal visible={showPopup} transparent={true} animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.popup}>
+            <Text style={styles.popupTitle}>Congratulations on Completing this Experience!</Text>
+            <Text style={styles.popupMessage}>
+              You earned {xp} XP.
+            </Text>
+            <TouchableOpacity style={styles.okayButton} onPress={closePopup}>
+              <Text style={styles.okayButtonText}>Okay</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 const styles = StyleSheet.create({
   container: {
@@ -141,17 +205,35 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   imageContainer: {
-    height: "33%", // Explicit height for top 33%
+    height: screenHeight * 0.25, // 33% of the screen height
   },
   image: {
     width: "100%",
     height: "100%", // Fill the image container
     borderRadius: 0,
   },
+  doneIndicator: {
+    position: "absolute",
+    width: 50, // Size of the outer blue dot
+    height: 50,
+    borderRadius: 25, // Ensure this matches half the width/height for a perfect circle
+    backgroundColor: "#509B9B",
+    justifyContent: "center",
+    alignItems: "center",
+    top: screenHeight * 0.25 - 25, // Center the dot at 33% of the screen height
+    left: screenWidth * 0.85 - 25, // Center the dot at 85% of the screen width
+  },
+  blueDot: {
+    width: 50, // Size matches the parent `doneIndicator`
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#509B9B", // Same color as `doneIndicator` to maintain consistency
+    justifyContent: "center",
+    alignItems: "center",
+  },  
   contentContainer: {
     flex: 1, // This will take up the remaining space
     padding: 16,
-    // height: "67%", // Removed explicit height to let flex handle sizing
   },
   skillTag: {
     alignSelf: "flex-start",
@@ -164,8 +246,6 @@ const styles = StyleSheet.create({
   skillTagText: {
     fontSize: 14,
     fontWeight: "600",
-    // color is now dynamically set, so you can remove or keep a default color
-    // color: "#509B9B",
   },
   taskName: {
     fontSize: 24,
@@ -221,26 +301,60 @@ const styles = StyleSheet.create({
   button: {
     flex: 1,
     marginHorizontal: 8,
-    backgroundColor: "#509B9B",
     paddingVertical: 8, // Reduced button height
     borderRadius: 8,
     borderColor: "#509B9B",
     borderWidth: 1,
     flexDirection: "row", // Align text and icon
-    alignItems: "center", // Vertically center the text and icon
-    shadowColor: "#000", // Add shadow for both platforms
-    shadowOpacity: 0.25,
-    shadowRadius: 3.5,
-    shadowOffset: { width: 0, height: 3 }, // Shift the shadow down
-    elevation: 5, // Add elevation for Android shadow
+    alignItems: "center", // Center both icon and text
+    justifyContent: "center", // Center content
   },
   buttonText: {
+    fontSize: 16,
+    fontWeight: "bold",
     textAlign: "center",
-    color: "#fff",
-    fontWeight: "600",
-    fontSize: 14,
+    marginLeft: 10, // Spacing between icon and text
   },
   icon: {
-    marginRight: 8, // Space between icon and text
+    marginLeft: 10, // Spacing between icon and text
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  popup: {
+    width: 412,
+    height: 274,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 5,
+    boxShadow: "0px 4px 9px 4px rgba(147, 151, 184, 0.15)",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+  popupTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+    textAlign: 'center',
+    alignSelf: 'center',
+  },
+  popupMessage: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  okayButton: {
+    backgroundColor: "#509B9B",
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 5,
+  },
+  okayButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
