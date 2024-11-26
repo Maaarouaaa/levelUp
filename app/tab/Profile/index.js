@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useRouter } from "expo-router";
+import db from "@/database/db";
 
 export default function Profile() {
   const router = useRouter();
@@ -9,6 +10,36 @@ export default function Profile() {
   const navigateToProgress = () => {
     router.push("/tab/Profile/myProgress"); // Directly navigate to the screen
   };
+
+  const [total_xp, set_total_xp] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetch_total_xp = async () => {
+      try {
+        setLoading(true);
+        // Query the database for total XP
+        const { data, error } = await db
+          .from("users")
+          .select("total_xp")
+          .eq("id", 1) // Replace with your logic for user ID
+          .single();
+
+        if (error) {
+          console.error("Error fetching total xp:", error.message);
+        } else if (data) {
+          set_total_xp(data.total_xp);
+        }
+      } catch (err) {
+        console.error("Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetch_total_xp();
+  }, []);
+
   return (
     <View style={styles.container}>
       {/* Header Background */}
@@ -34,7 +65,7 @@ export default function Profile() {
       </View>
 
       {/* Name and Member Info */}
-      <Text style={styles.profileName}>Varsha Saravanan</Text>
+      <Text style={styles.profileName}>Taralyn Nguyen</Text>
       <Text style={styles.memberInfo}>Member since June 2024</Text>
 
       {/* XP and Stats */}
@@ -45,8 +76,10 @@ export default function Profile() {
             source={require("@/assets/star-profilepage.png")}
             style={styles.statIcon}
           />
-          <Text style={styles.statNumber}>260</Text>
-          <Text style={styles.statLabel}>Lifetime XP</Text>
+          <Text style={styles.statNumber}>
+            {loading ? "Loading..." : total_xp !== null ? total_xp : "No Data"}
+          </Text>
+          <Text style={styles.statLabel}>Total XP</Text>
         </View>
 
         {/* Friends */}
@@ -71,34 +104,36 @@ export default function Profile() {
       </View>
 
       {/* Skills Section */}
-      <Text style={styles.skillsHeading}>My skills</Text>
-      <View style={styles.skillsRow}>
-        <SkillBar
-          skillName="Problem Solving"
-          currentXP={60}
-          maxXP={100}
-          color="#FF8460"
-        />
-        <SkillBar
-          skillName="Communication"
-          currentXP={80}
-          maxXP={100}
-          color="#4CA8FF"
-        />
-      </View>
-      <View style={styles.skillsRow}>
-        <SkillBar
-          skillName="Adaptability"
-          currentXP={40}
-          maxXP={100}
-          color="#FFAB45"
-        />
-        <SkillBar
-          skillName="Leadership"
-          currentXP={60}
-          maxXP={100}
-          color="#6CE7C9"
-        />
+      <View style={styles.skillsContainer}>
+        <Text style={styles.skillsHeading}>My skills</Text>
+        <View style={styles.skillsRow}>
+          <SkillBar
+            skillName="Problem Solving"
+            currentXP={60}
+            maxXP={100}
+            color="#FF8460"
+          />
+          <SkillBar
+            skillName="Communication"
+            currentXP={80}
+            maxXP={100}
+            color="#4CA8FF"
+          />
+        </View>
+        <View style={styles.skillsRow}>
+          <SkillBar
+            skillName="Adaptability"
+            currentXP={40}
+            maxXP={100}
+            color="#FFAB45"
+          />
+          <SkillBar
+            skillName="Leadership"
+            currentXP={60}
+            maxXP={100}
+            color="#6CE7C9"
+          />
+        </View>
       </View>
 
       {/* Buttons Section */}
@@ -119,6 +154,7 @@ export default function Profile() {
           />
         </TouchableOpacity>
       </View>
+
     </View>
   );
 }
@@ -203,14 +239,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "rgba(75, 75, 75, 0.8)",
   },
-  statsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    position: "absolute",
-    top: "48%", // Adjusted to move stats row down
-    width: "100%",
-    paddingHorizontal: 20,
-  },
   statBox: {
     alignItems: "center",
   },
@@ -291,4 +319,24 @@ const styles = StyleSheet.create({
     height: "100%",
     resizeMode: "contain",
   },
+  statsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    position: "absolute",
+    top: "48%", // Adjusted to move stats row down
+    width: "100%",
+    paddingHorizontal: 20,
+    marginBottom: 20, // Added margin to create space below stats
+  },
+  skillsContainer: {
+    marginTop: "25%", // Add a larger top margin to avoid overlap with stats
+    paddingHorizontal: 20,
+    flex: 1,
+  },
 });
+
+
+  
+
+
+

@@ -1,7 +1,10 @@
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import TodaysExperience from "@/components/TodaysExperience";
+import Icon from "react-native-vector-icons/Ionicons";
+import db from "@/database/db";
 
 export default function Feed() {
   const router = useRouter();
@@ -25,6 +28,35 @@ export default function Feed() {
     router.push("/tab/feed/adaptability");
   };
 
+  const [total_xp, set_total_xp] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetch_total_xp = async () => {
+      try {
+        setLoading(true);
+        // Query the database for total XP
+        const { data, error } = await db
+          .from("users")
+          .select("total_xp")
+          .eq("id", 1) // Replace with your logic for user ID
+          .single();
+
+        if (error) {
+          console.error("Error fetching total xp:", error.message);
+        } else if (data) {
+          set_total_xp(data.total_xp);
+        }
+      } catch (err) {
+        console.error("Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetch_total_xp();
+  }, []);
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -33,8 +65,14 @@ export default function Feed() {
           <Text style={styles.headerText}>Level up.</Text>
           <View style={styles.withPic}>
             <View style={styles.headerSubtitle}>
-              <Text style={styles.headerText}>Welcome, Varsha!</Text>
-              <Text style={styles.xp}>260 Xp</Text>
+              <Text style={styles.headerText}>Welcome, Taralyn!</Text>
+              <View style={styles.xpRow}>
+                <Icon name="star" size={20} color="#509B9B" />
+                <Text style={styles.xp}>
+                  {loading ? "Loading..." : total_xp !== null ? total_xp : "No Data"} XP
+                </Text>
+              </View>
+
             </View>
             <Image
               source={require("@/assets/varshapic-profilepage.png")}
@@ -170,5 +208,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
     color: "#333",
+  },
+  xpRow: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
