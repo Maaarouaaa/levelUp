@@ -9,7 +9,7 @@ import db from "@/database/db";
 export default function Feed() {
   const router = useRouter();
   const detailFromHome = () => {
-    router.push("/tab/feed/details");
+    router.push({ pathname: "/tab/feed/details", params: { id: id } });
   };
 
   const navigateToProblemSolving = () => {

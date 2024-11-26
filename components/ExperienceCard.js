@@ -9,10 +9,10 @@ import db from "@/database/db";
 export default function ExperienceCard({ id, navigate }) {
   const router = useRouter();
   const detailFromHome = () => {
-    router.push("/tab/feed/details"); // Directly navigate to the screen
+    router.push({ pathname: "/tab/feed/details", params: { id: id } }); // Directly navigate to the screen
   };
   const detailFromExperience = () => {
-    router.push("/tab/experience/details"); // Directly navigate to the screen
+    router.push({ pathname: "/tab/experience/details", params: { id: id } }); // Directly navigate to the screen
   };
   const [name, setName] = useState(null);
   const [xp, setXp] = useState(null);
