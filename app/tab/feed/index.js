@@ -75,7 +75,7 @@ export default function Feed() {
 
             </View>
             <Image
-              source={require("@/assets/varshapic-profilepage.png")}
+              source={require("@/assets/taralyn-profilepic.jpeg")}
               style={styles.image}
             />
           </View>

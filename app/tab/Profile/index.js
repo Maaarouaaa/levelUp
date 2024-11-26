@@ -59,7 +59,7 @@ export default function Profile() {
       {/* Profile Picture */}
       <View style={styles.profilePictureContainer}>
         <Image
-          source={require("@/assets/varshapic-profilepage.png")}
+          source={require("@/assets/taralyn-profilepic.jpeg")}
           style={styles.profilePicture}
         />
       </View>
