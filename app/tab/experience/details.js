@@ -11,6 +11,10 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 
 export default function Details() {
+  const param = useLocalSearchParams();
+  //const {id} = useLocalSearchParams();
+  console.log("this is ID", param.id);
+  
   return (
     <View style={styles.container}>
       {/* Image on the top 20% */}
