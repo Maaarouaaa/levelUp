@@ -24,6 +24,8 @@ export default function Details() {
   const [photo, setPhoto] = useState(null);
   const [description, setDescription] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isDone, setIsDone] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
   const skillColors = {
     "problem solving": "#FF6030",
@@ -36,19 +38,69 @@ export default function Details() {
     return skillColors[skillName] || "#000000";
   };
 
-  const [isDone, setIsDone] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
+  const handleMarkAsDone = async () => {
+    try {
+        const { error } = await db
+            .from("tasks")
+            .update({ done: 'TRUE' }) // Update the "done" column to TRUE
+            .eq("id", id); // Filter for the specific task by its ID
 
-  const handleMarkAsDone = () => {
-    setIsDone(true);
-    setShowPopup(true); // Show the popup
-    console.log("Task marked as done.");
+        if (error) {
+            console.error("Error marking task as done:", error.message);
+        } else {
+            // Call RPC to update XP
+            const { error: xpError } = await db.rpc('update_xp_for_user', {
+                skill_name: `${skill}`,  // Pass the skill name (e.g., 'problem_solving')
+                xp_value: xp,             // Pass the XP value
+                user_id: 1,               // Hardcoded user_id as 1
+                mark_done: true           // Mark as done (to add XP)
+            });
+
+            if (xpError) {
+                console.error("Error updating XP:", xpError.message);
+            } else {
+                setIsDone(true); // Update the local state
+                setShowPopup(true); // Show the popup
+                console.log("Task marked as done and XP updated.");
+            }
+        }
+    } catch (err) {
+        console.error("Error:", err);
+    }
   };
 
-  const handleMarkAsNotDone = () => {
-    setIsDone(false);
-    console.log("Task marked as not done.");
+  const handleMarkAsNotDone = async () => {
+    try {
+        const { error } = await db
+            .from("tasks")
+            .update({ done: 'FALSE' }) // Update the "done" column to FALSE
+            .eq("id", id); // Filter for the specific task by its ID
+
+        if (error) {
+            console.error("Error marking task as not done:", error.message);
+        } else {
+            // Call RPC to update XP
+            const { error: xpError } = await db.rpc('update_xp_for_user', {
+                skill_name: `${skill}`,  // Pass the skill name (e.g., 'problem_solving')
+                xp_value: xp,             // Pass the XP value
+                user_id: 1,               // Hardcoded user_id as 1
+                mark_done: false          // Mark as not done (to subtract XP)
+            });
+
+            if (xpError) {
+                console.error("Error updating XP:", xpError.message);
+            } else {
+                setIsDone(false); // Update the local state
+                console.log("Task marked as not done and XP updated.");
+            }
+        }
+    } catch (err) {
+        console.error("Error:", err);
+    }
   };
+
+  
+  
 
   const closePopup = () => {
     setShowPopup(false); // Close the popup
@@ -60,7 +112,7 @@ export default function Details() {
         setLoading(true);
         const { data, error } = await db
           .from("tasks")
-          .select("name, xp, skill, photo, description")
+          .select("name, xp, skill, photo, description, done")
           .eq("id", id)
           .single();
 
@@ -72,6 +124,7 @@ export default function Details() {
           setSkill(data.skill);
           setPhoto(data.photo);
           setDescription(data.description);
+          setIsDone(data.done); // Set the initial done state
         }
       } catch (err) {
         console.error("Error:", err);
@@ -191,6 +244,7 @@ export default function Details() {
     </View>
   );
 }
+
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
