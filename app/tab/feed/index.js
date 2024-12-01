@@ -7,8 +7,9 @@ import Icon from "react-native-vector-icons/Ionicons";
 import db from "@/database/db";
 
 export default function Feed() {
+  const id = Math.floor(Math.random() * 41)
   const router = useRouter();
-  const detailFromHome = () => {
+  const navigateToDetails = () => {
     router.push({ pathname: "/tab/feed/details", params: { id: id } });
   };
 
@@ -27,6 +28,7 @@ export default function Feed() {
   const navigateToAdapt = () => {
     router.push("/tab/feed/adaptability");
   };
+
 
   const [total_xp, set_total_xp] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -85,12 +87,13 @@ export default function Feed() {
 
         {/* Today's Experience Section */}
         <Text style={styles.miniTitle}>Today's experience</Text>
-        <View style={styles.postButton} onTouchEnd={detailFromHome}>
+        <View style={styles.postButton}>
           <TodaysExperience
             name="Solve a Rubik's Cube"
             xp="20"
             photo={require("@/assets/rubiks_cube.jpg")}
             description="Learn how to solve a Rubik’s Cube! Then, challenge your friends"
+            onPress= {navigateToDetails}
           />
         </View>
 
