@@ -8,27 +8,61 @@ export default function Profile() {
   const router = useRouter();
 
   const navigateToProgress = () => {
-    router.push("/tab/Profile/myProgress"); // Directly navigate to the screen
+    router.push("/tab/Profile/myProgress");
   };
 
-  const [total_xp, set_total_xp] = useState(null);
+  const [skillData, setSkillData] = useState({
+    problem_solving_xp: 0,
+    communication_xp: 0,
+    leadership_xp: 0,
+    adaptability_xp: 0,
+    total_xp: 0,
+  });
+
+  const [completedExperiences, setCompletedExperiences] = useState(0); // State for experiences
   const [loading, setLoading] = useState(true);
 
+  const fetchCompletedExperiences = async () => {
+    try {
+      const { data, error } = await db
+        .from("tasks") // Use the tasks table
+        .select("done") // Select the `done` column
+        .eq("done", true); // Filter for tasks where `done` is TRUE
+
+      if (error) {
+        console.error("Error fetching completed experiences:", error.message);
+      } else {
+        // Update the experience counter with the number of completed tasks
+        setCompletedExperiences(data.length);
+      }
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  };
+
   useEffect(() => {
-    const fetch_total_xp = async () => {
+    const fetchSkillData = async () => {
       try {
         setLoading(true);
-        // Query the database for total XP
+
         const { data, error } = await db
           .from("users")
-          .select("total_xp")
-          .eq("id", 1) // Replace with your logic for user ID
+          .select(
+            `"problem solving_xp", communication_xp, leadership_xp, adaptability_xp, total_xp`
+          )
+          .eq("id", 1) // Replace with the correct user ID
           .single();
 
         if (error) {
-          console.error("Error fetching total xp:", error.message);
+          console.error("Error fetching skill data:", error.message);
         } else if (data) {
-          set_total_xp(data.total_xp);
+          setSkillData({
+            problem_solving_xp: data["problem solving_xp"],
+            communication_xp: data.communication_xp,
+            leadership_xp: data.leadership_xp,
+            adaptability_xp: data.adaptability_xp,
+            total_xp: data.total_xp,
+          });
         }
       } catch (err) {
         console.error("Error:", err);
@@ -37,7 +71,8 @@ export default function Profile() {
       }
     };
 
-    fetch_total_xp();
+    fetchSkillData();
+    fetchCompletedExperiences(); // Fetch completed experiences
   }, []);
 
   return (
@@ -46,12 +81,7 @@ export default function Profile() {
       <View style={styles.headerBackground}></View>
 
       {/* Back Arrow */}
-      <Icon
-        name="arrow-back"
-        size={24}
-        style={styles.backArrow}
-        color="#838383"
-      />
+      <Icon name="arrow-back" size={24} style={styles.backArrow} color="#838383" />
 
       {/* Header Title */}
       <Text style={styles.headerTitle}>Profile</Text>
@@ -77,7 +107,7 @@ export default function Profile() {
             style={styles.statIcon}
           />
           <Text style={styles.statNumber}>
-            {loading ? "Loading..." : total_xp !== null ? total_xp : "No Data"}
+            {loading ? "Loading..." : skillData.total_xp !== null ? skillData.total_xp : "No Data"}
           </Text>
           <Text style={styles.statLabel}>Total XP</Text>
         </View>
@@ -98,7 +128,9 @@ export default function Profile() {
             source={require("@/assets/completed-profilepage.png")}
             style={styles.statIcon}
           />
-          <Text style={styles.statNumber}>29</Text>
+          <Text style={styles.statNumber}>
+            {loading ? "Loading..." : completedExperiences}
+          </Text>
           <Text style={styles.statLabel}>Experiences</Text>
         </View>
       </View>
@@ -109,28 +141,28 @@ export default function Profile() {
         <View style={styles.skillsRow}>
           <SkillBar
             skillName="Problem Solving"
-            currentXP={60}
-            maxXP={100}
+            currentXP={skillData.problem_solving_xp}
+            maxXP={500}
             color="#FF8460"
           />
           <SkillBar
             skillName="Communication"
-            currentXP={80}
-            maxXP={100}
+            currentXP={skillData.communication_xp}
+            maxXP={500}
             color="#4CA8FF"
           />
         </View>
         <View style={styles.skillsRow}>
           <SkillBar
             skillName="Adaptability"
-            currentXP={40}
-            maxXP={100}
+            currentXP={skillData.adaptability_xp}
+            maxXP={500}
             color="#FFAB45"
           />
           <SkillBar
             skillName="Leadership"
-            currentXP={60}
-            maxXP={100}
+            currentXP={skillData.leadership_xp}
+            maxXP={500}
             color="#6CE7C9"
           />
         </View>
@@ -154,14 +186,13 @@ export default function Profile() {
           />
         </TouchableOpacity>
       </View>
-
     </View>
   );
 }
 
 // SkillBar Component
 const SkillBar = ({ skillName, currentXP, maxXP, color }) => {
-  const barWidth = `${(currentXP / maxXP) * 100}%`; // Calculate bar width dynamically
+  const barWidth = `${(currentXP / maxXP) * 100}%`; // Dynamically calculate bar width based on XP
 
   return (
     <View style={styles.skillContainer}>
@@ -179,6 +210,7 @@ const SkillBar = ({ skillName, currentXP, maxXP, color }) => {
 };
 
 const styles = StyleSheet.create({
+  // Keep all your original styles intact here...
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
@@ -187,7 +219,7 @@ const styles = StyleSheet.create({
   headerBackground: {
     position: "absolute",
     width: "100%",
-    height: "24.5%", // Adjusted height to give more space for content
+    height: "24.5%",
     backgroundColor: "rgba(80, 155, 155, 0.27)",
   },
   backArrow: {
@@ -198,7 +230,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     position: "absolute",
     top: 40,
-    left: "37%", // Center the header title
+    left: "37%",
     fontFamily: "Poppins",
     fontWeight: "700",
     fontSize: 30,
@@ -206,13 +238,13 @@ const styles = StyleSheet.create({
   },
   profilePictureContainer: {
     position: "absolute",
-    top: "14%", // Adjusted to move image down
-    left: "30%", // Center horizontally
-    width: 130, // Reduced size
+    top: "14%",
+    left: "30%",
+    width: 130,
     height: 130,
     borderRadius: 100,
     overflow: "hidden",
-    backgroundColor: "#E0E0E0", // Placeholder background
+    backgroundColor: "#E0E0E0",
   },
   profilePicture: {
     width: "100%",
@@ -221,7 +253,7 @@ const styles = StyleSheet.create({
   },
   profileName: {
     position: "absolute",
-    top: "38%", // Adjusted to move name text down
+    top: "38%",
     width: "100%",
     textAlign: "center",
     fontFamily: "Poppins",
@@ -231,13 +263,21 @@ const styles = StyleSheet.create({
   },
   memberInfo: {
     position: "absolute",
-    top: "42.5%", // Adjusted to move member info down
+    top: "42.5%",
     width: "100%",
     textAlign: "center",
     fontFamily: "Poppins",
     fontWeight: "400",
     fontSize: 14,
     color: "rgba(75, 75, 75, 0.8)",
+  },
+  statsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    position: "absolute",
+    top: "48%",
+    width: "100%",
+    paddingHorizontal: 20,
   },
   statBox: {
     alignItems: "center",
@@ -258,7 +298,7 @@ const styles = StyleSheet.create({
     color: "#000000",
   },
   skillsHeading: {
-    marginTop: "100%", // Push My skills below stats
+    marginTop: "100%",
     fontFamily: "Poppins",
     fontWeight: "400",
     fontSize: 16,
@@ -289,10 +329,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#E0E0E0",
     borderRadius: 10,
     overflow: "hidden",
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
   },
   progress: {
     height: "100%",
@@ -307,8 +343,7 @@ const styles = StyleSheet.create({
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginTop: 15, // Space above buttons
-    marginBottom: 20, // Space below buttons
+    marginTop: 15,
   },
   button: {
     width: 200,
@@ -319,24 +354,4 @@ const styles = StyleSheet.create({
     height: "100%",
     resizeMode: "contain",
   },
-  statsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    position: "absolute",
-    top: "48%", // Adjusted to move stats row down
-    width: "100%",
-    paddingHorizontal: 20,
-    marginBottom: 20, // Added margin to create space below stats
-  },
-  skillsContainer: {
-    marginTop: "25%", // Add a larger top margin to avoid overlap with stats
-    paddingHorizontal: 20,
-    flex: 1,
-  },
 });
-
-
-  
-
-
-
