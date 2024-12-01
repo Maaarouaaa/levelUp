@@ -1,18 +1,59 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import ExperienceCard from "@/components/ExperienceCard";
-import { useRouter } from "expo-router";
+import db from "@/database/db";
 
-export default function Three({ navigation }) {
+export default function Three() {
   const [searchText, setSearchText] = useState("");
   const [isToggled, setIsToggled] = useState(false);
+  const [remainingIds, setRemainingIds] = useState([]);
+  const [completedIds, setCompletedIds] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const handleToggle = () => {
     setIsToggled((prev) => !prev);
   };
 
-  // Filtered IDs for Remaining state
-  const remainingIds = [1, 5, 4, 12, 13, 2, 3, 11];
+  useEffect(() => {
+    const fetchTaskIds = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await db
+          .from("tasks")
+          .select("id, locked, done");
+
+        if (error) {
+          console.error("Error fetching task IDs:", error.message);
+        } else if (data) {
+          const remaining = data
+            .filter((task) => !task.locked && !task.done)
+            .map((task) => task.id);
+          const done = data
+            .filter((task) => !task.locked && task.done)
+            .map((task) => task.id);
+
+          setRemainingIds(remaining);
+          setCompletedIds(done);
+        }
+      } catch (err) {
+        console.error("Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTaskIds();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.loadingContainer]}>
+        <ActivityIndicator size="large" color="#509B9B" />
+      </View>
+    );
+  }
+
+  const idsToDisplay = isToggled ? completedIds : remainingIds;
 
   return (
     <View style={styles.container}>
@@ -50,23 +91,22 @@ export default function Three({ navigation }) {
 
       {/* Scrollable Cards */}
       <ScrollView contentContainerStyle={styles.cardsContainer}>
-        {!isToggled &&
-          remainingIds.map((id) => (
-            <View key={id} style={styles.cardWrapper}>
-              <ExperienceCard
-                id={id} // Set the ID for the experience
-                navigate="experience" // Set the ID for the experience
-                photo={require("@/assets/rubiks_cube.jpg")} // Example placeholder image
-              />
-            </View>
-          ))}
+        {idsToDisplay.map((id) => (
+          <View key={id} style={styles.cardWrapper}>
+            <ExperienceCard
+              id={id}
+              navigate="experience"
+              photo={require("@/assets/rubiks_cube.jpg")}
+            />
+          </View>
+        ))}
       </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  // Style definitions remain the same as your original code
+  // Style definitions remain the same
   container: {
     flex: 1,
     backgroundColor: "#fff",
@@ -101,7 +141,7 @@ const styles = StyleSheet.create({
   },
   toggleContainer: {
     position: "relative",
-    backgroundColor: "#fff", // White background
+    backgroundColor: "#fff",
     borderRadius: 20,
     width: 200,
     height: 40,
@@ -109,8 +149,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 8,
-    elevation: 3, // Drop shadow on Android
-    shadowColor: "#000", // Drop shadow on iOS
+    elevation: 3,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
@@ -119,9 +159,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: 100,
     height: 32,
-    backgroundColor: "#509B9B", // Light blue toggle
+    backgroundColor: "#509B9B",
     borderRadius: 16,
-    elevation: 2, // Slight elevation for toggle
+    elevation: 2,
   },
   toggleLeft: {
     left: 4,
@@ -131,17 +171,24 @@ const styles = StyleSheet.create({
   },
   toggleText: {
     fontSize: 16,
-    color: "#509B9B", // Light blue text color when against white
+    color: "#509B9B",
     zIndex: 1,
+    paddingHorizontal: 5,
   },
   activeText: {
-    color: "#fff", // Blue text when against the light blue toggle
+    color: "#fff",
     fontWeight: "bold",
   },
   cardWrapper: {
-    marginBottom: 15, // Adds padding between cards
+    marginBottom: 15,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
+
 
 
 
