@@ -1,161 +1,216 @@
-import { StyleSheet, Text, View } from "react-native";
-
-import Theme from "@/assets/theme";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { useRouter } from "expo-router";
+import TodaysExperience from "@/components/TodaysExperience";
+import Icon from "react-native-vector-icons/Ionicons";
+import db from "@/database/db";
 
 export default function Feed() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.mainText}>This is the main screen</Text>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: Theme.colors.backgroundPrimary,
-  },
-  mainText: {
-    color: Theme.colors.textSecondary,
-    fontSize: Theme.sizes.textMedium,
-  },
-});
-
-/*
-import { useState, useEffect } from "react";
-import { StyleSheet, FlatList, RefreshControl, Text, View } from "react-native";
-
-import Theme from "@/assets/theme";
-import Post from "@/components/Post";
-import Loading from "@/components/Loading";
-
-import db from "@/database/db";
-import timeAgo from "@/utils/timeAgo";
-import useSession from "@/utils/useSession";
-
-export default function Feed({
-  shouldNavigateToComments = false,
-  fetchUsersPostsOnly = false,
-}) {
-  const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const session = useSession();
-
-  useEffect(() => {
-    // Fetch posts only if session is available and user is logged in
-    if (session && session.user && session.user.id) {
-      fetchPosts();
-    }
-  }, [fetchUsersPostsOnly, session]);
-
-  const fetchPosts = async () => {
-    setIsLoading(true);
-    try {
-      if (!session || !session.user || !session.user.id) {
-        console.error("Session is not available or user ID is missing.");
-        setPosts([]);
-        setIsLoading(false);
-        return;
-      }
-
-      let query = db
-        .from("posts")
-        .select("*")
-        .order("timestamp", { ascending: false });
-
-      if (fetchUsersPostsOnly) {
-        query = query.eq("user_id", session.user.id);
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error("Error fetching posts:", error);
-      } else {
-        setPosts(data);
-      }
-    } catch (err) {
-      console.error("Unexpected error fetching posts:", err);
-    } finally {
-      setIsLoading(false);
-      setIsRefreshing(false);
-    }
+  const router = useRouter();
+  const detailFromHome = () => {
+    router.push({ pathname: "/tab/feed/details", params: { id: id } });
   };
 
-  if (isLoading && !isRefreshing) {
-    return <Loading />;
-  }
+  const navigateToProblemSolving = () => {
+    router.push("/tab/feed/problemS");
+  };
 
-  if (!session) {
-    // Show a loading indicator or message until the session is loaded
-    return (
-      <View style={styles.noPostsContainer}>
-        <Text style={styles.noPostsText}>Loading session...</Text>
-      </View>
-    );
-  }
+  const navigateToCommunication = () => {
+    router.push("/tab/feed/communication");
+  };
 
-  return (
-    <View style={styles.noPostsContainer}>
-      <Text style={styles.noPostsText}>This is the main screen</Text>
-    </View>
-  );
+  const navigateToLeadership = () => {
+    router.push("/tab/feed/leadership");
+  };
 
-  return (
-    <FlatList
-      data={posts}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
-        <Post
-          shouldNavigateOnPress={shouldNavigateToComments}
-          id={item.id}
-          username={item.username}
-          timestamp={timeAgo(item.timestamp)}
-          text={item.text}
-          score={item.like_count}
-          vote={item.vote}
-          commentCount={item.comment_count}
-        />
-      )}
-      contentContainerStyle={styles.posts}
-      style={styles.postsContainer}
-      refreshControl={
-        <RefreshControl
-          refreshing={isRefreshing}
-          onRefresh={() => {
-            setIsRefreshing(true);
-            fetchPosts();
-          }}
-          tintColor={Theme.colors.textPrimary}
-        />
+  const navigateToAdapt = () => {
+    router.push("/tab/feed/adaptability");
+  };
+
+  const [total_xp, set_total_xp] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetch_total_xp = async () => {
+      try {
+        setLoading(true);
+        // Query the database for total XP
+        const { data, error } = await db
+          .from("users")
+          .select("total_xp")
+          .eq("id", 1) // Replace with your logic for user ID
+          .single();
+
+        if (error) {
+          console.error("Error fetching total xp:", error.message);
+        } else if (data) {
+          set_total_xp(data.total_xp);
+        }
+      } catch (err) {
+        console.error("Error:", err);
+      } finally {
+        setLoading(false);
       }
-    />
+    };
+
+    fetch_total_xp();
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Level up.</Text>
+          <View style={styles.withPic}>
+            <View style={styles.headerSubtitle}>
+              <Text style={styles.headerText}>Welcome, Taralyn!</Text>
+              <View style={styles.xpRow}>
+                <Icon name="star" size={20} color="#509B9B" />
+                <Text style={styles.xp}>
+                  {loading ? "Loading..." : total_xp !== null ? total_xp : "No Data"} XP
+                </Text>
+              </View>
+
+            </View>
+            <Image
+              source={require("@/assets/taralyn-profilepic.jpeg")}
+              style={styles.image}
+            />
+          </View>
+        </View>
+
+        <StatusBar style="light" />
+
+        {/* Today's Experience Section */}
+        <Text style={styles.miniTitle}>Today's experience</Text>
+        <View style={styles.postButton} onTouchEnd={detailFromHome}>
+          <TodaysExperience
+            name="Solve a Rubik's Cube"
+            xp="20"
+            photo={require("@/assets/rubiks_cube.jpg")}
+            description="Learn how to solve a Rubik’s Cube! Then, challenge your friends"
+          />
+        </View>
+
+        {/* Skills Section */}
+        <View style={styles.skillsContainer}>
+          <Text style={styles.miniTitle}>My skills</Text>
+          <View style={styles.pair}>
+            <TouchableOpacity onPress={navigateToProblemSolving}>
+              <Image
+                source={require("@/assets/probIcon.png")}
+                style={styles.skillIcon}
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={navigateToCommunication}>
+              <Image
+                source={require("@/assets/commIcon.png")}
+                style={styles.skillIcon}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.pair}>
+            <TouchableOpacity onPress={navigateToLeadership}>
+              <Image
+                source={require("@/assets/Leadicon.png")}
+                style={styles.skillIcon}
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={navigateToAdapt}>
+              <Image
+                source={require("@/assets/AdaptIcon.png")}
+                style={styles.skillIcon}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
+  },
+  scrollContainer: {
+    flexGrow: 1,
     alignItems: "center",
-    backgroundColor: Theme.colors.backgroundPrimary,
+    justifyContent: "flex-start",
+    paddingBottom: 50, // Extra padding for scrollable content
   },
-  postsContainer: {
+  header: {
+    backgroundColor: "#D0E4E4",
     width: "100%",
+    height: 150,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 31,
   },
-  posts: {
-    gap: 8,
+  headerText: {
+    color: "#509B9B",
+    fontSize: 24,
+    fontWeight: "bold",
+    paddingTop: 20,
   },
-  noPostsContainer: {
-    flex: 1,
+  headerSubtitle: {
+    justifyContent: "flex-start",
+    marginRight: 25,
+  },
+  xp: {
+    fontSize: 17,
+  },
+  image: {
+    height: 75,
+    width: 75,
+    borderRadius: 75,
+  },
+  withPic: {
+    padding: 7,
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
   },
-  noPostsText: {
-    color: Theme.colors.textSecondary,
-    fontSize: Theme.sizes.textMedium,
+  miniTitle: {
+    fontSize: 17,
+    padding: 15,
+    alignSelf: "flex-start",
+  },
+  postButton: {
+    flex: 1,
+    width: "90%",
+  },
+  skillsContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: 30,
+    width: "100%",
+  },
+  pair: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "62%",
+    marginVertical: 10,
+  },
+  skillIcon: {
+    width: 60,
+    height: 60,
+    marginBottom: 4,
+  },
+  skillText: {
+    fontSize: 16,
+    textAlign: "center",
+    color: "#333",
+  },
+  xpRow: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
-*/

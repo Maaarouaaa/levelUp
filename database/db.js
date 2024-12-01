@@ -1,4 +1,22 @@
-import { AppState } from 'react-native'
+import { AppState } from "react-native";
+import "react-native-url-polyfill/auto";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = "https://eemdsbtcbmblplxzqyrk.supabase.co";
+const supabaseAnonKey =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlbWRzYnRjYm1ibHBseHpxeXJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIxNjY1MzgsImV4cCI6MjA0Nzc0MjUzOH0.0lVPofL4USB87HfWCiBaCe6X80qVrnCsRmE8skb6rbo";
+
+const db = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    storage: AsyncStorage,
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: false,
+  },
+});
+export default db;
+/*import { AppState } from 'react-native'
 import 'react-native-url-polyfill/auto'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { createClient } from '@supabase/supabase-js'
@@ -29,3 +47,4 @@ AppState.addEventListener('change', (state) => {
 });
 
 export default db;
+*/

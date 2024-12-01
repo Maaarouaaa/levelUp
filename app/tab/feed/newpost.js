@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 export default function NewPost() {
   return (
     <View style={styles.container}>
-      <Text style={styles.centerText}>Button leads to this screen</Text>
+      <Text style={styles.centerText}>This is a task list screen</Text>
     </View>
   );
 }

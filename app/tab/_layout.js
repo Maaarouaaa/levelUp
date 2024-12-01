@@ -13,7 +13,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="feed"
         options={{
-          title: "one",
+          title: "home",
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons
               name="beehive-outline"
@@ -25,16 +25,16 @@ export default function TabLayout() {
             backgroundColor: Theme.colors.backgroundPrimary,
           },
           tabBarStyle: {
-            backgroundColor: Theme.colors.backgroundPrimary, // Use tabBarColor for the tab bar itself
+            backgroundColor: "#D0E4E4", // Use tabBarColor for the tab bar itself
           },
           headerTintColor: "#fff",
           headerShown: false,
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="experience"
         options={{
-          title: "two",
+          title: "experience",
           tabBarIcon: ({ size, color }) => (
             <AntDesign name="staro" size={24} color={color} />
           ),
@@ -42,16 +42,53 @@ export default function TabLayout() {
             backgroundColor: Theme.colors.backgroundPrimary,
           },
           tabBarStyle: {
-            backgroundColor: Theme.colors.backgroundPrimary, // Use tabBarColor for the tab bar itself
+            backgroundColor: "#D0E4E4", // Use tabBarColor for the tab bar itself
           },
           headerTintColor: "#fff",
           headerShown: true,
         }}
       />
       <Tabs.Screen
-        name="three"
+        name="Experience"
         options={{
-          title: "three",
+          title: "LevelUp", // default title
+          href: null,
+          headerStyle: {
+            backgroundColor: Theme.colors.backgroundPrimary, // Customize the header background color
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "LevelUp", // default title
+          href: null,
+          headerStyle: {
+            backgroundColor: Theme.colors.backgroundPrimary, // Customize the header background color
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="leaderB"
+        options={{
+          title: "leaderboard",
+          tabBarIcon: ({ size, color }) => (
+            <AntDesign name="smile-circle" size={24} color={color} />
+          ),
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          tabBarStyle: {
+            backgroundColor: "#D0E4E4", // Use tabBarColor for the tab bar itself
+          },
+          headerTintColor: "#fff",
+          headerShown: true,
+        }}
+      />
+      <Tabs.Screen
+        name="Profile"
+        options={{
+          title: "profile",
           tabBarIcon: ({ size, color }) => (
             <FontAwesome name="user" size={24} color={color} />
           ),
@@ -59,31 +96,14 @@ export default function TabLayout() {
             backgroundColor: Theme.colors.backgroundPrimary,
           },
           tabBarStyle: {
-            backgroundColor: Theme.colors.backgroundPrimary, // Use tabBarColor for the tab bar itself
+            backgroundColor: "#D0E4E4", // Use tabBarColor for the tab bar itself
           },
           headerTintColor: "#fff",
-          headerShown: true,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
-        name="four"
-        options={{
-          title: "four",
-          tabBarIcon: ({ size, color }) => (
-            <AntDesign name="smile-circle" size={24} color={color} />
-          ),
-          headerStyle: {
-            backgroundColor: Theme.colors.backgroundPrimary,
-          },
-          tabBarStyle: {
-            backgroundColor: Theme.colors.backgroundPrimary, // Use tabBarColor for the tab bar itself
-          },
-          headerTintColor: "#fff",
-          headerShown: true,
-        }}
-      />
-      <Tabs.Screen
-        name="index"
+        name="one"
         options={{
           title: "LevelUp", // default title
           href: null,
@@ -91,7 +111,7 @@ export default function TabLayout() {
             backgroundColor: Theme.colors.backgroundPrimary, // Customize the header background color
           },
           headerTintColor: "#fff", // Customize the color of the back button and header text
-          headerTitle: () => (
+          /*headerTitle: () => (
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <MaterialCommunityIcons name="bee" size={31} color="#f4511e" />
               <Text
@@ -105,9 +125,9 @@ export default function TabLayout() {
                 Buzz
               </Text>
             </View>
-          ),
+          ), */
           tabBarStyle: {
-            backgroundColor: Theme.colors.backgroundPrimary, // Customize the tab bar itself
+            backgroundColor: "#D0E4E4", // Customize the tab bar itself
           },
           headerShown: true,
         }}

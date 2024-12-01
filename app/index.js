@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 
 import { Redirect } from "expo-router";
 
-import Login from "@/components/Login";
-import db from "@/database/db";
-import Loading from "@/components/Loading";
+//import Login from "@/components/Login";
+//import db from "@/database/db";
+//import Loading from "@/components/Loading";
 
 export default function App() {
+  /*
   const [session, setSession] = useState(null);
   const [isLoading, setIsLoading] = useState(true); // Default to true for initial load
 
@@ -35,4 +36,6 @@ export default function App() {
   } else {
     return <Login />;
   }
+  */
+  return <Redirect href="/tab" />;
 }
