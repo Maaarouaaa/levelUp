@@ -7,7 +7,8 @@ import Icon from "react-native-vector-icons/Ionicons";
 import db from "@/database/db";
 
 export default function Feed() {
-  const id = Math.floor(Math.random() * 41)
+  //const id = Math.floor(Math.random() * 41)
+  const id = 1
   const router = useRouter();
   const navigateToDetails = () => {
     router.push({ pathname: "/tab/feed/details", params: { id: id } });
@@ -89,10 +90,7 @@ export default function Feed() {
         <Text style={styles.miniTitle}>Today's experience</Text>
         <View style={styles.postButton}>
           <TodaysExperience
-            name="Solve a Rubik's Cube"
-            xp="20"
-            photo={require("@/assets/rubiks_cube.jpg")}
-            description="Learn how to solve a Rubik’s Cube! Then, challenge your friends"
+            id= {id}
             onPress= {navigateToDetails}
           />
         </View>

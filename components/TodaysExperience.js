@@ -1,15 +1,58 @@
-import React from "react";
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
-import Theme from "@/assets/theme";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import db from "@/database/db";
 
-export default function TodaysExperience({
-  name,
-  xp,
-  photo,
-  description,
-  onPress,
-}) {
+export default function TodaysExperience({ id, onPress }) {
+  const [name, setName] = useState(null);
+  const [xp, setXp] = useState(null);
+  const [photo, setPhoto] = useState(null);
+  const [description, setDescription] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchExperienceData = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await db
+          .from("tasks")
+          .select("name, xp, photo, description")
+          .eq("id", id)
+          .single();
+
+        if (error) {
+          console.error("Error fetching experience data:", error.message);
+        } else if (data) {
+          setName(data.name);
+          setXp(data.xp);
+          setPhoto(data.photo);
+          setDescription(data.description);
+        }
+      } catch (err) {
+        console.error("Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchExperienceData();
+  }, [id]);
+
+  const truncateDescription = (text) => {
+    if (text && text.length > 80) {
+      return text.slice(0, 80) + "...";
+    }
+    return text;
+  };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.loadingContainer]}>
+        <ActivityIndicator size="large" color="#509B9B" />
+      </View>
+    );
+  }
+
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.content}>
@@ -19,8 +62,10 @@ export default function TodaysExperience({
           <Text style={styles.xp}>{xp} XP</Text>
         </View>
         <View style={styles.details}>
-          <Image source={photo} style={styles.image} />
-          <Text style={styles.description}>{description}</Text>
+          <Image source={{ uri: photo }} style={styles.image} />
+          <Text style={styles.description}>
+            {truncateDescription(description)}
+          </Text>
         </View>
         <TouchableOpacity style={styles.button} onPress={onPress}>
           <Text style={styles.buttonText}>Go to Experience</Text>
@@ -43,6 +88,10 @@ const styles = StyleSheet.create({
     height: 320,
     padding: 16,
     justifyContent: "space-between",
+  },
+  loadingContainer: {
+    justifyContent: "center",
+    alignItems: "center",
   },
   content: {
     flex: 1,
@@ -100,3 +149,6 @@ const styles = StyleSheet.create({
     fontWeight: "semibold",
   },
 });
+
+
+
