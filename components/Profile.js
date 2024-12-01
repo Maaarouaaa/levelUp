@@ -4,6 +4,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import db from "@/database/db"; // Ensure this path points to your database setup
 
 const Profile = ({ id, ranking, friends }) => {
+  console.log(friends)
   const [photo, setPhoto] = useState(null);
   const [name, setName] = useState(null);
   const [totalXp, setTotalXp] = useState(null);
