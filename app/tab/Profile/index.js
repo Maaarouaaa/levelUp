@@ -19,14 +19,32 @@ export default function Profile() {
     total_xp: 0,
   });
 
+  const [completedExperiences, setCompletedExperiences] = useState(0); // State for experiences
   const [loading, setLoading] = useState(true);
+
+  const fetchCompletedExperiences = async () => {
+    try {
+      const { data, error } = await db
+        .from("tasks") // Use the tasks table
+        .select("done") // Select the `done` column
+        .eq("done", true); // Filter for tasks where `done` is TRUE
+
+      if (error) {
+        console.error("Error fetching completed experiences:", error.message);
+      } else {
+        // Update the experience counter with the number of completed tasks
+        setCompletedExperiences(data.length);
+      }
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  };
 
   useEffect(() => {
     const fetchSkillData = async () => {
       try {
         setLoading(true);
 
-        // Fetch data with the correct column names from Supabase
         const { data, error } = await db
           .from("users")
           .select(
@@ -38,9 +56,8 @@ export default function Profile() {
         if (error) {
           console.error("Error fetching skill data:", error.message);
         } else if (data) {
-          // Update state with fetched data
           setSkillData({
-            problem_solving_xp: data["problem solving_xp"], // Correct handling of column name
+            problem_solving_xp: data["problem solving_xp"],
             communication_xp: data.communication_xp,
             leadership_xp: data.leadership_xp,
             adaptability_xp: data.adaptability_xp,
@@ -55,6 +72,7 @@ export default function Profile() {
     };
 
     fetchSkillData();
+    fetchCompletedExperiences(); // Fetch completed experiences
   }, []);
 
   return (
@@ -110,7 +128,9 @@ export default function Profile() {
             source={require("@/assets/completed-profilepage.png")}
             style={styles.statIcon}
           />
-          <Text style={styles.statNumber}>29</Text>
+          <Text style={styles.statNumber}>
+            {loading ? "Loading..." : completedExperiences}
+          </Text>
           <Text style={styles.statLabel}>Experiences</Text>
         </View>
       </View>
@@ -122,13 +142,13 @@ export default function Profile() {
           <SkillBar
             skillName="Problem Solving"
             currentXP={skillData.problem_solving_xp}
-            maxXP={100}
+            maxXP={500}
             color="#FF8460"
           />
           <SkillBar
             skillName="Communication"
             currentXP={skillData.communication_xp}
-            maxXP={100}
+            maxXP={500}
             color="#4CA8FF"
           />
         </View>
@@ -136,13 +156,13 @@ export default function Profile() {
           <SkillBar
             skillName="Adaptability"
             currentXP={skillData.adaptability_xp}
-            maxXP={100}
+            maxXP={500}
             color="#FFAB45"
           />
           <SkillBar
             skillName="Leadership"
             currentXP={skillData.leadership_xp}
-            maxXP={100}
+            maxXP={500}
             color="#6CE7C9"
           />
         </View>
@@ -216,7 +236,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: "#509B9B",
   },
-  
   profilePictureContainer: {
     position: "absolute",
     top: "14%",
