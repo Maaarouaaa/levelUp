@@ -1,13 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import ExperienceCard from "@/components/ExperienceCard";
 import db from "@/database/db";
 
 export default function Three() {
   const [searchText, setSearchText] = useState("");
   const [isToggled, setIsToggled] = useState(false);
-  const [remainingIds, setRemainingIds] = useState([]);
-  const [completedIds, setCompletedIds] = useState([]);
+  const [allTasks, setAllTasks] = useState([]); 
+  const [filteredTasks, setFilteredTasks] = useState([]); 
   const [loading, setLoading] = useState(true);
 
   const handleToggle = () => {
@@ -15,25 +23,18 @@ export default function Three() {
   };
 
   useEffect(() => {
-    const fetchTaskIds = async () => {
+    const fetchTasks = async () => {
       try {
         setLoading(true);
         const { data, error } = await db
           .from("tasks")
-          .select("id, locked, done");
+          .select("id, name, description, locked, done");
 
         if (error) {
-          console.error("Error fetching task IDs:", error.message);
+          console.error("Error fetching tasks:", error.message);
         } else if (data) {
-          const remaining = data
-            .filter((task) => !task.locked && !task.done)
-            .map((task) => task.id);
-          const done = data
-            .filter((task) => !task.locked && task.done)
-            .map((task) => task.id);
-
-          setRemainingIds(remaining);
-          setCompletedIds(done);
+          setAllTasks(data);
+          setFilteredTasks(data.filter((task) => !task.locked)); 
         }
       } catch (err) {
         console.error("Error:", err);
@@ -42,8 +43,33 @@ export default function Three() {
       }
     };
 
-    fetchTaskIds();
+    fetchTasks();
   }, []);
+
+  // Apply search logic
+  useEffect(() => {
+    if (searchText === "") {
+      // Show filtered tasks based on toggle state
+      setFilteredTasks(
+        allTasks.filter(
+          (task) => !task.locked && (isToggled ? task.done : !task.done)
+        )
+      );
+    } else {
+      // Search by name and description in unlocked tasks
+      const filtered = allTasks.filter((task) => {
+        const name = task.name || ""; // Fallback to empty string
+        const description = task.description || ""; // Fallback to empty string
+        return (
+          !task.locked &&
+          (name.toLowerCase().includes(searchText.toLowerCase()) ||
+            description.toLowerCase().includes(searchText.toLowerCase())) &&
+          (isToggled ? task.done : !task.done) // Respect toggle state
+        );
+      });
+      setFilteredTasks(filtered);
+    }
+  }, [searchText, isToggled, allTasks]);
 
   if (loading) {
     return (
@@ -52,8 +78,6 @@ export default function Three() {
       </View>
     );
   }
-
-  const idsToDisplay = isToggled ? completedIds : remainingIds;
 
   return (
     <View style={styles.container}>
@@ -91,12 +115,13 @@ export default function Three() {
 
       {/* Scrollable Cards */}
       <ScrollView contentContainerStyle={styles.cardsContainer}>
-        {idsToDisplay.map((id) => (
-          <View key={id} style={styles.cardWrapper}>
+        {filteredTasks.map((task) => (
+          <View key={task.id} style={styles.cardWrapper}>
             <ExperienceCard
-              id={id}
+              id={task.id}
+              name={task.name || "No Name"}
+              description={task.description || "No Description"}
               navigate="experience"
-              photo={require("@/assets/rubiks_cube.jpg")}
             />
           </View>
         ))}
@@ -106,7 +131,6 @@ export default function Three() {
 }
 
 const styles = StyleSheet.create({
-  // Style definitions remain the same
   container: {
     flex: 1,
     backgroundColor: "#fff",
@@ -188,7 +212,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-
-
-
