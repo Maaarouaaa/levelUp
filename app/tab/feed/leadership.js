@@ -1,47 +1,95 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, View, TextInput, ScrollView, TouchableWithoutFeedback, Keyboard } from "react-native";
 import ExperienceCard from "@/components/ExperienceCard";
-import { useRouter } from "expo-router";
+import db from "@/database/db";
 
-
-export default function Three({ navigation }) {
+export default function Three() {
   const [searchText, setSearchText] = useState("");
-  const [isToggled, setIsToggled] = useState(false);
+  const [allTasks, setAllTasks] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]); 
 
-  const handleToggle = () => {
-    setIsToggled((prev) => !prev);
-  };
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const { data, error } = await db
+          .from("tasks")
+          .select("id, name, description, done, locked")
+          .gte("id", 21)
+          .lte("id", 30)
+          .order("id", { ascending: true }); 
+
+        if (error) {
+          console.error("Error fetching tasks:", error.message);
+        } else {
+          console.log("Fetched tasks:", data); // Debug log
+          setAllTasks(data); // Store all tasks
+          setFilteredTasks(data); // Initially display all tasks
+        }
+      } catch (err) {
+        console.error("Error:", err);
+      }
+    };
+
+    fetchTasks();
+  }, []);
+
+  useEffect(() => {
+    if (searchText === "") {
+      setFilteredTasks(allTasks); // Reset to show all tasks when search is cleared
+    } else {
+      const filtered = allTasks.filter((task) => {
+        const name = task.name || ""; // Fallback to empty string
+        const description = task.description || ""; // Fallback to empty string
+        // Only search through unlocked tasks
+        if (!task.locked) {
+          return (
+            name.toLowerCase().includes(searchText.toLowerCase()) ||
+            description.toLowerCase().includes(searchText.toLowerCase())
+          );
+        }
+        return false; // Exclude locked tasks from the filtered results
+      });
+      setFilteredTasks(filtered);
+    }
+  }, [searchText, allTasks]);
+
   return (
-    <View style={styles.container}>
-      {/* Blue Background */}
-      <View style={styles.blueBackground}>
-        <Text style={styles.headerText}>Leadership</Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        {/* Blue Background */}
+        <View style={styles.blueBackground}>
+          <Text style={styles.headerText}>Leadership</Text>
+        </View>
+
+        {/* Search Bar */}
+        <View style={styles.searchBarWrapper}>
+          <TextInput
+            style={styles.searchBar}
+            placeholder="Search experiences..."
+            placeholderTextColor="#aaa"
+            value={searchText}
+            onChangeText={setSearchText}
+          />
+        </View>
+
+        {/* Scrollable Cards */}
+        <ScrollView
+          contentContainerStyle={[styles.cardsContainer, { paddingTop: 10 }]} // Ensure proper spacing
+          style={{ marginTop: 40 }} // Add margin to avoid overlap with sticky search bar
+        >
+          {filteredTasks.map((task) => (
+            <View key={task.id} style={styles.cardWrapper}>
+              <ExperienceCard
+                id={task.id}
+                name={task.name || "No Name"}
+                description={task.description || "No Description"}
+                navigate="home" // Explicitly pass navigate
+              />
+            </View>
+          ))}
+        </ScrollView>
       </View>
-
-      {/* Search Bar */}
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Search experiences..."
-        placeholderTextColor="#aaa"
-        value={searchText}
-        onChangeText={setSearchText}
-      />
-
-      
-
-      {/* Scrollable Cards */}
-      <ScrollView contentContainerStyle={styles.cardsContainer}>
-        {[21, 22, 23, 24, 25, 26, 27, 28, 29, 30].map((id) => (
-          <View key={id} style={styles.cardWrapper}>
-            <ExperienceCard
-              id={id} // Set the ID for the experience
-              navigate="home" // Set the ID for the experience
-              photo={require("@/assets/rubiks_cube.jpg")} // Example placeholder image
-            />
-          </View>
-        ))}
-      </ScrollView>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -61,12 +109,19 @@ const styles = StyleSheet.create({
     color: "#58CDB0",
     fontWeight: "bold",
   },
-  searchBar: {
+  searchBarWrapper: {
     position: "absolute",
     top: "15%",
     alignSelf: "center",
-    height: 40,
     width: "80%",
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    elevation: 3,
+    zIndex: 1, // Ensure it stays above the cards
+  },
+  searchBar: {
+    height: 40,
+    width: "100%",
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
@@ -74,53 +129,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     color: "#000",
   },
-  toggleWrapper: {
-    alignItems: "center",
-    marginVertical: 30,
-  },
-  toggleContainer: {
-    position: "relative",
-    backgroundColor: "#fff", // White background
-    borderRadius: 20,
-    width: 200,
-    height: 40,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 8,
-    elevation: 3, // Drop shadow on Android
-    shadowColor: "#000", // Drop shadow on iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
-  toggleIndicator: {
-    position: "absolute",
-    width: 100,
-    height: 32,
-    backgroundColor: "#509B9B", // Light blue toggle
-    borderRadius: 16,
-    elevation: 2, // Slight elevation for toggle
-  },
-  toggleLeft: {
-    left: 4,
-  },
-  toggleRight: {
-    right: 4,
-  },
-  toggleText: {
-    fontSize: 16,
-    color: "#509B9B", // Light blue text color when against white
-    zIndex: 1,
-  },
-  activeText: {
-    color: "#fff", // Blue text when against the light blue toggle
-    fontWeight: "bold",
-  },
   cardWrapper: {
-    marginBottom: 15, // Adds padding between cards
+    marginBottom: 15,
   },
   cardsContainer: {
-    paddingTop: 40,
+    paddingTop: 10, // Add padding to prevent overlap with the search bar
   },
 });
