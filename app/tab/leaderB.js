@@ -115,10 +115,12 @@ export default function Three() {
             id={profile.id}
             ranking={profile.ranking}
             totalXP={profile.totalXP}
-            isFriend={profile.friends} // Pass 'friends' column value to Profile
+            friends={friendsProfiles.some((friend) => friend.id === profile.id)} // Use friendsProfiles state for the check
           />
         ))}
       </ScrollView>
+
+
     </View>
   );
 }
@@ -190,6 +192,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#509B9B",
     zIndex: 1,
+    paddingHorizontal: 18,
   },
   activeText: {
     color: "#fff",

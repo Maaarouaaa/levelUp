@@ -4,7 +4,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import db from "@/database/db"; // Ensure this path points to your database setup
 
 const Profile = ({ id, ranking, friends }) => {
-  console.log(friends)
+  console.log(friends);
   const [photo, setPhoto] = useState(null);
   const [name, setName] = useState(null);
   const [totalXp, setTotalXp] = useState(null);
@@ -47,7 +47,12 @@ const Profile = ({ id, ranking, friends }) => {
 
   return (
     <>
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.container,
+          name === "Taralyn" && { backgroundColor: "#f2f2f2" }, // Light grey for id === 1
+        ]}
+      >
         {/* Ranking */}
         <Text style={styles.ranking}>{ranking}</Text>
 
@@ -92,16 +97,10 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 5,
-    marginVertical: 5,
-    backgroundColor: "rgba(0,0,0,0)",
-    borderRadius: 10,
-    marginHorizontal: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    backgroundColor: "rgba(0,0,0,0)", // Default background
+    width: "100%", // Ensures the container spans the full width
+    paddingVertical: 12, // Optional: Add padding for better spacing
+    paddingRight: 6, // Add padding to the right of the container
   },
   ranking: {
     fontSize: 20,
@@ -136,7 +135,7 @@ const styles = StyleSheet.create({
     marginLeft: 2,
   },
   button: {
-    flexDirection: "row", // Added to align icon and text horizontally
+    flexDirection: "row",
     alignItems: "center",
     paddingVertical: 8,
     paddingHorizontal: 12,
@@ -149,7 +148,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#509B9B",
     fontWeight: "bold",
-    marginLeft: 2, // Spacing between icon and text
+    marginLeft: 2,
   },
   loadingContainer: {
     flex: 1,
@@ -157,16 +156,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   icon: {
-    marginRight: 5, // Spacing between icon and text
+    marginRight: 5,
   },
   divider: {
     height: 1,
     backgroundColor: "#509B9B",
-    marginVertical: 8,
+    width: "100%", // Ensures the divider spans the full width
   },
 });
 
+
 export default Profile;
+
 
 
 
