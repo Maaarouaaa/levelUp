@@ -1,9 +1,14 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from "react-native";
+import { LineChart } from "react-native-chart-kit";
+import { Dimensions } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import db from "@/database/db";
 
 export default function MyProgress() {
   const [selectedFilters, setSelectedFilters] = useState([]);
+  const [chartData, setChartData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // Toggle filter selection
   const toggleFilter = (filter) => {
@@ -14,8 +19,53 @@ export default function MyProgress() {
     );
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        // Fetch data for user with id = 1
+        const { data, error } = await db
+          .from("users")
+          .select("day1, day2, day3, day4, day5")
+          .eq("id", 1); // Only fetch data for the user with id = 1
+  
+        // Debugging log for database response
+        console.log("Database response:", data);
+  
+        if (error) {
+          console.error("Error fetching data:", error.message);
+        } else if (data && data.length > 0) {
+          console.log("Fetched data:", data);
+  
+          const user = data[0]; // Since it's for one user
+          const points = [];
+          let cumulativeSum = 0;
+  
+          // Calculate cumulative sum for the user's data
+          ["day1", "day2", "day3", "day4", "day5"].forEach((day) => {
+            const value = user[day] || 0; // Use 0 if the value is null
+            cumulativeSum += value;
+            points.push(cumulativeSum);
+          });
+  
+          console.log("Cumulative points:", points);
+          setChartData(points);
+        } else {
+          console.log("No data found for the user with id = 1");
+        }
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {/* Header Background */}
       <View style={styles.headerBackground}></View>
 
@@ -39,7 +89,7 @@ export default function MyProgress() {
             <Text
               style={[
                 styles.filterTextLabel,
-                { color: "#FF8460" }, // Orange color for Problem Solving
+                { color: "#FF8460" },
                 selectedFilters.includes("Problem Solving") && styles.selectedFilterText,
               ]}
             >
@@ -57,7 +107,7 @@ export default function MyProgress() {
             <Text
               style={[
                 styles.filterTextLabel,
-                { color: "#4CA8FF" }, // Blue color for Communication
+                { color: "#4CA8FF" },
                 selectedFilters.includes("Communication") && styles.selectedFilterText,
               ]}
             >
@@ -77,7 +127,7 @@ export default function MyProgress() {
             <Text
               style={[
                 styles.filterTextLabel,
-                { color: "#FFAB45" }, // Yellow-Orange color for Adaptability
+                { color: "#FFAB45" },
                 selectedFilters.includes("Adaptability") && styles.selectedFilterText,
               ]}
             >
@@ -95,7 +145,7 @@ export default function MyProgress() {
             <Text
               style={[
                 styles.filterTextLabel,
-                { color: "#6CE7C9" }, // Green color for Leadership
+                { color: "#6CE7C9" },
                 selectedFilters.includes("Leadership") && styles.selectedFilterText,
               ]}
             >
@@ -107,14 +157,40 @@ export default function MyProgress() {
 
       <Text style={styles.graphTitle}>Skill Progress</Text>
 
-      {/* Graph Background */}
-      <View style={styles.graphContainer}>
-        <Image
-          source={require("@/assets/graph.png")} // Adjust path if necessary
-          style={styles.graphImage}
+      {/* Graph Section */}
+      {loading ? (
+        <Text style={styles.loadingText}>Loading...</Text>
+      ) : chartData ? (
+        <LineChart
+          data={{
+            labels: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5"],
+            datasets: [
+              {
+                data: chartData,
+                color: () => "#509B9B",
+              },
+            ],
+          }}
+          width={Dimensions.get("window").width * 0.9} // Adjust width
+          height={300} // Adjust height
+          chartConfig={{
+            backgroundGradientFrom: "#fff",
+            backgroundGradientTo: "#fff",
+            color: (opacity = 1) => `rgba(80, 155, 155, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            style: {
+              borderRadius: 16,
+            },
+          }}
+          style={{
+            marginVertical: 8,
+            borderRadius: 16,
+          }}
         />
-      </View>
-    </View>
+      ) : (
+        <Text style={styles.errorText}>No data available</Text>
+      )}
+    </ScrollView>
   );
 }
 
@@ -127,7 +203,7 @@ const styles = StyleSheet.create({
   headerBackground: {
     position: "absolute",
     width: "100%",
-    height: "24.5%", // Matches the height of the header background
+    height: "32%",
     backgroundColor: "rgba(80, 155, 155, 0.27)",
   },
   backArrow: {
@@ -138,7 +214,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     position: "absolute",
     top: 30,
-    left: "28%", // Center the header title
+    left: "28%",
     fontFamily: "Poppins",
     fontWeight: "700",
     fontSize: 30,
@@ -146,7 +222,6 @@ const styles = StyleSheet.create({
   },
   filterText: {
     marginTop: "22%",
-    marginBottom: 0,
     marginLeft: 45,
     fontFamily: "Poppins",
     fontWeight: "300",
@@ -154,7 +229,6 @@ const styles = StyleSheet.create({
     color: "#000000",
   },
   filterContainer: {
-    marginTop: 0,
     alignItems: "center",
   },
   row: {
@@ -166,43 +240,39 @@ const styles = StyleSheet.create({
   filterButton: {
     alignItems: "center",
     justifyContent: "center",
-    width: "45%", // Each button takes 40% of the row width
-    height: 23, // Adjust button height
-    borderRadius: 15, // Rounded corners
-    borderWidth: 2, // Outline border
-    borderColor: "#E0E0E0", // Default border color
+    width: "45%",
+    height: 23,
+    borderRadius: 15,
+    borderWidth: 2,
+    borderColor: "#E0E0E0",
     backgroundColor: "#FFFFFF",
   },
   selectedFilterButton: {
-    borderColor: "#509B9B", // Highlighted border when selected
+    borderColor: "#509B9B",
   },
   filterTextLabel: {
     fontFamily: "Poppins",
     fontWeight: "600",
     fontSize: 12,
-    textAlign: "center",
   },
   selectedFilterText: {
-    fontWeight: "800", // Bolder text when selected
-  },
-  graphContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 10,
-  },
-  graphImage: {
-    width: "180%", // Adjust width as necessary
-    height: "90%", // Adjust height as necessary
-    resizeMode: "contain",
+    fontWeight: "800",
   },
   graphTitle: {
     fontSize: 14,
     fontWeight: "500",
     textAlign: "center",
     color: "black",
-    marginTop: 10, // Adjust this value to move the title down
-    marginBottom: -20, // Keep this to control spacing between the title and the graph
-    fontFamily: "Poppins",
-  }
+    marginTop: 20,
+  },
+  loadingText: {
+    textAlign: "center",
+    marginTop: 20,
+    color: "#509B9B",
+  },
+  errorText: {
+    textAlign: "center",
+    marginTop: 20,
+    color: "red",
+  },
 });
