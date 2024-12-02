@@ -1,11 +1,15 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Dimensions } from "react-native";
+import Svg, { Line, Circle, Text as SvgText } from "react-native-svg";
 import Icon from "react-native-vector-icons/Ionicons";
+import db from "@/database/db";
 
 export default function MyProgress() {
+  const [chartData, setChartData] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState([]);
+  const screenWidth = Dimensions.get("window").width * 0.9; // Scaled width for better fit
+  const graphHeight = 250;
 
-  // Toggle filter selection
   const toggleFilter = (filter) => {
     setSelectedFilters((prev) =>
       prev.includes(filter)
@@ -14,15 +18,56 @@ export default function MyProgress() {
     );
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data, error } = await db
+          .from("users")
+          .select("day1, day2, day3, day4, day5")
+          .eq("id", 1); // Fetch only for ID 1
+
+        if (error) {
+          console.error("Error fetching data:", error.message);
+        } else if (data.length > 0) {
+          console.log("Database response:", data);
+
+          const user = data[0]; // Get data for the user with ID 1
+          const cumulativePoints = [];
+          let cumulativeSum = 0;
+
+          ["day1", "day2", "day3", "day4", "day5"].forEach((day) => {
+            if (user[day] !== null) {
+              cumulativeSum += user[day];
+              cumulativePoints.push(cumulativeSum);
+            } else {
+              cumulativePoints.push(cumulativeSum);
+            }
+          });
+
+          console.log("Cumulative points:", cumulativePoints);
+          setChartData(cumulativePoints);
+        } else {
+          console.error("No data found for user with ID 1");
+        }
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (!chartData) {
+    return <Text style={styles.loadingText}>Loading...</Text>;
+  }
+
+  const maxValue = Math.max(...chartData); // Maximum value for scaling
+  const scaledData = chartData.map((value) => (value / maxValue) * graphHeight);
+
   return (
-    <View style={styles.container}>
-      {/* Header Background */}
+    <ScrollView style={styles.container}>
       <View style={styles.headerBackground}></View>
-
-      {/* Back Arrow */}
       <Icon name="arrow-back" size={24} style={styles.backArrow} color="#838383" />
-
-      {/* Header Title */}
       <Text style={styles.headerTitle}>My Progress</Text>
 
       {/* Filter Section */}
@@ -39,7 +84,7 @@ export default function MyProgress() {
             <Text
               style={[
                 styles.filterTextLabel,
-                { color: "#FF8460" }, // Orange color for Problem Solving
+                { color: "#FF8460" },
                 selectedFilters.includes("Problem Solving") && styles.selectedFilterText,
               ]}
             >
@@ -57,7 +102,7 @@ export default function MyProgress() {
             <Text
               style={[
                 styles.filterTextLabel,
-                { color: "#4CA8FF" }, // Blue color for Communication
+                { color: "#4CA8FF" },
                 selectedFilters.includes("Communication") && styles.selectedFilterText,
               ]}
             >
@@ -77,7 +122,7 @@ export default function MyProgress() {
             <Text
               style={[
                 styles.filterTextLabel,
-                { color: "#FFAB45" }, // Yellow-Orange color for Adaptability
+                { color: "#FFAB45" },
                 selectedFilters.includes("Adaptability") && styles.selectedFilterText,
               ]}
             >
@@ -95,7 +140,7 @@ export default function MyProgress() {
             <Text
               style={[
                 styles.filterTextLabel,
-                { color: "#6CE7C9" }, // Green color for Leadership
+                { color: "#6CE7C9" },
                 selectedFilters.includes("Leadership") && styles.selectedFilterText,
               ]}
             >
@@ -107,14 +152,60 @@ export default function MyProgress() {
 
       <Text style={styles.graphTitle}>Skill Progress</Text>
 
-      {/* Graph Background */}
       <View style={styles.graphContainer}>
-        <Image
-          source={require("@/assets/graph.png")} // Adjust path if necessary
-          style={styles.graphImage}
-        />
-      </View>
-    </View>
+
+  <Svg
+  width={screenWidth} // Use the full available width
+  height={graphHeight + 70} // Maintain space for the x-axis labels
+  style={{ marginHorizontal: 10 }} // Add margin to center the graph
+>
+
+    {/* Draw Lines */}
+    {chartData.map((_, index) => {
+      if (index < chartData.length - 1) {
+        return (
+          <Line
+            key={`line-${index}`}
+            x1={(index / (chartData.length - 1)) * screenWidth * 0.8}
+            y1={graphHeight - scaledData[index]}
+            x2={((index + 1) / (chartData.length - 1)) * screenWidth * 0.8}
+            y2={graphHeight - scaledData[index + 1]}
+            stroke="#509B9B"
+            strokeWidth={2}
+          />
+        );
+      }
+      return null;
+    })}
+
+    {/* Draw Circles */}
+    {chartData.map((value, index) => (
+      <Circle
+        key={`circle-${index}`}
+        cx={(index / (chartData.length - 1)) * screenWidth * 0.8}
+        cy={graphHeight - scaledData[index]}
+        r={4}
+        fill="#FF8460"
+      />
+    ))}
+
+    {/* X-Axis Labels */}
+    {chartData.map((_, index) => (
+      <SvgText
+        key={`label-${index}`}
+        x={(index / (chartData.length - 1)) * screenWidth * 0.8} // Current scaling
+        y={graphHeight + 40} // Adjusted position for visibility
+        fontSize="12"
+        fill="black"
+        textAnchor="middle"
+      >
+        Day {index + 1}
+      </SvgText>
+    ))}
+  </Svg>
+</View>
+
+    </ScrollView>
   );
 }
 
@@ -122,12 +213,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
-    position: "relative",
   },
   headerBackground: {
     position: "absolute",
     width: "100%",
-    height: "24.5%", // Matches the height of the header background
+    height: "32%",
     backgroundColor: "rgba(80, 155, 155, 0.27)",
   },
   backArrow: {
@@ -138,7 +228,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     position: "absolute",
     top: 30,
-    left: "28%", // Center the header title
+    left: "28%",
     fontFamily: "Poppins",
     fontWeight: "700",
     fontSize: 30,
@@ -146,7 +236,6 @@ const styles = StyleSheet.create({
   },
   filterText: {
     marginTop: "22%",
-    marginBottom: 0,
     marginLeft: 45,
     fontFamily: "Poppins",
     fontWeight: "300",
@@ -154,7 +243,6 @@ const styles = StyleSheet.create({
     color: "#000000",
   },
   filterContainer: {
-    marginTop: 0,
     alignItems: "center",
   },
   row: {
@@ -166,43 +254,40 @@ const styles = StyleSheet.create({
   filterButton: {
     alignItems: "center",
     justifyContent: "center",
-    width: "45%", // Each button takes 40% of the row width
-    height: 23, // Adjust button height
-    borderRadius: 15, // Rounded corners
-    borderWidth: 2, // Outline border
-    borderColor: "#E0E0E0", // Default border color
+    width: "45%",
+    height: 23,
+    borderRadius: 15,
+    borderWidth: 2,
+    borderColor: "#E0E0E0",
     backgroundColor: "#FFFFFF",
   },
   selectedFilterButton: {
-    borderColor: "#509B9B", // Highlighted border when selected
+    borderColor: "#509B9B",
   },
   filterTextLabel: {
     fontFamily: "Poppins",
     fontWeight: "600",
     fontSize: 12,
-    textAlign: "center",
   },
   selectedFilterText: {
-    fontWeight: "800", // Bolder text when selected
-  },
-  graphContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 10,
-  },
-  graphImage: {
-    width: "180%", // Adjust width as necessary
-    height: "90%", // Adjust height as necessary
-    resizeMode: "contain",
+    fontWeight: "800",
   },
   graphTitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "500",
     textAlign: "center",
     color: "black",
-    marginTop: 10, // Adjust this value to move the title down
-    marginBottom: -20, // Keep this to control spacing between the title and the graph
-    fontFamily: "Poppins",
-  }
+    marginTop: 30, // Adjusted position
+    marginBottom: 20, // Added space below
+  },
+  graphContainer: {
+    marginTop: 20, // Adjusted margin for more space
+    alignItems: "center",
+  },
+  loadingText: {
+    fontSize: 16,
+    color: "#509B9B",
+    textAlign: "center",
+    marginTop: 20,
+  },
 });
