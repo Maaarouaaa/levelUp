@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from "react-native";
-import { LineChart } from "react-native-chart-kit";
-import { Dimensions } from "react-native";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Dimensions } from "react-native";
+import Svg, { Line, Circle, Text as SvgText } from "react-native-svg";
 import Icon from "react-native-vector-icons/Ionicons";
 import db from "@/database/db";
 
 export default function MyProgress() {
-  const [selectedFilters, setSelectedFilters] = useState([]);
   const [chartData, setChartData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [selectedFilters, setSelectedFilters] = useState([]);
+  const screenWidth = Dimensions.get("window").width * 0.9; // Scaled width for better fit
+  const graphHeight = 250;
 
-  // Toggle filter selection
   const toggleFilter = (filter) => {
     setSelectedFilters((prev) =>
       prev.includes(filter)
@@ -22,57 +21,53 @@ export default function MyProgress() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
-        // Fetch data for user with id = 1
         const { data, error } = await db
           .from("users")
           .select("day1, day2, day3, day4, day5")
-          .eq("id", 1); // Only fetch data for the user with id = 1
-  
-        // Debugging log for database response
-        console.log("Database response:", data);
-  
+          .eq("id", 1); // Fetch only for ID 1
+
         if (error) {
           console.error("Error fetching data:", error.message);
-        } else if (data && data.length > 0) {
-          console.log("Fetched data:", data);
-  
-          const user = data[0]; // Since it's for one user
-          const points = [];
+        } else if (data.length > 0) {
+          console.log("Database response:", data);
+
+          const user = data[0]; // Get data for the user with ID 1
+          const cumulativePoints = [];
           let cumulativeSum = 0;
-  
-          // Calculate cumulative sum for the user's data
+
           ["day1", "day2", "day3", "day4", "day5"].forEach((day) => {
-            const value = user[day] || 0; // Use 0 if the value is null
-            cumulativeSum += value;
-            points.push(cumulativeSum);
+            if (user[day] !== null) {
+              cumulativeSum += user[day];
+              cumulativePoints.push(cumulativeSum);
+            } else {
+              cumulativePoints.push(cumulativeSum);
+            }
           });
-  
-          console.log("Cumulative points:", points);
-          setChartData(points);
+
+          console.log("Cumulative points:", cumulativePoints);
+          setChartData(cumulativePoints);
         } else {
-          console.log("No data found for the user with id = 1");
+          console.error("No data found for user with ID 1");
         }
       } catch (err) {
         console.error("Error fetching data:", err);
-      } finally {
-        setLoading(false);
       }
     };
-  
+
     fetchData();
   }, []);
-  
+
+  if (!chartData) {
+    return <Text style={styles.loadingText}>Loading...</Text>;
+  }
+
+  const maxValue = Math.max(...chartData); // Maximum value for scaling
+  const scaledData = chartData.map((value) => (value / maxValue) * graphHeight);
 
   return (
     <ScrollView style={styles.container}>
-      {/* Header Background */}
       <View style={styles.headerBackground}></View>
-
-      {/* Back Arrow */}
       <Icon name="arrow-back" size={24} style={styles.backArrow} color="#838383" />
-
-      {/* Header Title */}
       <Text style={styles.headerTitle}>My Progress</Text>
 
       {/* Filter Section */}
@@ -157,39 +152,59 @@ export default function MyProgress() {
 
       <Text style={styles.graphTitle}>Skill Progress</Text>
 
-      {/* Graph Section */}
-      {loading ? (
-        <Text style={styles.loadingText}>Loading...</Text>
-      ) : chartData ? (
-        <LineChart
-          data={{
-            labels: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5"],
-            datasets: [
-              {
-                data: chartData,
-                color: () => "#509B9B",
-              },
-            ],
-          }}
-          width={Dimensions.get("window").width * 0.9} // Adjust width
-          height={300} // Adjust height
-          chartConfig={{
-            backgroundGradientFrom: "#fff",
-            backgroundGradientTo: "#fff",
-            color: (opacity = 1) => `rgba(80, 155, 155, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            style: {
-              borderRadius: 16,
-            },
-          }}
-          style={{
-            marginVertical: 8,
-            borderRadius: 16,
-          }}
-        />
-      ) : (
-        <Text style={styles.errorText}>No data available</Text>
-      )}
+      <View style={styles.graphContainer}>
+
+  <Svg
+  width={screenWidth} // Use the full available width
+  height={graphHeight + 70} // Maintain space for the x-axis labels
+  style={{ marginHorizontal: 10 }} // Add margin to center the graph
+>
+
+    {/* Draw Lines */}
+    {chartData.map((_, index) => {
+      if (index < chartData.length - 1) {
+        return (
+          <Line
+            key={`line-${index}`}
+            x1={(index / (chartData.length - 1)) * screenWidth * 0.8}
+            y1={graphHeight - scaledData[index]}
+            x2={((index + 1) / (chartData.length - 1)) * screenWidth * 0.8}
+            y2={graphHeight - scaledData[index + 1]}
+            stroke="#509B9B"
+            strokeWidth={2}
+          />
+        );
+      }
+      return null;
+    })}
+
+    {/* Draw Circles */}
+    {chartData.map((value, index) => (
+      <Circle
+        key={`circle-${index}`}
+        cx={(index / (chartData.length - 1)) * screenWidth * 0.8}
+        cy={graphHeight - scaledData[index]}
+        r={4}
+        fill="#FF8460"
+      />
+    ))}
+
+    {/* X-Axis Labels */}
+    {chartData.map((_, index) => (
+      <SvgText
+        key={`label-${index}`}
+        x={(index / (chartData.length - 1)) * screenWidth * 0.8} // Current scaling
+        y={graphHeight + 40} // Adjusted position for visibility
+        fontSize="12"
+        fill="black"
+        textAnchor="middle"
+      >
+        Day {index + 1}
+      </SvgText>
+    ))}
+  </Svg>
+</View>
+
     </ScrollView>
   );
 }
@@ -198,7 +213,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
-    position: "relative",
   },
   headerBackground: {
     position: "absolute",
@@ -259,20 +273,21 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
   graphTitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "500",
     textAlign: "center",
     color: "black",
-    marginTop: 20,
+    marginTop: 30, // Adjusted position
+    marginBottom: 20, // Added space below
+  },
+  graphContainer: {
+    marginTop: 20, // Adjusted margin for more space
+    alignItems: "center",
   },
   loadingText: {
-    textAlign: "center",
-    marginTop: 20,
+    fontSize: 16,
     color: "#509B9B",
-  },
-  errorText: {
     textAlign: "center",
     marginTop: 20,
-    color: "red",
   },
 });
