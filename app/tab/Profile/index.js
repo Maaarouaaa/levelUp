@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import db from "@/database/db";
@@ -19,38 +19,19 @@ export default function Profile() {
     total_xp: 0,
   });
 
-  const [completedExperiences, setCompletedExperiences] = useState(0); // State for experiences
+  const [completedExperiences, setCompletedExperiences] = useState(0);
   const [loading, setLoading] = useState(true);
-
-  const fetchCompletedExperiences = async () => {
-    try {
-      const { data, error } = await db
-        .from("tasks") // Use the tasks table
-        .select("done") // Select the `done` column
-        .eq("done", true); // Filter for tasks where `done` is TRUE
-
-      if (error) {
-        console.error("Error fetching completed experiences:", error.message);
-      } else {
-        // Update the experience counter with the number of completed tasks
-        setCompletedExperiences(data.length);
-      }
-    } catch (err) {
-      console.error("Error:", err);
-    }
-  };
 
   useEffect(() => {
     const fetchSkillData = async () => {
       try {
         setLoading(true);
-
         const { data, error } = await db
           .from("users")
           .select(
             `"problem solving_xp", communication_xp, leadership_xp, adaptability_xp, total_xp`
           )
-          .eq("id", 1) // Replace with the correct user ID
+          .eq("id", 1) // Replace with correct user ID
           .single();
 
         if (error) {
@@ -71,119 +52,117 @@ export default function Profile() {
       }
     };
 
+    const fetchCompletedExperiences = async () => {
+      try {
+        const { data, error } = await db
+          .from("tasks")
+          .select("done")
+          .eq("done", true);
+
+        if (error) {
+          console.error("Error fetching completed experiences:", error.message);
+        } else {
+          setCompletedExperiences(data.length);
+        }
+      } catch (err) {
+        console.error("Error:", err);
+      }
+    };
+
     fetchSkillData();
-    fetchCompletedExperiences(); // Fetch completed experiences
+    fetchCompletedExperiences();
   }, []);
 
   return (
     <View style={styles.container}>
-      {/* Header Background */}
-      <View style={styles.headerBackground}></View>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Profile</Text>
+      </View>
 
-      {/* Back Arrow */}
-      <Icon name="arrow-back" size={24} style={styles.backArrow} color="#838383" />
-
-      {/* Header Title */}
-      <Text style={styles.headerTitle}>Profile</Text>
-
-      {/* Profile Picture */}
-      <View style={styles.profilePictureContainer}>
+      {/* Profile Section */}
+      <View style={styles.profileSection}>
         <Image
           source={require("@/assets/taralyn-profilepic.jpeg")}
           style={styles.profilePicture}
         />
+        <Text style={styles.profileName}>Taralyn Nguyen</Text>
+        <Text style={styles.memberInfo}>Member since December 2024</Text>
       </View>
 
-      {/* Name and Member Info */}
-      <Text style={styles.profileName}>Taralyn Nguyen</Text>
-      <Text style={styles.memberInfo}>Member since June 2024</Text>
-
-      {/* XP and Stats */}
+      {/* Stats Section */}
       <View style={styles.statsContainer}>
-        {/* Lifetime XP */}
-        <View style={styles.statBox}>
-          <Image
-            source={require("@/assets/star-profilepage.png")}
-            style={styles.statIcon}
-          />
-          <Text style={styles.statNumber}>
-            {loading ? "Loading..." : skillData.total_xp !== null ? skillData.total_xp : "No Data"}
-          </Text>
-          <Text style={styles.statLabel}>Total XP</Text>
-        </View>
-
-        {/* Friends */}
-        <View style={styles.statBox}>
-          <Image
-            source={require("@/assets/user-profilepage.png")}
-            style={styles.statIcon}
-          />
-          <Text style={styles.statNumber}>13</Text>
-          <Text style={styles.statLabel}>Friends</Text>
-        </View>
-
-        {/* Experiences */}
-        <View style={styles.statBox}>
-          <Image
-            source={require("@/assets/completed-profilepage.png")}
-            style={styles.statIcon}
-          />
-          <Text style={styles.statNumber}>
-            {loading ? "Loading..." : completedExperiences}
-          </Text>
-          <Text style={styles.statLabel}>Experiences</Text>
-        </View>
+        {[
+          {
+            icon: <Icon name="star" size={24} color="#509B9B" />,
+            number: loading ? "..." : skillData.total_xp || "No Data",
+            label: "Total XP",
+          },
+          {
+            icon: <Icon name="checkmark-done-circle" size={24} color="#509B9B" />,
+            number: loading ? "..." : completedExperiences,
+            label: "Experiences",
+          },
+          {
+            icon: <Icon name="people" size={24} color="#509B9B" />,
+            number: 13,
+            label: "Friends",
+          },
+        ].map((stat, index) => (
+          <View key={index} style={styles.statBox}>
+            {/* Directly render the Icon component */}
+            {stat.icon}
+            <Text style={styles.statNumber}>{stat.number}</Text>
+            <Text style={styles.statLabel}>{stat.label}</Text>
+          </View>
+        ))}
       </View>
+
 
       {/* Skills Section */}
       <View style={styles.skillsContainer}>
-        <Text style={styles.skillsHeading}>My skills</Text>
-        <View style={styles.skillsRow}>
-          <SkillBar
-            skillName="Problem Solving"
-            currentXP={skillData.problem_solving_xp}
-            maxXP={500}
-            color="#FF8460"
-          />
-          <SkillBar
-            skillName="Communication"
-            currentXP={skillData.communication_xp}
-            maxXP={500}
-            color="#4CA8FF"
-          />
-        </View>
-        <View style={styles.skillsRow}>
-          <SkillBar
-            skillName="Adaptability"
-            currentXP={skillData.adaptability_xp}
-            maxXP={500}
-            color="#FFAB45"
-          />
-          <SkillBar
-            skillName="Leadership"
-            currentXP={skillData.leadership_xp}
-            maxXP={500}
-            color="#6CE7C9"
-          />
+        <Text style={styles.skillsHeading}>My Skills</Text>
+        <View style={styles.skillsGrid}>
+          {[
+            {
+              skillName: "Problem Solving",
+              currentXP: skillData.problem_solving_xp,
+              maxXP: 500,
+              color: "#FF8460",
+            },
+            {
+              skillName: "Communication",
+              currentXP: skillData.communication_xp,
+              maxXP: 500,
+              color: "#4CA8FF",
+            },
+            {
+              skillName: "Adaptability",
+              currentXP: skillData.adaptability_xp,
+              maxXP: 500,
+              color: "#FFAB45",
+            },
+            {
+              skillName: "Leadership",
+              currentXP: skillData.leadership_xp,
+              maxXP: 500,
+              color: "#6CE7C9",
+            },
+          ].map((skill, index) => (
+            <SkillBar key={index} {...skill} />
+          ))}
         </View>
       </View>
 
       {/* Buttons Section */}
       <View style={styles.buttonsContainer}>
-        {/* My Progress Button */}
         <TouchableOpacity style={styles.button} onPress={navigateToProgress}>
-          <Image
-            source={require("@/assets/Myprogress-profilepage.png")}
-            style={styles.buttonImage}
-          />
+          <Icon name="stats-chart" size={16} color="#509B9B" />
+          <Text style={styles.buttonText}>My Progress</Text>
         </TouchableOpacity>
-
-        {/* My Friends Button */}
         <TouchableOpacity style={styles.button}>
-          <Image
-            source={require("@/assets/Myfriends-profilepage.png")}
-            style={styles.buttonImage}
-          />
+          <Icon name="people-circle" size={18} color="#509B9B" />
+          <Text style={styles.buttonText}>My Friends</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -192,166 +171,143 @@ export default function Profile() {
 
 // SkillBar Component
 const SkillBar = ({ skillName, currentXP, maxXP, color }) => {
-  const barWidth = `${(currentXP / maxXP) * 100}%`; // Dynamically calculate bar width based on XP
+  const barWidth = `${(currentXP / maxXP) * 100}%`;
 
   return (
-    <View style={styles.skillContainer}>
+    <View style={styles.skillBox}>
       <Text style={[styles.skillName, { color }]}>{skillName}</Text>
       <View style={styles.progressBar}>
         <View
           style={[styles.progress, { width: barWidth, backgroundColor: color }]}
         />
       </View>
-      <Text
-        style={[styles.xpText, { color }]}
-      >{`${currentXP}/${maxXP} XP`}</Text>
+      <Text style={[styles.xpText, { color }]}>
+        {`${currentXP}/${maxXP} XP`}
+      </Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  // Keep all your original styles intact here...
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
+  },
+  header: {
+    height: Dimensions.get("window").height * 0.22, // Set header to 22% of screen height
+    backgroundColor: "rgba(80, 155, 155, 0.27)",
+    justifyContent: "center",
+    alignItems: "center",
     position: "relative",
   },
-  headerBackground: {
-    position: "absolute",
-    width: "100%",
-    height: "24.5%",
-    backgroundColor: "rgba(80, 155, 155, 0.27)",
-  },
-  backArrow: {
-    position: "absolute",
-    top: 40,
-    left: 16,
-  },
   headerTitle: {
-    position: "absolute",
-    top: 40,
-    left: "37%",
-    fontFamily: "Poppins",
+    fontSize: 34,
     fontWeight: "700",
-    fontSize: 30,
     color: "#509B9B",
   },
-  profilePictureContainer: {
-    position: "absolute",
-    top: "14%",
-    left: "30%",
-    width: 130,
-    height: 130,
-    borderRadius: 100,
-    overflow: "hidden",
-    backgroundColor: "#E0E0E0",
+  profileSection: {
+    alignItems: "center",
+    marginTop: -40, // Pull the profile picture upwards to overlap the header
+    zIndex: 1, // Ensure the profile picture stays on top
   },
   profilePicture: {
-    width: "100%",
-    height: "100%",
+    height: 120,
+    width: 120,
     borderRadius: 60,
+    marginBottom: 10,
   },
   profileName: {
-    position: "absolute",
-    top: "38%",
-    width: "100%",
-    textAlign: "center",
-    fontFamily: "Poppins",
+    fontSize: 28,
     fontWeight: "700",
-    fontSize: 22,
     color: "#509B9B",
   },
   memberInfo: {
-    position: "absolute",
-    top: "42.5%",
-    width: "100%",
-    textAlign: "center",
-    fontFamily: "Poppins",
-    fontWeight: "400",
-    fontSize: 14,
-    color: "rgba(75, 75, 75, 0.8)",
+    fontSize: 16,
+    color: "#4B4B4B",
   },
   statsContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    position: "absolute",
-    top: "48%",
-    width: "100%",
-    paddingHorizontal: 20,
+    marginTop: 30,
+    marginBottom: 20,
   },
   statBox: {
     alignItems: "center",
   },
-  statIcon: {
-    marginBottom: 5,
-  },
   statNumber: {
-    fontFamily: "Poppins",
-    fontWeight: "400",
-    fontSize: 18,
-    color: "#000000",
+    fontSize: 20,
+    fontWeight: "600",
+    marginBottom: 3,
+    marginTop: 3,
   },
   statLabel: {
-    fontFamily: "Poppins",
     fontSize: 12,
-    fontWeight: "400",
-    color: "#000000",
+  },
+  skillsContainer: {
+    marginBottom: 20,
+    marginHorizontal: 30,
   },
   skillsHeading: {
-    marginTop: "100%",
-    fontFamily: "Poppins",
-    fontWeight: "400",
-    fontSize: 16,
-    color: "#000000",
-    marginVertical: 10,
-    textAlign: "left",
-    paddingLeft: 25,
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 10,
   },
-  skillsRow: {
+  skillsGrid: {
     flexDirection: "row",
-    justifyContent: "space-around",
     flexWrap: "wrap",
-    paddingHorizontal: 20,
+    justifyContent: "space-between",
   },
-  skillContainer: {
-    marginVertical: 7,
-    width: "43%",
+  skillBox: {
+    width: "48%",
+    marginBottom: 10,
   },
   skillName: {
-    fontFamily: "Poppins",
+    fontSize: 14,
     fontWeight: "700",
-    fontSize: 12,
     marginBottom: 5,
   },
   progressBar: {
-    height: 15,
-    width: "100%",
+    height: 30,
     backgroundColor: "#E0E0E0",
-    borderRadius: 10,
+    borderRadius: 20,
     overflow: "hidden",
-  },
+    shadowColor: "#000", // Color of the shadow
+    shadowOffset: { width: 0, height: 2 }, // Offset for the shadow (horizontal, vertical)
+    shadowOpacity: 0.8, // Opacity of the shadow
+    shadowRadius: 4, // Blur radius of the shadow
+    elevation: 5, // Elevation for Android shadow
+  },  
   progress: {
     height: "100%",
-    borderRadius: 10,
   },
   xpText: {
-    fontFamily: "Poppins",
-    fontWeight: "400",
-    fontSize: 12,
+    fontSize: 14,
     marginTop: 5,
   },
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginTop: 15,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
   },
   button: {
-    width: 200,
-    height: 50,
+    flexDirection: "row",
+    alignItems: "center",
+    width: 160,
+    height: 40,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    borderColor: "#509B9B",
+    borderWidth: 1,
+    justifyContent: "center",
   },
-  buttonImage: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "contain",
+  buttonText: {
+    fontSize: 14,
+    color: "#509B9B",
+    fontWeight: "bold",
+    marginLeft: 2,
   },
 });
+
+
