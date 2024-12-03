@@ -25,7 +25,7 @@ export default function Three({ navigation }) {
     <View style={styles.container}>
       {/* Blue Background */}
       <View style={styles.blueBackground}>
-        <Text style={styles.headerText}>My Experiences</Text>
+        <Text style={styles.headerText}>Challenge Log</Text>
       </View>
 
       {/* Search Bar */}
@@ -47,10 +47,10 @@ export default function Three({ navigation }) {
             ]}
           />
           <Text style={[styles.toggleText, !isToggled && styles.activeText]}>
-            Remaining
+            Inbox
           </Text>
           <Text style={[styles.toggleText, isToggled && styles.activeText]}>
-            Completed
+            Sent
           </Text>
         </TouchableOpacity>
       </View>
@@ -64,7 +64,6 @@ export default function Three({ navigation }) {
                 id={id} // Set the ID for the experience
                 navigate="experience" // Set the ID for the experience
                 photo={require("@/assets/rubiks_cube.jpg")} // Example placeholder image
-                bool={true}
               />
             </View>
           ))}
@@ -115,7 +114,7 @@ const styles = StyleSheet.create({
     height: 40,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     paddingHorizontal: 8,
     elevation: 3, // Drop shadow on Android
     shadowColor: "#000", // Drop shadow on iOS

@@ -13,6 +13,10 @@ import { useRouter } from "expo-router";
 export default function Three({ navigation }) {
   const [searchText, setSearchText] = useState("");
   const [isToggled, setIsToggled] = useState(false);
+  const [toSend, setToSend] = useState(false);
+  const handlePress = () => {
+    setToSend((prevState) => !prevState); // Toggles between true and false
+  };
 
   const handleToggle = () => {
     setIsToggled((prev) => !prev);
@@ -27,7 +31,6 @@ export default function Three({ navigation }) {
       <View style={styles.blueBackground}>
         <Text style={styles.headerText}>My Experiences</Text>
       </View>
-
       {/* Search Bar */}
       <TextInput
         style={styles.searchBar}
@@ -36,10 +39,22 @@ export default function Three({ navigation }) {
         value={searchText}
         onChangeText={setSearchText}
       />
-
-      {/* Oval Toggle */}
-      <View style={styles.toggleWrapper}>
-        <TouchableOpacity style={styles.toggleContainer} onPress={handleToggle}>
+      {/* Scrollable Cards */}
+      <ScrollView contentContainerStyle={styles.cardsContainer}>
+        {!isToggled &&
+          remainingIds.map((id) => (
+            <View key={id} style={styles.cardWrapper} onPress={setToSend}>
+              <ExperienceCard
+                id={id} // Set the ID for the experience
+                navigate="experience" // Set the ID for the experience
+                photo={require("@/assets/rubiks_cube.jpg")} // Example placeholder image
+              />
+            </View>
+          ))}
+      </ScrollView>
+      {/* Send button 
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.sendButton} onPress={handleToggle}>
           <View
             style={[
               styles.toggleIndicator,
@@ -47,28 +62,10 @@ export default function Three({ navigation }) {
             ]}
           />
           <Text style={[styles.toggleText, !isToggled && styles.activeText]}>
-            Remaining
-          </Text>
-          <Text style={[styles.toggleText, isToggled && styles.activeText]}>
-            Completed
+            Send experiences?
           </Text>
         </TouchableOpacity>
-      </View>
-
-      {/* Scrollable Cards */}
-      <ScrollView contentContainerStyle={styles.cardsContainer}>
-        {!isToggled &&
-          remainingIds.map((id) => (
-            <View key={id} style={styles.cardWrapper}>
-              <ExperienceCard
-                id={id} // Set the ID for the experience
-                navigate="experience" // Set the ID for the experience
-                photo={require("@/assets/rubiks_cube.jpg")} // Example placeholder image
-                bool={true}
-              />
-            </View>
-          ))}
-      </ScrollView>
+      </View> */}
     </View>
   );
 }
@@ -115,7 +112,7 @@ const styles = StyleSheet.create({
     height: 40,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     paddingHorizontal: 8,
     elevation: 3, // Drop shadow on Android
     shadowColor: "#000", // Drop shadow on iOS
@@ -148,5 +145,11 @@ const styles = StyleSheet.create({
   },
   cardWrapper: {
     marginBottom: 15, // Adds padding between cards
+  },
+  buttonContainer: {
+    backgroundColor: "red",
+  },
+  sendButton: {
+    position: "absolute",
   },
 });
