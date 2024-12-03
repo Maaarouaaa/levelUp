@@ -1,11 +1,12 @@
-// back end director for tab navigation
 import { Slot } from "expo-router";
+import React, { useState } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
 import Theme from "@/assets/theme";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import Feather from "@expo/vector-icons/Feather";
 
 export default function TabLayout() {
   return (
@@ -13,7 +14,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="feed"
         options={{
-          title: "home",
+          //title: "",
+          tabBarLabel: () => null,
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons
               name="beehive-outline"
@@ -34,18 +36,20 @@ export default function TabLayout() {
       <Tabs.Screen
         name="experience"
         options={{
-          title: "experience",
+          //title: "",
+          tabBarLabel: () => null,
           tabBarIcon: ({ size, color }) => (
             <AntDesign name="staro" size={24} color={color} />
           ),
           headerStyle: {
             backgroundColor: Theme.colors.backgroundPrimary,
+            height: 71,
           },
           tabBarStyle: {
             backgroundColor: "#D0E4E4", // Use tabBarColor for the tab bar itself
           },
           headerTintColor: "#fff",
-          headerShown: true,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -56,6 +60,25 @@ export default function TabLayout() {
           headerStyle: {
             backgroundColor: Theme.colors.backgroundPrimary, // Customize the header background color
           },
+        }}
+      />
+      <Tabs.Screen
+        name="Challenge"
+        options={{
+          //title: "",
+          tabBarLabel: () => null,
+          tabBarIcon: ({ size, color }) => (
+            <Feather name="send" size={24} color={color} />
+          ),
+          headerStyle: {
+            backgroundColor: Theme.colors.backgroundPrimary,
+            height: 71,
+          },
+          tabBarStyle: {
+            backgroundColor: "#D0E4E4", // Use tabBarColor for the tab bar itself
+          },
+          headerTintColor: "#fff",
+          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -71,24 +94,31 @@ export default function TabLayout() {
       <Tabs.Screen
         name="leaderB"
         options={{
-          title: "leaderboard",
+          //title: "",
+          tabBarLabel: () => null,
           tabBarIcon: ({ size, color }) => (
             <AntDesign name="smile-circle" size={24} color={color} />
           ),
           headerStyle: {
-            backgroundColor: "#fff",
+            backgroundColor: "#D0E4E4",
+            height: 300,
           },
           tabBarStyle: {
             backgroundColor: "#D0E4E4", // Use tabBarColor for the tab bar itself
           },
-          headerTintColor: "#fff",
-          headerShown: true,
+          headerTintColor: "#509B9B",
+          headerTitleStyle: {
+            fontSize: 24, // Adjust the font size
+            fontWeight: "bold", // Set the font weight to bold
+          },
+          headerShown: false,
         }}
       />
       <Tabs.Screen
         name="Profile"
         options={{
-          title: "profile",
+          //title: "profile",
+          tabBarLabel: () => null,
           tabBarIcon: ({ size, color }) => (
             <FontAwesome name="user" size={24} color={color} />
           ),
@@ -111,21 +141,6 @@ export default function TabLayout() {
             backgroundColor: Theme.colors.backgroundPrimary, // Customize the header background color
           },
           headerTintColor: "#fff", // Customize the color of the back button and header text
-          /*headerTitle: () => (
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <MaterialCommunityIcons name="bee" size={31} color="#f4511e" />
-              <Text
-                style={{
-                  color: "#fff",
-                  marginLeft: 8,
-                  fontSize: 18,
-                  fontWeight: "bold",
-                }}
-              >
-                Buzz
-              </Text>
-            </View>
-          ), */
           tabBarStyle: {
             backgroundColor: "#D0E4E4", // Customize the tab bar itself
           },
