@@ -12,14 +12,13 @@ import { useRouter } from "expo-router";
 
 import db from "@/database/db";
 
-export default function ExperienceCard({ id, navigate }) {
+export default function ExperienceCard({ id, navigate, bool }) {
   const router = useRouter();
-
   const detailFromHome = () => {
-    router.push({ pathname: "/tab/feed/details", params: { id: id } }); // Navigate to feed details
+    router.push({ pathname: "/tab/feed/details", params: { id: id } });
   };
   const detailFromExperience = () => {
-    router.push({ pathname: "/tab/experience/details", params: { id: id } }); // Navigate to experience details
+    router.push({ pathname: "/tab/experience/details", params: { id: id } });
   };
 
   const [name, setName] = useState(null);
@@ -27,7 +26,7 @@ export default function ExperienceCard({ id, navigate }) {
   const [locked, setLocked] = useState(null);
   const [photo, setPhoto] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isSelected, setIsSelected] = useState(false); // Track if card is selected
+  const [isSelected, setIsSelected] = useState(false);
 
   useEffect(() => {
     const fetchExperienceData = async () => {
@@ -65,32 +64,33 @@ export default function ExperienceCard({ id, navigate }) {
     );
   }
 
-  const handleNavigation = () => {
-    switch (navigate) {
-      case "home":
-        return detailFromHome();
-      case "experience":
-        return detailFromExperience();
-      default:
-        return; // Handle other cases or do nothing
+  const handlePress = () => {
+    if (bool) {
+      // If `bool` is true, toggle the "selected" state
+      setIsSelected((prev) => !prev);
+    } else {
+      // Otherwise, navigate to the appropriate screen
+      switch (navigate) {
+        case "home":
+          detailFromHome();
+          break;
+        case "experience":
+          detailFromExperience();
+          break;
+        default:
+          break;
+      }
     }
   };
 
-  const handleSelection = () => {
-    if (!locked) {
-      setIsSelected(!isSelected); // Toggle selected state
-    }
-  };
-
-  // Card rendering when unlocked
   if (!locked) {
     return (
       <TouchableOpacity
         style={[
           styles.container,
-          isSelected && styles.selectedContainer, // Apply blue color if selected
+          isSelected && bool && styles.selectedContainer, // Blue background when selected and `bool` is true
         ]}
-        onPress={handleSelection}
+        onPress={handlePress}
       >
         <View style={styles.content}>
           <View style={styles.details}>
@@ -106,26 +106,25 @@ export default function ExperienceCard({ id, navigate }) {
             </View>
           </View>
         </View>
-
-        {/* Conditionally render "Selected" text */}
-        {isSelected && <Text style={styles.selectedText}>SELECTED</Text>}
+        {isSelected && bool && (
+          <Text style={styles.selectedText}>SELECTED</Text>
+        )}
+      </TouchableOpacity>
+    );
+  } else {
+    return (
+      <TouchableOpacity style={styles.containerL}>
+        <View style={styles.contentL}>
+          <Icon name="lock-closed" size={30} color="#000000" />
+        </View>
       </TouchableOpacity>
     );
   }
-
-  // Card rendering when locked
-  return (
-    <TouchableOpacity style={styles.containerL}>
-      <View style={styles.contentL}>
-        <Icon name="lock-closed" size={30} color="#000000" />
-      </View>
-    </TouchableOpacity>
-  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FFFFFF", // Default background color
+    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -136,6 +135,15 @@ const styles = StyleSheet.create({
     height: 96,
     padding: 16,
     justifyContent: "space-between",
+  },
+  selectedContainer: {
+    backgroundColor: "#509B9B", // Blue background when selected
+  },
+  selectedText: {
+    fontSize: 26,
+    color: "#FFFFFF", // White text for selected state
+    fontWeight: "bold",
+    textAlign: "center",
   },
   loadingContainer: {
     justifyContent: "center",
@@ -175,17 +183,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginRight: 8,
   },
-  selectedContainer: {
-    backgroundColor: "#509B9B", // Blue background when selected
-  },
-  selectedText: {
-    fontSize: 26,
-    color: "#FFFFFF", // White text for selected state
-    fontWeight: "bold",
-    textAlign: "center",
-  },
   containerL: {
-    backgroundColor: "#A3A3A3", // Gray for locked state
+    backgroundColor: "#A3A3A3",
     borderRadius: 12,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },

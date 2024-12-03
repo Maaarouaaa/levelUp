@@ -43,11 +43,12 @@ export default function Three({ navigation }) {
       <ScrollView contentContainerStyle={styles.cardsContainer}>
         {!isToggled &&
           remainingIds.map((id) => (
-            <View key={id} style={styles.cardWrapper} onPress={setToSend}>
+            <View key={id} style={styles.cardWrapper} onPress={handlePress}>
               <ExperienceCard
                 id={id} // Set the ID for the experience
                 navigate="experience" // Set the ID for the experience
-                photo={require("@/assets/rubiks_cube.jpg")} // Example placeholder image
+                //photo={require("@/assets/rubiks_cube.jpg")} // Example placeholder image
+                bool={true}
               />
             </View>
           ))}
