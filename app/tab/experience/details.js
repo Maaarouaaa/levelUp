@@ -40,49 +40,37 @@ export default function Details() {
 
   const handleMarkAsDone = async () => {
     try {
-      // Step 1: Mark the current task as done
-      const { error: taskError } = await db
+      const { error } = await db
         .from("tasks")
-        .update({ done: 'TRUE' })
+        .update({ done: "TRUE" }) // Mark the task as done
         .eq("id", id);
   
-      if (taskError) {
-        console.error("Error marking task as done:", taskError.message);
+      if (error) {
+        console.error("Error marking task as done:", error.message);
         return;
       }
-  
-      // Step 2: Call RPC to update XP
-      const { error: xpError } = await db.rpc("update_xp_for_user", {
-        skill_name: `${skill}`,
-        xp_value: xp,
-        user_id: 1,
-        mark_done: true,
-      });
-  
-      if (xpError) {
-        console.error("Error updating XP:", xpError.message);
-        return;
-      }
-  
-      // Step 3: Unlock the next task and update user progress
-      const skillLastColumn = `${skill}_last`; // Dynamically determine the column name
+      
+      const nSkill = skill.replace(/\s+/g, "").toLowerCase()
+
+      // Fetch the current value of {skill}_last
       const { data: userData, error: userError } = await db
         .from("users")
-        .select(skillLastColumn)
+        .select(`${nSkill}_last`) // Dynamically select the column
         .eq("id", 1)
         .single();
   
       if (userError) {
-        console.error("Error fetching user data:", userError.message);
+        console.error("Error fetching user's last task:", userError.message);
         return;
       }
   
-      const nextTaskId = userData[skillLastColumn] + 1;
+      const currentLast = userData[`${nSkill}_last`];
+      const nextTaskId = currentLast + 1;
   
       // Unlock the next task
       const { error: unlockError } = await db
         .from("tasks")
-        .update({ locked: false })
+        .update({ locked: false }) // Unlock the next task
         .eq("id", nextTaskId);
   
       if (unlockError) {
@@ -90,26 +78,43 @@ export default function Details() {
         return;
       }
   
-      // Increment `{skill}_last` in the users table
-      const { error: updateUserError } = await db
+      // Increment the {skill}_last column
+      const { error: incrementError } = await db
         .from("users")
-        .update({ [skillLastColumn]: nextTaskId })
+        .update({ [`${nSkill}_last`]: currentLast + 1 }) // Update dynamically
         .eq("id", 1);
   
-      if (updateUserError) {
-        console.error("Error updating user progress:", updateUserError.message);
+      if (incrementError) {
+        console.error("Error incrementing user's last task:", incrementError.message);
         return;
       }
   
-      // Step 4: Update local state and show success
+      // Update XP using the RPC
+      const { error: xpError } = await db.rpc("update_xp_for_user", {
+        skill_name: skill, // Pass the skill name
+        xp_value: xp, // XP value to add
+        user_id: 1, // Hardcoded user ID
+        mark_done: true, // Mark as done
+      });
+  
+      if (xpError) {
+        console.error("Error updating XP:", xpError.message);
+        return;
+      }
+  
+      // Update UI state
       setIsDone(true);
       setShowPopup(true);
-      console.log("Task marked as done, XP updated, next task unlocked, and user progress updated.");
+  
+      console.log("Task marked as done, XP updated, next task unlocked, and user's last task incremented.");
     } catch (err) {
       console.error("Error:", err);
     }
   };
   
+  
+  
+
   const handleMarkAsNotDone = async () => {
     try {
         const { error } = await db
