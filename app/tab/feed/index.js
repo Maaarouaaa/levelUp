@@ -65,29 +65,32 @@ export default function Feed() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerText}>Level up.</Text>
-          <View style={styles.withPic}>
-            <View style={styles.headerSubtitle}>
-              <Text style={styles.headerText}>Welcome, Taralyn!</Text>
-              <View style={styles.xpRow}>
-                <Icon name="star" size={20} color="#509B9B" />
-                <Text style={styles.xp}>
-                  {loading ? "Loading..." : total_xp !== null ? total_xp : "No Data"} XP
-                </Text>
-              </View>
-
+            <View style={styles.topHalf}>
+              <Text style={styles.headerText}>level up.</Text>
             </View>
-            <Image
-              source={require("@/assets/taralyn-profilepic.jpeg")}
-              style={styles.image}
-            />
-          </View>
+
+            <View style={styles.bottomHalf}>
+              <View style={styles.headerSubtitle}>
+                <Text style={styles.welcomeText}>Welcome, Taralyn!</Text>
+                <View style={styles.xpRow}>
+                  <Icon name="star" size={20} color="#509B9B" />
+                  <Text style={styles.xp}>
+                    {loading ? "Loading..." : total_xp !== null ? total_xp : "No Data"} XP
+                  </Text>
+                </View>
+              </View>
+              <Image
+                source={require("@/assets/taralyn-profilepic.jpeg")}
+                style={styles.image}
+              />
+            </View>
+
         </View>
 
         <StatusBar style="light" />
 
         {/* Today's Experience Section */}
-        <Text style={styles.miniTitle}>Today's experience</Text>
+        <Text style={styles.miniTitle}>Today's Experience</Text>
         <View style={styles.postButton}>
           <TodaysExperience
             id= {id}
@@ -97,7 +100,7 @@ export default function Feed() {
 
         {/* Skills Section */}
         <View style={styles.skillsContainer}>
-          <Text style={styles.miniTitle}>My skills</Text>
+          <Text style={styles.miniTitle}>My Skills</Text>
           <View style={styles.pair}>
             <TouchableOpacity onPress={navigateToProblemSolving}>
               <Image
@@ -149,38 +152,53 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: "#D0E4E4",
     width: "100%",
-    height: 150,
+    height: "25%",
     justifyContent: "center",
     alignItems: "center",
-    padding: 31,
+    padding: 10,
   },
   headerText: {
     color: "#509B9B",
+    fontSize: 48,
+    fontWeight: "bold",
+    paddingTop: 50,
+    paddingBottom: 30,
+  },
+  topHalf: {
+    paddingTop: 20,
+  },
+  bottomHalf: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "80%",
+    paddingBottom: 30,
+  },
+  welcomeText: {
+    color: "#509B9B",
     fontSize: 24,
     fontWeight: "bold",
-    paddingTop: 20,
   },
   headerSubtitle: {
     justifyContent: "flex-start",
-    marginRight: 25,
   },
   xp: {
     fontSize: 17,
   },
   image: {
-    height: 75,
-    width: 75,
-    borderRadius: 75,
+    height: 50,
+    width: 50,
+    borderRadius: 50,
   },
   withPic: {
-    padding: 7,
+    padding: 10,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
   },
   miniTitle: {
-    fontSize: 17,
+    fontSize: 18,
     padding: 15,
+    paddingLeft: 20,
     alignSelf: "flex-start",
   },
   postButton: {
@@ -190,19 +208,17 @@ const styles = StyleSheet.create({
   skillsContainer: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
-    paddingTop: 30,
     width: "100%",
   },
   pair: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: "62%",
+    width: "72%",
     marginVertical: 10,
   },
   skillIcon: {
-    width: 60,
-    height: 60,
+    width: 90,
+    height: 90,
     marginBottom: 4,
   },
   skillText: {

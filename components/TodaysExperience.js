@@ -39,8 +39,8 @@ export default function TodaysExperience({ id, onPress }) {
   }, [id]);
 
   const truncateDescription = (text) => {
-    if (text && text.length > 80) {
-      return text.slice(0, 80) + "...";
+    if (text && text.length > 110) {
+      return text.slice(0, 110) + "...";
     }
     return text;
   };
@@ -58,7 +58,7 @@ export default function TodaysExperience({ id, onPress }) {
       <View style={styles.content}>
         <Text style={styles.name}>{name}</Text>
         <View style={styles.xpRow}>
-          <Icon name="star" size={25} color="#509B9B" />
+          <Icon name="star" size={20} color="#509B9B" />
           <Text style={styles.xp}>{xp} XP</Text>
         </View>
         <View style={styles.details}>
@@ -84,8 +84,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: 364,
-    height: 320,
+    width: 340,
+    height: 270,
     padding: 16,
     justifyContent: "space-between",
   },
@@ -108,9 +108,9 @@ const styles = StyleSheet.create({
     marginVertical: 1,
   },
   xp: {
-    fontSize: 20,
+    fontSize: 18,
     color: "#000000",
-    marginLeft: 8,
+    marginLeft: 4,
   },
   details: {
     flexDirection: "row",
@@ -118,8 +118,8 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   image: {
-    width: 140,
-    height: 140,
+    width: 120,
+    height: 120,
     borderRadius: 12,
     marginRight: 8,
   },
@@ -127,18 +127,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#4B4B4B",
     flexShrink: 1,
-    borderRightWidth: 20,
-    borderLeftWidth: 20,
+    borderRightWidth: 8,
+    borderLeftWidth: 18,
     borderRightColor: "#FFFFFF",
     borderLeftColor: "#FFFFFF",
   },
   button: {
     backgroundColor: "#509B9B",
-    paddingVertical: 10,
-    height: 40,
-    width: 250,
+    paddingVertical: 0,
+    height: 30,
+    width: 230,
     paddingHorizontal: 20,
-    borderRadius: 20,
+    borderRadius: 16,
     alignItems: "center",
     alignSelf: "center",
     marginTop: 8,
@@ -147,6 +147,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#FFFFFF",
     fontWeight: "semibold",
+    marginTop: 5,
   },
 });
 
