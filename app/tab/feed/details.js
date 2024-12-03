@@ -40,61 +40,23 @@ export default function Details() {
 
   const handleMarkAsDone = async () => {
     try {
-      const { error } = await db
+      // Step 1: Mark the current task as done
+      const { error: taskError } = await db
         .from("tasks")
-        .update({ done: "TRUE" }) // Mark the task as done
+        .update({ done: 'TRUE' })
         .eq("id", id);
   
-      if (error) {
-        console.error("Error marking task as done:", error.message);
-        return;
-      }
-      
-      const nSkill = skill.replace(/\s+/g, "").toLowerCase()
-
-      // Fetch the current value of {skill}_last
-      const { data: userData, error: userError } = await db
-        .from("users")
-        .select(`${nSkill}_last`) // Dynamically select the column
-        .eq("id", 1)
-        .single();
-  
-      if (userError) {
-        console.error("Error fetching user's last task:", userError.message);
+      if (taskError) {
+        console.error("Error marking task as done:", taskError.message);
         return;
       }
   
-      const currentLast = userData[`${nSkill}_last`];
-      const nextTaskId = currentLast + 1;
-  
-      // Unlock the next task
-      const { error: unlockError } = await db
-        .from("tasks")
-        .update({ locked: false }) // Unlock the next task
-        .eq("id", nextTaskId);
-  
-      if (unlockError) {
-        console.error("Error unlocking the next task:", unlockError.message);
-        return;
-      }
-  
-      // Increment the {skill}_last column
-      const { error: incrementError } = await db
-        .from("users")
-        .update({ [`${nSkill}_last`]: currentLast + 1 }) // Update dynamically
-        .eq("id", 1);
-  
-      if (incrementError) {
-        console.error("Error incrementing user's last task:", incrementError.message);
-        return;
-      }
-  
-      // Update XP using the RPC
+      // Step 2: Call RPC to update XP
       const { error: xpError } = await db.rpc("update_xp_for_user", {
-        skill_name: skill, // Pass the skill name
-        xp_value: xp, // XP value to add
-        user_id: 1, // Hardcoded user ID
-        mark_done: true, // Mark as done
+        skill_name: `${skill}`,
+        xp_value: xp,
+        user_id: 1,
+        mark_done: true,
       });
   
       if (xpError) {
@@ -102,19 +64,52 @@ export default function Details() {
         return;
       }
   
-      // Update UI state
+      // Step 3: Unlock the next task and update user progress
+      const skillLastColumn = `${skill}_last`; // Dynamically determine the column name
+      const { data: userData, error: userError } = await db
+        .from("users")
+        .select(skillLastColumn)
+        .eq("id", 1)
+        .single();
+  
+      if (userError) {
+        console.error("Error fetching user data:", userError.message);
+        return;
+      }
+  
+      const nextTaskId = userData[skillLastColumn] + 1;
+  
+      // Unlock the next task
+      const { error: unlockError } = await db
+        .from("tasks")
+        .update({ locked: false })
+        .eq("id", nextTaskId);
+  
+      if (unlockError) {
+        console.error("Error unlocking the next task:", unlockError.message);
+        return;
+      }
+  
+      // Increment `{skill}_last` in the users table
+      const { error: updateUserError } = await db
+        .from("users")
+        .update({ [skillLastColumn]: nextTaskId })
+        .eq("id", 1);
+  
+      if (updateUserError) {
+        console.error("Error updating user progress:", updateUserError.message);
+        return;
+      }
+  
+      // Step 4: Update local state and show success
       setIsDone(true);
       setShowPopup(true);
-  
-      console.log("Task marked as done, XP updated, next task unlocked, and user's last task incremented.");
+      console.log("Task marked as done, XP updated, next task unlocked, and user progress updated.");
     } catch (err) {
       console.error("Error:", err);
     }
   };
   
-  
-  
-
   const handleMarkAsNotDone = async () => {
     try {
         const { error } = await db
