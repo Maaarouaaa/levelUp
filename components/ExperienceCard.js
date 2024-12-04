@@ -133,7 +133,9 @@ const styles = StyleSheet.create({
     textAlign: "left",
     flexWrap: "wrap", // Allows the name to wrap to a second line if needed
     lineHeight: 24,
-    marginBottom: 3, // Adds spacing below the name
+    paddingTop: 4,
+    marginBottom: 1, // Adds spacing below the name
+    fontFamily: 'Poppins-Regular',
   },
   xpRow: {
     flexDirection: "row",

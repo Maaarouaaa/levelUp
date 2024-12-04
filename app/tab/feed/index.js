@@ -174,8 +174,9 @@ const styles = StyleSheet.create({
   welcomeText: {
     color: "#509B9B",
     fontSize: 24,
-    fontWeight: "bold",
-    fontFamily: "Poppins",
+    width: 500,
+    fontWeight: 200,
+    fontFamily: 'Poppins-SemiBold',
     marginBottom: 5, 
   },
   xpRow: {
@@ -183,9 +184,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   xp: {
-    fontSize: 17,
-    fontFamily: "Poppins",
+    fontSize: 16,
+    fontFamily: "Poppins-Regular",
     marginLeft: 5, 
+    marginTop: 2,
   },
   pair: {
     flexDirection: "row", 
@@ -209,7 +211,7 @@ const styles = StyleSheet.create({
     padding: 12,
     paddingLeft: 20,
     alignSelf: "flex-start",
-    fontFamily: "Poppins",
+    fontFamily: "Poppins-Regular",
   },
   skillIcon: {
     width: 80,

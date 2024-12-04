@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
   },  
   contentContainer: {
     flex: 1, // This will take up the remaining space
-    padding: 16,
+    padding: 14,
   },
   skillTag: {
     alignSelf: "flex-start",
@@ -353,16 +353,18 @@ const styles = StyleSheet.create({
   skillTagText: {
     fontSize: 14,
     fontWeight: "600",
+    fontFamily: 'Poppins-Regular',
   },
   taskName: {
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "left",
     paddingVertical: 4,
+    fontFamily: 'Poppins-SemiBold',
   },
   xpText: {
     fontSize: 16,
-    color: "#777",
+    color: "#000",
     textAlign: "center",
   },
   xpRow: {
@@ -376,6 +378,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     textAlign: "left",
     paddingTop: 6,
+    fontFamily: 'Poppins-Regular',
   },
   inputContainer: {
     marginTop: 10,
@@ -390,6 +393,7 @@ const styles = StyleSheet.create({
     zIndex: 100,
     fontSize: 12,
     color: "#509B9B",
+    fontFamily: 'Poppins-Regular',
   },
   textInput: {
     borderWidth: 1,
@@ -399,6 +403,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#000",
     height: 80, // Adjusted height
+    fontFamily: 'Poppins-Regular',
   },
   buttonContainer: {
     flexDirection: "row",
@@ -421,6 +426,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginLeft: 10, // Spacing between icon and text
+    fontFamily: 'Poppins-SemiBold',
   },
   icon: {
     marginLeft: 10, // Spacing between icon and text
@@ -447,11 +453,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: 'center',
     alignSelf: 'center',
+    fontFamily: 'Poppins-SemiBold',
   },
   popupMessage: {
     fontSize: 16,
     textAlign: "center",
     marginBottom: 20,
+    fontFamily: 'Poppins-Regular',
   },
   okayButton: {
     backgroundColor: "#509B9B",
@@ -463,5 +471,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+    fontFamily: 'Poppins-SemiBold',
   },
 });
