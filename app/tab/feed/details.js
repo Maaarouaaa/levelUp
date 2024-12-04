@@ -67,8 +67,8 @@ export default function Details() {
       const currentLast = userData[`${nSkill}_last`];
       const nextTaskId = currentLast + 1;
   
-      // Only unlock the next task if the current task ID is not a multiple of 10
-      if (id % 10 !== 0) {
+      // Only unlock the next task if skill_last is not a multiple of 10
+      if (currentLast % 10 !== 0) {
         const { error: unlockError } = await db
           .from("tasks")
           .update({ locked: false }) // Unlock the next task
@@ -79,7 +79,7 @@ export default function Details() {
           return;
         }
       } else {
-        console.log("Current task is a milestone (multiple of 10); next task will not be unlocked.");
+        console.log("Current skill_last is a milestone (multiple of 10); next task will not be unlocked.");
       }
   
       // Increment the {skill}_last column
@@ -110,13 +110,12 @@ export default function Details() {
       setIsDone(true);
       setShowPopup(true);
   
-      console.log(
-        "Task marked as done, XP updated, next task unlocked (if applicable), and user's last task incremented."
-      );
+      console.log("Task marked as done, XP updated, next task conditionally unlocked, and user's last task incremented.");
     } catch (err) {
       console.error("Error:", err);
     }
   };
+  
   
   
   
