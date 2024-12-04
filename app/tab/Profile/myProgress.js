@@ -8,9 +8,9 @@ export default function MyProgress() {
   const [chartData, setChartData] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState(["total_xp"]); // Default filter is total_xp
   const screenWidth = Dimensions.get("window").width * 0.9;
-  const graphHeight = 300; // Increased height for dynamic growth
-  const topMargin = 50; // Add margin to the top of the graph
-  const bottomPadding = 100; // Extra padding for future growth below X-axis
+  const graphHeight = 300;
+  const topMargin = 50; // Adjusted for better spacing
+  const bottomPadding = 100;
 
   const toggleFilter = (filter) => {
     setSelectedFilters((prev) =>
@@ -33,7 +33,6 @@ export default function MyProgress() {
         } else {
           console.log("Raw data from the database:", data);
 
-          // Calculate cumulative data for each key
           const cumulativeData = [];
           let cumulativeSums = {
             total_xp: 0,
@@ -43,14 +42,13 @@ export default function MyProgress() {
             adaptability_xp: 0,
           };
 
-          data.forEach((row, index) => {
+          data.forEach((row) => {
             const cumulativeRow = {};
             for (let key in cumulativeSums) {
-              cumulativeSums[key] += row[key] || 0; // Add current value or 0 if null
+              cumulativeSums[key] += row[key] || 0;
               cumulativeRow[key] = cumulativeSums[key];
             }
             cumulativeData.push(cumulativeRow);
-            console.log(`Cumulative data for row ${index + 1}:`, cumulativeRow);
           });
 
           setChartData(cumulativeData);
@@ -77,31 +75,58 @@ export default function MyProgress() {
         selectedFilters.map((filter) => row[filter])
       )
     );
-  
+
     const scaledData = selectedFilters.map((filter) => ({
       filter,
       data: chartData.map((row) => (row[filter] / maxValue) * (graphHeight - topMargin)),
     }));
-  
+
+    const yAxisPoints = Array.from({ length: Math.ceil(maxValue / 50) + 1 }, (_, i) => i * 50);
+
     return (
       <View style={styles.cardContainer}>
         <Svg
-          width={screenWidth * 0.85} // Slightly reduced width to fit within the card
-          height={graphHeight + bottomPadding - 40} // Adjusted bottom padding for a smaller card
+          width={screenWidth * 0.85}
+          height={graphHeight + bottomPadding - 40}
           style={{ marginHorizontal: 10 }}
         >
+          {/* Draw Y-Axis Labels */}
+          {yAxisPoints.map((point, index) => (
+            <SvgText
+              key={`y-axis-${index}`}
+              x={10} // Positioned on the left of the graph
+              y={graphHeight - (point / maxValue) * (graphHeight - topMargin)}
+              fontSize="12"
+              fill="black"
+              textAnchor="middle"
+            >
+              {point}
+            </SvgText>
+          ))}
+
+      {/* Y-Axis Title */}
+      <SvgText
+        x={-50} // Move further to the left
+        y={graphHeight / 2} // Center it vertically along the graph height
+        fontSize="14"
+        fill="black"
+        textAnchor="middle"
+        transform={`rotate(-90, -50, ${graphHeight / 2})`} // Rotate and position appropriately
+      >
+        XP
+      </SvgText>
+
           {/* Draw Graphs for Selected Filters */}
           {scaledData.map(({ filter, data }) => (
             <React.Fragment key={filter}>
-              {/* Draw Lines */}
               {data.map((_, index) => {
                 if (index < data.length - 1) {
                   return (
                     <Line
                       key={`line-${filter}-${index}`}
-                      x1={(index / (data.length - 1)) * screenWidth * 0.7 + screenWidth * 0.1}
+                      x1={(index / (data.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08}
                       y1={graphHeight - data[index]}
-                      x2={((index + 1) / (data.length - 1)) * screenWidth * 0.7 + screenWidth * 0.1}
+                      x2={((index + 1) / (data.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08}
                       y2={graphHeight - data[index + 1]}
                       stroke={
                         {
@@ -118,12 +143,11 @@ export default function MyProgress() {
                 }
                 return null;
               })}
-  
-              {/* Draw Circles */}
+
               {data.map((value, index) => (
                 <Circle
                   key={`circle-${filter}-${index}`}
-                  cx={(index / (data.length - 1)) * screenWidth * 0.7 + screenWidth * 0.1}
+                  cx={(index / (data.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08}
                   cy={graphHeight - value}
                   r={4}
                   fill={
@@ -139,13 +163,13 @@ export default function MyProgress() {
               ))}
             </React.Fragment>
           ))}
-  
+
           {/* X-Axis Labels */}
           {chartData.map((_, index) => (
             <SvgText
               key={`label-${index}`}
-              x={(index / (chartData.length - 1)) * screenWidth * 0.7 + screenWidth * 0.1}
-              y={graphHeight + 30} // Adjusted for a smaller card
+              x={(index / (chartData.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08}
+              y={graphHeight + 25}
               fontSize="12"
               fill="black"
               textAnchor="middle"
@@ -153,11 +177,11 @@ export default function MyProgress() {
               {index + 1}
             </SvgText>
           ))}
-  
+
           {/* X-Axis Title */}
           <SvgText
-            x={screenWidth / 2} // Centered horizontally
-            y={graphHeight + 50} // Adjusted for a smaller card
+            x={screenWidth / 2 - 20}
+            y={graphHeight + 50}
             fontSize="14"
             fill="black"
             textAnchor="middle"
@@ -167,16 +191,13 @@ export default function MyProgress() {
         </Svg>
       </View>
     );
-  };  
+  };
 
   return (
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
-      {/* Header */}
       <View style={styles.headerBackground}></View>
       <Icon name="arrow-back" size={24} style={styles.backArrow} color="#838383" />
       <Text style={styles.headerTitle}>My Progress</Text>
-
-      {/* Filters */}
       <Text style={styles.filterText}>Filter by</Text>
       <View style={styles.filterContainer}>
         <View style={styles.row}>
@@ -255,8 +276,6 @@ export default function MyProgress() {
           </TouchableOpacity>
         </View>
       </View>
-
-      {/* Graph Section */}
       <Text style={styles.graphTitle}>Skill Progress</Text>
       <View style={styles.graphContainer}>{renderGraphs()}</View>
     </ScrollView>
@@ -309,6 +328,7 @@ const styles = StyleSheet.create({
   },
   filterText: {
     marginTop: "22%",
+    marginBottom: "1%",
     marginLeft: 45,
     fontFamily: "Poppins-Regular",
     fontSize: 13,
@@ -326,8 +346,8 @@ const styles = StyleSheet.create({
   filterButton: {
     alignItems: "center",
     justifyContent: "center",
-    width: "45%",
-    height: 23,
+    width: "47%",
+    height: 25,
     borderRadius: 15,
     borderWidth: 2,
     borderColor: "#E0E0E0",
@@ -348,10 +368,10 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     textAlign: "center",
     color: "black",
-    marginTop: 30,
+    marginTop: 10,
   },
   graphContainer: {
-    marginTop: 20,
+    marginTop: 30,
     alignItems: "center",
   },
   loadingContainer: {
