@@ -7,8 +7,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import db from "@/database/db";
 
 export default function Feed() {
-  //const id = Math.floor(Math.random() * 41)
-  const id = 1
+  const id = 1;
   const router = useRouter();
   const navigateToDetails = () => {
     router.push({ pathname: "/tab/feed/details", params: { id: id } });
@@ -30,7 +29,6 @@ export default function Feed() {
     router.push("/tab/feed/adaptability");
   };
 
-
   const [total_xp, set_total_xp] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -38,11 +36,10 @@ export default function Feed() {
     const fetch_total_xp = async () => {
       try {
         setLoading(true);
-        // Query the database for total XP
         const { data, error } = await db
           .from("users")
           .select("total_xp")
-          .eq("id", 1) // Replace with your logic for user ID
+          .eq("id", 1)
           .single();
 
         if (error) {
@@ -65,26 +62,26 @@ export default function Feed() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Header */}
         <View style={styles.header}>
-            <View style={styles.topHalf}>
-              <Text style={styles.headerText}>level up.</Text>
-            </View>
-
-            <View style={styles.bottomHalf}>
-              <View style={styles.headerSubtitle}>
-                <Text style={styles.welcomeText}>Welcome, Taralyn!</Text>
-                <View style={styles.xpRow}>
-                  <Icon name="star" size={20} color="#509B9B" />
-                  <Text style={styles.xp}>
-                    {loading ? "Loading..." : total_xp !== null ? total_xp : "No Data"} XP
-                  </Text>
-                </View>
+          <Image
+            source={require("@/assets/level Up. (3).png")} 
+            style={styles.headerLogo}
+            resizeMode="contain"
+          />
+          <View style={styles.bottomHalf}>
+            <View style={styles.headerSubtitle}>
+              <Text style={styles.welcomeText}>Welcome, Taralyn!</Text>
+              <View style={styles.xpRow}>
+                <Icon name="star" size={20} color="#509B9B" />
+                <Text style={styles.xp}>
+                  {loading ? "Loading..." : total_xp !== null ? total_xp : "No Data"} XP
+                </Text>
               </View>
-              <Image
-                source={require("@/assets/taralyn-profilepic.jpeg")}
-                style={styles.image}
-              />
             </View>
-
+            <Image
+              source={require("@/assets/taralyn-profilepic.jpeg")}
+              style={styles.image}
+            />
+          </View>
         </View>
 
         <StatusBar style="light" />
@@ -92,10 +89,7 @@ export default function Feed() {
         {/* Today's Experience Section */}
         <Text style={styles.miniTitle}>Today's Experience</Text>
         <View style={styles.postButton}>
-          <TodaysExperience
-            id= {id}
-            onPress= {navigateToDetails}
-          />
+          <TodaysExperience id={id} onPress={navigateToDetails} />
         </View>
 
         {/* Skills Section */}
@@ -147,7 +141,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: "center",
     justifyContent: "flex-start",
-    paddingBottom: 50, // Extra padding for scrollable content
+    paddingBottom: 50,
   },
   header: {
     backgroundColor: "#D0E4E4",
@@ -157,77 +151,66 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
   },
-  headerText: {
-    color: "#509B9B",
-    fontSize: 48,
-    fontWeight: "bold",
-    paddingTop: 50,
-    paddingBottom: 30,
-  },
-  topHalf: {
-    paddingTop: 20,
+  headerLogo: {
+    paddingTop: 10,
+    width: "50%",
+    height: "50%",
   },
   bottomHalf: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: "80%",
-    paddingBottom: 30,
+    alignItems: "center",
+    width: "90%",
+    paddingBottom: 10,
+  },
+  headerSubtitle: {
+    flex: 1,
+    justifyContent: "flex-start",
+    marginRight: 20, 
   },
   welcomeText: {
     color: "#509B9B",
     fontSize: 24,
     fontWeight: "bold",
+    fontFamily: "Poppins",
+    marginBottom: 5, 
   },
-  headerSubtitle: {
-    justifyContent: "flex-start",
+  xpRow: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   xp: {
     fontSize: 17,
+    fontFamily: "Poppins",
+    marginLeft: 5, 
   },
+  pair: {
+    flexDirection: "row", 
+    justifyContent: "space-between", 
+    width: "70%", 
+    marginVertical: 10, 
+  },  
   image: {
-    height: 50,
-    width: 50,
+    height: 55, 
+    width: 55, 
     borderRadius: 50,
-  },
-  withPic: {
-    padding: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  miniTitle: {
-    fontSize: 18,
-    padding: 15,
-    paddingLeft: 20,
-    alignSelf: "flex-start",
-  },
-  postButton: {
-    flex: 1,
-    width: "90%",
+    marginLeft: 20, 
   },
   skillsContainer: {
     flex: 1,
     alignItems: "center",
     width: "100%",
   },
-  pair: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "72%",
-    marginVertical: 10,
+  miniTitle: {
+    fontSize: 18,
+    padding: 12,
+    paddingLeft: 20,
+    alignSelf: "flex-start",
+    fontFamily: "Poppins",
   },
   skillIcon: {
-    width: 90,
-    height: 90,
+    width: 80,
+    height: 80,
     marginBottom: 4,
-  },
-  skillText: {
-    fontSize: 16,
-    textAlign: "center",
-    color: "#333",
-  },
-  xpRow: {
-    flexDirection: "row",
-    alignItems: "center",
   },
 });

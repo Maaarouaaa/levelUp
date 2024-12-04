@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerText: {
+    fontFamily: "Poppins",
     fontSize: 40,
     color: "#509B9B",
     fontWeight: "bold",
@@ -189,13 +190,15 @@ const styles = StyleSheet.create({
     right: 4,
   },
   toggleText: {
-    fontSize: 16,
+    fontFamily: "Poppins",
+    fontSize: 15,
     color: "#509B9B",
     zIndex: 1,
     paddingHorizontal: 18,
   },
   activeText: {
     color: "#fff",
+    fontFamily: "Poppins",
     fontWeight: "bold",
   },
   profilesContainer: {

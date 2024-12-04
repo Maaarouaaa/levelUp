@@ -99,16 +99,19 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 24,
+    fontFamily: "Poppins",
     color: "#000000",
     textAlign: "left",
   },
   xpRow: {
     flexDirection: "row",
     alignItems: "center",
+    fontFamily: "Poppins",
     marginVertical: 1,
   },
   xp: {
     fontSize: 18,
+    fontFamily: "Poppins",
     color: "#000000",
     marginLeft: 4,
   },
@@ -125,6 +128,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
+    fontFamily: "Poppins",
     color: "#4B4B4B",
     flexShrink: 1,
     borderRightWidth: 8,
@@ -145,6 +149,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
+    fontFamily: "Poppins",
     color: "#FFFFFF",
     fontWeight: "semibold",
     marginTop: 5,

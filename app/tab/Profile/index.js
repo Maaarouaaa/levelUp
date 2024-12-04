@@ -201,6 +201,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   headerTitle: {
+    fontFamily: "Poppins",
     fontSize: 34,
     fontWeight: "700",
     color: "#509B9B",
@@ -217,11 +218,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   profileName: {
+    fontFamily: "Poppins",
     fontSize: 28,
     fontWeight: "700",
     color: "#509B9B",
   },
   memberInfo: {
+    fontFamily: "Poppins",
     fontSize: 16,
     color: "#4B4B4B",
   },
@@ -235,12 +238,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   statNumber: {
+    fontFamily: "Poppins",
     fontSize: 20,
     fontWeight: "600",
     marginBottom: 3,
     marginTop: 3,
   },
   statLabel: {
+    fontFamily: "Poppins",
     fontSize: 12,
   },
   skillsContainer: {
@@ -248,6 +253,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 30,
   },
   skillsHeading: {
+    fontFamily: "Poppins",
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 10,
@@ -262,6 +268,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   skillName: {
+    fontFamily: "Poppins",
     fontSize: 14,
     fontWeight: "700",
     marginBottom: 5,
@@ -281,6 +288,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   xpText: {
+    fontFamily: "Poppins",
     fontSize: 14,
     marginTop: 5,
   },
@@ -303,6 +311,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   buttonText: {
+    fontFamily: "Poppins",
     fontSize: 14,
     color: "#509B9B",
     fontWeight: "bold",
