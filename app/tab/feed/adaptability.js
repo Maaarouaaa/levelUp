@@ -1,53 +1,57 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { StyleSheet, Text, View, TextInput, ScrollView, TouchableWithoutFeedback, Keyboard } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import ExperienceCard from "@/components/ExperienceCard";
 import db from "@/database/db";
 
 export default function Three() {
   const [searchText, setSearchText] = useState("");
-  const [allTasks, setAllTasks] = useState([]); 
-  const [filteredTasks, setFilteredTasks] = useState([]); 
+  const [allTasks, setAllTasks] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]);
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const { data, error } = await db
-          .from("tasks")
-          .select("id, name, description, done, locked")
-          .gte("id", 31)
-          .lte("id", 40)
-          .order("id", { ascending: true }); 
+  const fetchTasks = async () => {
+    try {
+      const { data, error } = await db
+        .from("tasks")
+        .select("id, name, description, done, locked")
+        .gte("id", 31)
+        .lte("id", 40)
+        .order("id", { ascending: true });
 
-        if (error) {
-          console.error("Error fetching tasks:", error.message);
-        } else {
-          console.log("Fetched tasks:", data); 
-          setAllTasks(data); 
-          setFilteredTasks(data); 
-        }
-      } catch (err) {
-        console.error("Error:", err);
+      if (error) {
+        console.error("Error fetching tasks:", error.message);
+      } else {
+        console.log("Fetched tasks:", data);
+        setAllTasks(data);
+        setFilteredTasks(data);
       }
-    };
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  };
 
-    fetchTasks();
-  }, []);
+  // Refetch tasks when the screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      fetchTasks();
+    }, [])
+  );
 
   useEffect(() => {
     if (searchText === "") {
-      setFilteredTasks(allTasks); 
+      setFilteredTasks(allTasks);
     } else {
       const filtered = allTasks.filter((task) => {
-        const name = task.name || ""; 
-        const description = task.description || ""; 
-        
+        const name = task.name || "";
+        const description = task.description || "";
+
         if (!task.locked) {
           return (
             name.toLowerCase().includes(searchText.toLowerCase()) ||
             description.toLowerCase().includes(searchText.toLowerCase())
           );
         }
-        return false; 
+        return false;
       });
       setFilteredTasks(filtered);
     }
@@ -74,8 +78,8 @@ export default function Three() {
 
         {/* Scrollable Cards */}
         <ScrollView
-          contentContainerStyle={[styles.cardsContainer, { paddingTop: 10 }]} 
-          style={{ marginTop: 40 }} 
+          contentContainerStyle={[styles.cardsContainer, { paddingTop: 10 }]}
+          style={{ marginTop: 40 }}
         >
           {filteredTasks.map((task) => (
             <View key={task.id} style={styles.cardWrapper}>
@@ -83,7 +87,7 @@ export default function Three() {
                 id={task.id}
                 name={task.name || "No Name"}
                 description={task.description || "No Description"}
-                navigate="home" 
+                navigate="home"
               />
             </View>
           ))}
@@ -92,6 +96,7 @@ export default function Three() {
     </TouchableWithoutFeedback>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

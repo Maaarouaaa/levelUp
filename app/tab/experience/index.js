@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,6 +11,7 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 import ExperienceCard from "@/components/ExperienceCard";
 import db from "@/database/db";
+import { useFocusEffect } from "@react-navigation/native";
 
 const categories = ["All", "problem solving", "adaptability", "leadership", "communication"];
 
@@ -20,36 +21,40 @@ export default function Three() {
   const [allTasks, setAllTasks] = useState([]);
   const [filteredTasks, setFilteredTasks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("All"); // Default category
-  const [showDropdown, setShowDropdown] = useState(false); // Dropdown visibility state
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const handleToggle = () => {
     setIsToggled((prev) => !prev);
   };
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        setLoading(true);
-        const { data, error } = await db
-          .from("tasks")
-          .select("id, name, description, skill, locked, done");
+  // Fetch tasks
+  const fetchTasks = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await db
+        .from("tasks")
+        .select("id, name, description, skill, locked, done");
 
-        if (error) {
-          console.error("Error fetching tasks:", error.message);
-        } else if (data) {
-          setAllTasks(data);
-          setFilteredTasks(data.filter((task) => !task.locked));
-        }
-      } catch (err) {
-        console.error("Error:", err);
-      } finally {
-        setLoading(false);
+      if (error) {
+        console.error("Error fetching tasks:", error.message);
+      } else if (data) {
+        setAllTasks(data);
+        setFilteredTasks(data.filter((task) => !task.locked));
       }
-    };
+    } catch (err) {
+      console.error("Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchTasks();
-  }, []);
+  // Use useFocusEffect to refetch data when the screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      fetchTasks();
+    }, []) // Ensure the dependency array is empty to refetch data every time
+  );
 
   // Apply filtering logic
   useEffect(() => {
@@ -175,6 +180,7 @@ export default function Three() {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

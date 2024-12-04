@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useCallback } from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import TodaysExperience from "@/components/TodaysExperience";
 import Icon from "react-native-vector-icons/Ionicons";
 import db from "@/database/db";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function Feed() {
   const id = 1;
@@ -32,30 +33,32 @@ export default function Feed() {
   const [total_xp, set_total_xp] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetch_total_xp = async () => {
-      try {
-        setLoading(true);
-        const { data, error } = await db
-          .from("users")
-          .select("total_xp")
-          .eq("id", 1)
-          .single();
+  useFocusEffect(
+    useCallback(() => {
+      const fetch_total_xp = async () => {
+        try {
+          setLoading(true);
+          const { data, error } = await db
+            .from("users")
+            .select("total_xp")
+            .eq("id", 1)
+            .single();
 
-        if (error) {
-          console.error("Error fetching total xp:", error.message);
-        } else if (data) {
-          set_total_xp(data.total_xp);
+          if (error) {
+            console.error("Error fetching total xp:", error.message);
+          } else if (data) {
+            set_total_xp(data.total_xp);
+          }
+        } catch (err) {
+          console.error("Error:", err);
+        } finally {
+          setLoading(false);
         }
-      } catch (err) {
-        console.error("Error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
 
-    fetch_total_xp();
-  }, []);
+      fetch_total_xp();
+    }, []) // Empty dependency array ensures this runs every time the screen is focused
+  );
 
   return (
     <View style={styles.container}>
