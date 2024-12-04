@@ -77,7 +77,7 @@ export default function ExperienceCard({ id, navigate }) {
           <View style={styles.words}>
             <Text style={styles.name}>{name || "No Name"}</Text>
             <View style={styles.xpRow}>
-              <Icon name="star" size={25} color="#509B9B" />
+              <Icon name="star" size={18} color="#509B9B" />
               <Text style={styles.xp}>{xp !== null ? `${xp} XP` : "No XP"}</Text>
             </View>
           </View>
@@ -123,24 +123,27 @@ const styles = StyleSheet.create({
   },
   words: {
     flex: 1,
-    justifyContent: "center", // Ensures vertical centering even when the name overflows
-    marginLeft: 16,
+    justifyContent: "center", // Ensures vertical centering
+    alignItems: "flex-start", // Aligns text to the left
+    marginLeft: 12,
   },
   name: {
     fontSize: 22,
     color: "#000000",
     textAlign: "left",
-    flexWrap: 'wrap', // Allows the name to wrap to a second line if needed
-    lineHeight: 22,
+    flexWrap: "wrap", // Allows the name to wrap to a second line if needed
+    lineHeight: 24,
+    marginBottom: 3, // Adds spacing below the name
   },
   xpRow: {
     flexDirection: "row",
     alignItems: "center",
+    marginTop: 1, // Adds spacing above the XP row
   },
   xp: {
-    fontSize: 20,
+    fontSize: 18,
     color: "#000000",
-    marginLeft: 8,
+    marginLeft: 4,
   },
   details: {
     flexDirection: "row",
