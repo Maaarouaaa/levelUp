@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useCallback } from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useRouter } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
 import db from "@/database/db";
 
 export default function Profile() {
@@ -22,56 +23,58 @@ export default function Profile() {
   const [completedExperiences, setCompletedExperiences] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchSkillData = async () => {
-      try {
-        setLoading(true);
-        const { data, error } = await db
-          .from("users")
-          .select(
-            `"problem solving_xp", communication_xp, leadership_xp, adaptability_xp, total_xp`
-          )
-          .eq("id", 1) // Replace with correct user ID
-          .single();
+  useFocusEffect(
+    useCallback(() => {
+      const fetchSkillData = async () => {
+        try {
+          setLoading(true);
+          const { data, error } = await db
+            .from("users")
+            .select(
+              `"problem solving_xp", communication_xp, leadership_xp, adaptability_xp, total_xp`
+            )
+            .eq("id", 1) // Replace with correct user ID
+            .single();
 
-        if (error) {
-          console.error("Error fetching skill data:", error.message);
-        } else if (data) {
-          setSkillData({
-            problem_solving_xp: data["problem solving_xp"],
-            communication_xp: data.communication_xp,
-            leadership_xp: data.leadership_xp,
-            adaptability_xp: data.adaptability_xp,
-            total_xp: data.total_xp,
-          });
+          if (error) {
+            console.error("Error fetching skill data:", error.message);
+          } else if (data) {
+            setSkillData({
+              problem_solving_xp: data["problem solving_xp"],
+              communication_xp: data.communication_xp,
+              leadership_xp: data.leadership_xp,
+              adaptability_xp: data.adaptability_xp,
+              total_xp: data.total_xp,
+            });
+          }
+        } catch (err) {
+          console.error("Error:", err);
+        } finally {
+          setLoading(false);
         }
-      } catch (err) {
-        console.error("Error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
 
-    const fetchCompletedExperiences = async () => {
-      try {
-        const { data, error } = await db
-          .from("tasks")
-          .select("done")
-          .eq("done", true);
+      const fetchCompletedExperiences = async () => {
+        try {
+          const { data, error } = await db
+            .from("tasks")
+            .select("done")
+            .eq("done", true);
 
-        if (error) {
-          console.error("Error fetching completed experiences:", error.message);
-        } else {
-          setCompletedExperiences(data.length);
+          if (error) {
+            console.error("Error fetching completed experiences:", error.message);
+          } else {
+            setCompletedExperiences(data.length);
+          }
+        } catch (err) {
+          console.error("Error:", err);
         }
-      } catch (err) {
-        console.error("Error:", err);
-      }
-    };
+      };
 
-    fetchSkillData();
-    fetchCompletedExperiences();
-  }, []);
+      fetchSkillData();
+      fetchCompletedExperiences();
+    }, []) // Empty dependency array ensures this runs only on focus
+  );
 
   return (
     <View style={styles.container}>
@@ -110,14 +113,12 @@ export default function Profile() {
           },
         ].map((stat, index) => (
           <View key={index} style={styles.statBox}>
-            {/* Directly render the Icon component */}
             {stat.icon}
             <Text style={styles.statNumber}>{stat.number}</Text>
             <Text style={styles.statLabel}>{stat.label}</Text>
           </View>
         ))}
       </View>
-
 
       {/* Skills Section */}
       <View style={styles.skillsContainer}>
@@ -187,6 +188,7 @@ const SkillBar = ({ skillName, currentXP, maxXP, color }) => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
