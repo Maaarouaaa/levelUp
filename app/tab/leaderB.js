@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerText: {
-    fontFamily: "Poppins",
+    fontFamily: "Poppins-Bold",
     fontSize: 40,
     color: "#509B9B",
     fontWeight: "bold",
@@ -154,6 +154,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "#fff",
     color: "#000",
+    fontFamily: "Poppins-Regular"
   },
   toggleWrapper: {
     alignItems: "center",
@@ -190,7 +191,7 @@ const styles = StyleSheet.create({
     right: 4,
   },
   toggleText: {
-    fontFamily: "Poppins",
+    fontFamily: "Poppins-SemiBold",
     fontSize: 15,
     color: "#509B9B",
     zIndex: 1,
@@ -198,7 +199,7 @@ const styles = StyleSheet.create({
   },
   activeText: {
     color: "#fff",
-    fontFamily: "Poppins",
+    fontFamily: "Poppins-SemiBold",
     fontWeight: "bold",
   },
   profilesContainer: {
