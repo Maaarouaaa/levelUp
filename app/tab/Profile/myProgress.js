@@ -6,9 +6,11 @@ import db from "@/database/db";
 
 export default function MyProgress() {
   const [chartData, setChartData] = useState(null);
-  const [selectedFilters, setSelectedFilters] = useState([]);
-  const screenWidth = Dimensions.get("window").width * 0.9; // Scaled width for better fit
-  const graphHeight = 250;
+  const [selectedFilters, setSelectedFilters] = useState(["total_xp"]); // Default filter is total_xp
+  const screenWidth = Dimensions.get("window").width * 0.9;
+  const graphHeight = 300; // Increased height for dynamic growth
+  const topMargin = 50; // Add margin to the top of the graph
+  const bottomPadding = 100; // Extra padding for future growth below X-axis
 
   const toggleFilter = (filter) => {
     setSelectedFilters((prev) =>
@@ -21,33 +23,37 @@ export default function MyProgress() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log("Fetching data from the database...");
         const { data, error } = await db
-          .from("users")
-          .select("day1, day2, day3, day4, day5")
-          .eq("id", 1); // Fetch only for ID 1
+          .from("graph_data")
+          .select("total_xp, problem_solving_xp, communication_xp, leadership_xp, adaptability_xp");
 
         if (error) {
           console.error("Error fetching data:", error.message);
-        } else if (data.length > 0) {
-          console.log("Database response:", data);
+        } else {
+          console.log("Raw data from the database:", data);
 
-          const user = data[0]; // Get data for the user with ID 1
-          const cumulativePoints = [];
-          let cumulativeSum = 0;
+          // Calculate cumulative data for each key
+          const cumulativeData = [];
+          let cumulativeSums = {
+            total_xp: 0,
+            problem_solving_xp: 0,
+            communication_xp: 0,
+            leadership_xp: 0,
+            adaptability_xp: 0,
+          };
 
-          ["day1", "day2", "day3", "day4", "day5"].forEach((day) => {
-            if (user[day] !== null) {
-              cumulativeSum += user[day];
-              cumulativePoints.push(cumulativeSum);
-            } else {
-              cumulativePoints.push(cumulativeSum);
+          data.forEach((row, index) => {
+            const cumulativeRow = {};
+            for (let key in cumulativeSums) {
+              cumulativeSums[key] += row[key] || 0; // Add current value or 0 if null
+              cumulativeRow[key] = cumulativeSums[key];
             }
+            cumulativeData.push(cumulativeRow);
+            console.log(`Cumulative data for row ${index + 1}:`, cumulativeRow);
           });
 
-          console.log("Cumulative points:", cumulativePoints);
-          setChartData(cumulativePoints);
-        } else {
-          console.error("No data found for user with ID 1");
+          setChartData(cumulativeData);
         }
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -58,34 +64,134 @@ export default function MyProgress() {
   }, []);
 
   if (!chartData) {
-    return <Text style={styles.loadingText}>Loading...</Text>;
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>Loading...</Text>
+      </View>
+    );
   }
 
-  const maxValue = Math.max(...chartData); // Maximum value for scaling
-  const scaledData = chartData.map((value) => (value / maxValue) * graphHeight);
+  const renderGraphs = () => {
+    const maxValue = Math.max(
+      ...chartData.flatMap((row) =>
+        selectedFilters.map((filter) => row[filter])
+      )
+    );
+  
+    const scaledData = selectedFilters.map((filter) => ({
+      filter,
+      data: chartData.map((row) => (row[filter] / maxValue) * (graphHeight - topMargin)),
+    }));
+  
+    return (
+      <View style={styles.cardContainer}>
+        <Svg
+          width={screenWidth * 0.85} // Slightly reduced width to fit within the card
+          height={graphHeight + bottomPadding - 40} // Adjusted bottom padding for a smaller card
+          style={{ marginHorizontal: 10 }}
+        >
+          {/* Draw Graphs for Selected Filters */}
+          {scaledData.map(({ filter, data }) => (
+            <React.Fragment key={filter}>
+              {/* Draw Lines */}
+              {data.map((_, index) => {
+                if (index < data.length - 1) {
+                  return (
+                    <Line
+                      key={`line-${filter}-${index}`}
+                      x1={(index / (data.length - 1)) * screenWidth * 0.7 + screenWidth * 0.1}
+                      y1={graphHeight - data[index]}
+                      x2={((index + 1) / (data.length - 1)) * screenWidth * 0.7 + screenWidth * 0.1}
+                      y2={graphHeight - data[index + 1]}
+                      stroke={
+                        {
+                          total_xp: "#509B9B",
+                          problem_solving_xp: "#FF8460",
+                          communication_xp: "#4CA8FF",
+                          adaptability_xp: "#FFAB45",
+                          leadership_xp: "#58CDB0",
+                        }[filter]
+                      }
+                      strokeWidth={2}
+                    />
+                  );
+                }
+                return null;
+              })}
+  
+              {/* Draw Circles */}
+              {data.map((value, index) => (
+                <Circle
+                  key={`circle-${filter}-${index}`}
+                  cx={(index / (data.length - 1)) * screenWidth * 0.7 + screenWidth * 0.1}
+                  cy={graphHeight - value}
+                  r={4}
+                  fill={
+                    {
+                      total_xp: "#509B9B",
+                      problem_solving_xp: "#FF8460",
+                      communication_xp: "#4CA8FF",
+                      adaptability_xp: "#FFAB45",
+                      leadership_xp: "#58CDB0",
+                    }[filter]
+                  }
+                />
+              ))}
+            </React.Fragment>
+          ))}
+  
+          {/* X-Axis Labels */}
+          {chartData.map((_, index) => (
+            <SvgText
+              key={`label-${index}`}
+              x={(index / (chartData.length - 1)) * screenWidth * 0.7 + screenWidth * 0.1}
+              y={graphHeight + 30} // Adjusted for a smaller card
+              fontSize="12"
+              fill="black"
+              textAnchor="middle"
+            >
+              {index + 1}
+            </SvgText>
+          ))}
+  
+          {/* X-Axis Title */}
+          <SvgText
+            x={screenWidth / 2} // Centered horizontally
+            y={graphHeight + 50} // Adjusted for a smaller card
+            fontSize="14"
+            fill="black"
+            textAnchor="middle"
+          >
+            Days
+          </SvgText>
+        </Svg>
+      </View>
+    );
+  };  
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
+      {/* Header */}
       <View style={styles.headerBackground}></View>
       <Icon name="arrow-back" size={24} style={styles.backArrow} color="#838383" />
       <Text style={styles.headerTitle}>My Progress</Text>
 
-      {/* Filter Section */}
+      {/* Filters */}
       <Text style={styles.filterText}>Filter by</Text>
       <View style={styles.filterContainer}>
         <View style={styles.row}>
           <TouchableOpacity
             style={[
               styles.filterButton,
-              selectedFilters.includes("Problem Solving") && styles.selectedFilterButton,
+              selectedFilters.includes("problem_solving_xp") && styles.selectedFilterButton,
             ]}
-            onPress={() => toggleFilter("Problem Solving")}
+            onPress={() => toggleFilter("problem_solving_xp")}
           >
             <Text
               style={[
                 styles.filterTextLabel,
                 { color: "#FF8460" },
-                selectedFilters.includes("Problem Solving") && styles.selectedFilterText,
+                selectedFilters.includes("problem_solving_xp") && styles.selectedFilterText,
               ]}
             >
               Problem Solving
@@ -95,15 +201,15 @@ export default function MyProgress() {
           <TouchableOpacity
             style={[
               styles.filterButton,
-              selectedFilters.includes("Communication") && styles.selectedFilterButton,
+              selectedFilters.includes("communication_xp") && styles.selectedFilterButton,
             ]}
-            onPress={() => toggleFilter("Communication")}
+            onPress={() => toggleFilter("communication_xp")}
           >
             <Text
               style={[
                 styles.filterTextLabel,
                 { color: "#4CA8FF" },
-                selectedFilters.includes("Communication") && styles.selectedFilterText,
+                selectedFilters.includes("communication_xp") && styles.selectedFilterText,
               ]}
             >
               Communication
@@ -115,15 +221,15 @@ export default function MyProgress() {
           <TouchableOpacity
             style={[
               styles.filterButton,
-              selectedFilters.includes("Adaptability") && styles.selectedFilterButton,
+              selectedFilters.includes("adaptability_xp") && styles.selectedFilterButton,
             ]}
-            onPress={() => toggleFilter("Adaptability")}
+            onPress={() => toggleFilter("adaptability_xp")}
           >
             <Text
               style={[
                 styles.filterTextLabel,
                 { color: "#FFAB45" },
-                selectedFilters.includes("Adaptability") && styles.selectedFilterText,
+                selectedFilters.includes("adaptability_xp") && styles.selectedFilterText,
               ]}
             >
               Adaptability
@@ -133,15 +239,15 @@ export default function MyProgress() {
           <TouchableOpacity
             style={[
               styles.filterButton,
-              selectedFilters.includes("Leadership") && styles.selectedFilterButton,
+              selectedFilters.includes("leadership_xp") && styles.selectedFilterButton,
             ]}
-            onPress={() => toggleFilter("Leadership")}
+            onPress={() => toggleFilter("leadership_xp")}
           >
             <Text
               style={[
                 styles.filterTextLabel,
-                { color: "#6CE7C9" },
-                selectedFilters.includes("Leadership") && styles.selectedFilterText,
+                { color: "#58CDB0" },
+                selectedFilters.includes("leadership_xp") && styles.selectedFilterText,
               ]}
             >
               Leadership
@@ -150,69 +256,36 @@ export default function MyProgress() {
         </View>
       </View>
 
+      {/* Graph Section */}
       <Text style={styles.graphTitle}>Skill Progress</Text>
-
-      <View style={styles.graphContainer}>
-
-  <Svg
-  width={screenWidth} // Use the full available width
-  height={graphHeight + 70} // Maintain space for the x-axis labels
-  style={{ marginHorizontal: 10 }} // Add margin to center the graph
->
-
-    {/* Draw Lines */}
-    {chartData.map((_, index) => {
-      if (index < chartData.length - 1) {
-        return (
-          <Line
-            key={`line-${index}`}
-            x1={(index / (chartData.length - 1)) * screenWidth * 0.8}
-            y1={graphHeight - scaledData[index]}
-            x2={((index + 1) / (chartData.length - 1)) * screenWidth * 0.8}
-            y2={graphHeight - scaledData[index + 1]}
-            stroke="#509B9B"
-            strokeWidth={2}
-          />
-        );
-      }
-      return null;
-    })}
-
-    {/* Draw Circles */}
-    {chartData.map((value, index) => (
-      <Circle
-        key={`circle-${index}`}
-        cx={(index / (chartData.length - 1)) * screenWidth * 0.8}
-        cy={graphHeight - scaledData[index]}
-        r={4}
-        fill="#FF8460"
-      />
-    ))}
-
-    {/* X-Axis Labels */}
-    {chartData.map((_, index) => (
-      <SvgText
-        key={`label-${index}`}
-        x={(index / (chartData.length - 1)) * screenWidth * 0.8} // Current scaling
-        y={graphHeight + 40} // Adjusted position for visibility
-        fontSize="12"
-        fill="black"
-        textAnchor="middle"
-      >
-        Day {index + 1}
-      </SvgText>
-    ))}
-  </Svg>
-</View>
-
+      <View style={styles.graphContainer}>{renderGraphs()}</View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1, // Enable flexbox layout
     backgroundColor: "#FFFFFF",
+  },
+  scrollView: {
+    flexGrow: 1, // Allow content to grow and scroll dynamically
+  },
+  contentContainer: {
+    flexGrow: 1, // Ensure the content container takes up available space
+    paddingBottom: 20, // Add extra space at the bottom to prevent cutoff
+  },
+  cardContainer: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12, // Rounded edges
+    elevation: 4, // Android shadow
+    shadowColor: "black", // iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    padding: 10,
+    marginVertical: 10, // Adjusted margins
+    marginHorizontal: 15, // Smaller horizontal margin
   },
   headerBackground: {
     position: "absolute",
@@ -229,16 +302,15 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 30,
     left: "28%",
-    fontFamily: "Poppins",
-    fontWeight: "700",
+    fontFamily: "Poppins-Regular",
+    fontWeight: "bold",
     fontSize: 30,
     color: "#509B9B",
   },
   filterText: {
     marginTop: "22%",
     marginLeft: 45,
-    fontFamily: "Poppins",
-    fontWeight: "300",
+    fontFamily: "Poppins-Regular",
     fontSize: 13,
     color: "#000000",
   },
@@ -265,8 +337,7 @@ const styles = StyleSheet.create({
     borderColor: "#509B9B",
   },
   filterTextLabel: {
-    fontFamily: "Poppins",
-    fontWeight: "600",
+    fontFamily: "Poppins-Regular",
     fontSize: 12,
   },
   selectedFilterText: {
@@ -277,17 +348,20 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     textAlign: "center",
     color: "black",
-    marginTop: 30, // Adjusted position
-    marginBottom: 20, // Added space below
+    marginTop: 30,
   },
   graphContainer: {
-    marginTop: 20, // Adjusted margin for more space
+    marginTop: 20,
     alignItems: "center",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
   },
   loadingText: {
     fontSize: 16,
     color: "#509B9B",
-    textAlign: "center",
-    marginTop: 20,
   },
 });
