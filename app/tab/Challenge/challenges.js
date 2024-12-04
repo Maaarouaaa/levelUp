@@ -8,22 +8,53 @@ import {
   TouchableOpacity,
 } from "react-native";
 import ExperienceCard from "@/components/ExperienceCard";
-import { useRouter } from "expo-router";
+import db from "@/database/db";
 
 export default function Three({ navigation }) {
   const [searchText, setSearchText] = useState("");
   const [isToggled, setIsToggled] = useState(false);
   const [toSend, setToSend] = useState(false);
+  const [selectedCards, setSelectedCards] = useState([]);
+  userName = "DummyName";
   const handlePress = () => {
-    setToSend((prevState) => !prevState); // Toggles between true and false
+    console.log("Card pressed!");
+    setToSend(true); // Set to true to show the Send button
   };
 
   const handleToggle = () => {
-    setIsToggled((prev) => !prev);
+    setToSend(false); // Hide the Send button after action
   };
 
   // Filtered IDs for Remaining state
   const remainingIds = [1, 5, 4, 12, 13, 2, 3, 11];
+
+  const handleSend = async () => {
+    console.log("one", selectedCards);
+    try {
+      const currentDate = new Date().toISOString(); // Get the current date in ISO format
+
+      const { data, error } = await db
+        .from("Sent") // The table name in Supabase
+        .insert(
+          selectedCards.map((card) => ({
+            userName: "DummyName", // User's name
+            //cardId: 3, // Card ID
+            //date: currentDate, // Current date
+          }))
+        );
+
+      if (error) {
+        console.error("Error inserting data:", error.message);
+      } else {
+        console.log("Data inserted successfully:", data);
+        setSelectedCards([]); // Clear selected cards after successful submission
+        setToSend(false); // Hide send button
+      }
+    } catch (error) {
+      console.error("Unexpected error:", error);
+    }
+    console.log("two", selectedCards);
+  };
 
   return (
     <View style={styles.container}>
@@ -43,6 +74,135 @@ export default function Three({ navigation }) {
       <ScrollView contentContainerStyle={styles.cardsContainer}>
         {!isToggled &&
           remainingIds.map((id) => (
+            <TouchableOpacity
+              key={id}
+              style={styles.cardWrapper}
+              onPress={handlePress}
+            >
+              <ExperienceCard
+                id={id} // Set the ID for the experience
+                navigate="experience" // Navigate to experience screen
+                bool={true} // Example prop
+              />
+            </TouchableOpacity>
+          ))}
+      </ScrollView>
+      {/* Send button */}
+
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+          <Text style={styles.buttonText}>Send experiences?</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    pointerEvents: "box-none",
+  },
+  blueBackground: {
+    height: "18%",
+    backgroundColor: "rgba(80, 155, 155, .27)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  headerText: {
+    fontSize: 40,
+    color: "#509B9B",
+    fontWeight: "bold",
+  },
+  searchBar: {
+    position: "absolute",
+    top: "15%",
+    alignSelf: "center",
+    height: 40,
+    width: "80%",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    backgroundColor: "#fff",
+    color: "#000",
+  },
+  cardsContainer: {
+    marginTop: 41,
+    //backgroundColor: "red",
+  },
+  cardWrapper: {
+    marginBottom: 15, // Adds padding between cards
+    pointerEvents: "box-none",
+  },
+  buttonContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    bottom: 20, // Distance from the bottom edge of the screen
+    width: "100%",
+  },
+  sendButton: {
+    width: "60%", // Adjust the button width as necessary
+    padding: 15,
+    borderRadius: 25,
+    backgroundColor: "#509B9B",
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+});
+
+/*
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
+import ExperienceCard from "@/components/ExperienceCard";
+import { useRouter } from "expo-router";
+
+export default function Three({ navigation }) {
+  const [searchText, setSearchText] = useState("");
+  const [isToggled, setIsToggled] = useState(false);
+  const [toSend, setToSend] = useState(false);
+  const handlePress = () => {
+    setToSend((prevState) => !prevState); // Toggles between true and false
+  };
+
+  const handleToggle = () => {
+    setIsToggled((prev) => !prev);
+  };
+
+  // Filtered IDs for Remaining state
+  const remainingIds = [1, 5, 4, 12, 13, 2, 3, 11];
+
+  return (
+    <View style={styles.container}>
+      {/* Blue Background 
+      <View style={styles.blueBackground}>
+        <Text style={styles.headerText}>Challenge</Text>
+      </View>
+      {/* Search Bar 
+      <TextInput
+        style={styles.searchBar}
+        placeholder="Search experiences..."
+        placeholderTextColor="#aaa"
+        value={searchText}
+        onChangeText={setSearchText}
+      />
+      {/* Scrollable Cards 
+      <ScrollView contentContainerStyle={styles.cardsContainer}>
+        {!isToggled &&
+          remainingIds.map((id) => (
             <View key={id} style={styles.cardWrapper} onPress={handlePress}>
               <ExperienceCard
                 id={id} // Set the ID for the experience
@@ -53,7 +213,7 @@ export default function Three({ navigation }) {
             </View>
           ))}
       </ScrollView>
-      {/* Send button */}
+      {/* Send button 
       {toSend && (
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.sendButton} onPress={handleToggle}>
@@ -152,3 +312,4 @@ const styles = StyleSheet.create({
     size: 31,
   },
 });
+*/
