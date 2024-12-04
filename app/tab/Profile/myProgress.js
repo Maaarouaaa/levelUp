@@ -83,40 +83,34 @@ export default function MyProgress() {
 
     const yAxisPoints = Array.from({ length: Math.ceil(maxValue / 50) + 1 }, (_, i) => i * 50);
 
+
     return (
       <View style={styles.cardContainer}>
         <Svg
           width={screenWidth * 0.85}
-          height={graphHeight + bottomPadding - 40}
-          style={{ marginHorizontal: 10 }}
+          height={graphHeight + bottomPadding}
+          style={styles.graphSvg}
         >
-          {/* Draw Y-Axis Labels */}
           {yAxisPoints.map((point, index) => (
             <SvgText
               key={`y-axis-${index}`}
-              x={10} // Positioned on the left of the graph
+              x={34}
               y={graphHeight - (point / maxValue) * (graphHeight - topMargin)}
-              fontSize="12"
-              fill="black"
-              textAnchor="middle"
+              {...styles.yAxisLabel} // Applying style
             >
               {point}
             </SvgText>
           ))}
 
-      {/* Y-Axis Title */}
-      <SvgText
-        x={-50} // Move further to the left
-        y={graphHeight / 2} // Center it vertically along the graph height
-        fontSize="14"
-        fill="black"
-        textAnchor="middle"
-        transform={`rotate(-90, -50, ${graphHeight / 2})`} // Rotate and position appropriately
-      >
-        XP
-      </SvgText>
+          <SvgText
+            x={28}
+            y={graphHeight / 2 + topMargin}
+            transform={`rotate(-90, 10, ${graphHeight / 2 + topMargin})`}
+            {...styles.yAxisTitle} // Applying style
+          >
+            Total XP
+          </SvgText>
 
-          {/* Draw Graphs for Selected Filters */}
           {scaledData.map(({ filter, data }) => (
             <React.Fragment key={filter}>
               {data.map((_, index) => {
@@ -137,7 +131,7 @@ export default function MyProgress() {
                           leadership_xp: "#58CDB0",
                         }[filter]
                       }
-                      strokeWidth={2}
+                      {...styles.graphLine} // Applying style
                     />
                   );
                 }
@@ -149,7 +143,6 @@ export default function MyProgress() {
                   key={`circle-${filter}-${index}`}
                   cx={(index / (data.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08}
                   cy={graphHeight - value}
-                  r={4}
                   fill={
                     {
                       total_xp: "#509B9B",
@@ -159,157 +152,164 @@ export default function MyProgress() {
                       leadership_xp: "#58CDB0",
                     }[filter]
                   }
+                  {...styles.graphCircle} // Applying style
                 />
               ))}
             </React.Fragment>
           ))}
 
-          {/* X-Axis Labels */}
           {chartData.map((_, index) => (
             <SvgText
               key={`label-${index}`}
               x={(index / (chartData.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08}
               y={graphHeight + 25}
-              fontSize="12"
-              fill="black"
-              textAnchor="middle"
+              {...styles.xAxisLabel} // Applying style
             >
               {index + 1}
             </SvgText>
           ))}
 
-          {/* X-Axis Title */}
           <SvgText
-            x={screenWidth / 2 - 20}
+            x={screenWidth / 2 -42}
             y={graphHeight + 50}
-            fontSize="14"
-            fill="black"
-            textAnchor="middle"
+            {...styles.xAxisTitle} // Applying style
           >
-            Days
+            Week
           </SvgText>
         </Svg>
+
+
+
       </View>
     );
   };
 
   return (
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
-      <View style={styles.headerBackground}></View>
-      <Icon name="arrow-back" size={24} style={styles.backArrow} color="#838383" />
-      <Text style={styles.headerTitle}>My Progress</Text>
-      <Text style={styles.filterText}>Filter by</Text>
-      <View style={styles.filterContainer}>
-        <View style={styles.row}>
-          <TouchableOpacity
-            style={[
-              styles.filterButton,
-              selectedFilters.includes("problem_solving_xp") && styles.selectedFilterButton,
-            ]}
-            onPress={() => toggleFilter("problem_solving_xp")}
-          >
-            <Text
-              style={[
-                styles.filterTextLabel,
-                { color: "#FF8460" },
-                selectedFilters.includes("problem_solving_xp") && styles.selectedFilterText,
-              ]}
-            >
-              Problem Solving
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.filterButton,
-              selectedFilters.includes("communication_xp") && styles.selectedFilterButton,
-            ]}
-            onPress={() => toggleFilter("communication_xp")}
-          >
-            <Text
-              style={[
-                styles.filterTextLabel,
-                { color: "#4CA8FF" },
-                selectedFilters.includes("communication_xp") && styles.selectedFilterText,
-              ]}
-            >
-              Communication
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.row}>
-          <TouchableOpacity
-            style={[
-              styles.filterButton,
-              selectedFilters.includes("adaptability_xp") && styles.selectedFilterButton,
-            ]}
-            onPress={() => toggleFilter("adaptability_xp")}
-          >
-            <Text
-              style={[
-                styles.filterTextLabel,
-                { color: "#FFAB45" },
-                selectedFilters.includes("adaptability_xp") && styles.selectedFilterText,
-              ]}
-            >
-              Adaptability
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.filterButton,
-              selectedFilters.includes("leadership_xp") && styles.selectedFilterButton,
-            ]}
-            onPress={() => toggleFilter("leadership_xp")}
-          >
-            <Text
-              style={[
-                styles.filterTextLabel,
-                { color: "#58CDB0" },
-                selectedFilters.includes("leadership_xp") && styles.selectedFilterText,
-              ]}
-            >
-              Leadership
-            </Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.headerBackground}>
+        <Text style={styles.headerTitle}>My Progress</Text>
       </View>
-      <Text style={styles.graphTitle}>Skill Progress</Text>
-      <View style={styles.graphContainer}>{renderGraphs()}</View>
+
+      <View style = {styles.filterSection}>
+        <Text style={styles.filterBy}>Filter by</Text>
+        <View style={styles.filterContainer}>
+          <View style={styles.row}>
+            <TouchableOpacity
+              style={[
+                styles.filterButton,
+                selectedFilters.includes("problem_solving_xp") && styles.selectedFilterButton,
+              ]}
+              onPress={() => toggleFilter("problem_solving_xp")}
+            >
+              <Text
+                style={[
+                  styles.filterTextLabel,
+                  { color: "#FF8460" },
+                  selectedFilters.includes("problem_solving_xp") && styles.selectedFilterText,
+                ]}
+              >
+                Problem Solving
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.filterButton,
+                selectedFilters.includes("communication_xp") && styles.selectedFilterButton,
+              ]}
+              onPress={() => toggleFilter("communication_xp")}
+            >
+              <Text
+                style={[
+                  styles.filterTextLabel,
+                  { color: "#4CA8FF" },
+                  selectedFilters.includes("communication_xp") && styles.selectedFilterText,
+                ]}
+              >
+                Communication
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.row}>
+            <TouchableOpacity
+              style={[
+                styles.filterButton,
+                selectedFilters.includes("adaptability_xp") && styles.selectedFilterButton,
+              ]}
+              onPress={() => toggleFilter("adaptability_xp")}
+            >
+              <Text
+                style={[
+                  styles.filterTextLabel,
+                  { color: "#FFAB45" },
+                  selectedFilters.includes("adaptability_xp") && styles.selectedFilterText,
+                ]}
+              >
+                Adaptability
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.filterButton,
+                selectedFilters.includes("leadership_xp") && styles.selectedFilterButton,
+              ]}
+              onPress={() => toggleFilter("leadership_xp")}
+            >
+              <Text
+                style={[
+                  styles.filterTextLabel,
+                  { color: "#58CDB0" },
+                  selectedFilters.includes("leadership_xp") && styles.selectedFilterText,
+                ]}
+              >
+                Leadership
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      
+
+      </View>
+
+      <View style = {styles.graphSection}>
+        <Text style={styles.graphTitle}>Skill Progress</Text>
+        <View style={styles.graphContainer}>{renderGraphs()}</View>
+      </View>
+ 
+      
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  // General Styles
   container: {
-    flex: 1, // Enable flexbox layout
+    flex: 1,
     backgroundColor: "#FFFFFF",
   },
   scrollView: {
-    flexGrow: 1, // Allow content to grow and scroll dynamically
+    flexGrow: 1,
   },
   contentContainer: {
-    flexGrow: 1, // Ensure the content container takes up available space
-    paddingBottom: 20, // Add extra space at the bottom to prevent cutoff
+    paddingBottom: 20,
   },
   cardContainer: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 12, // Rounded edges
-    elevation: 4, // Android shadow
-    shadowColor: "black", // iOS shadow
+    borderRadius: 12,
+    elevation: 4,
+    shadowColor: "black",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    padding: 10,
-    marginVertical: 10, // Adjusted margins
-    marginHorizontal: 15, // Smaller horizontal margin
+    marginVertical: 10,
+    marginTop: 20,
   },
   headerBackground: {
     position: "absolute",
     width: "100%",
-    height: "32%",
+    height: 200,
     backgroundColor: "rgba(80, 155, 155, 0.27)",
   },
   backArrow: {
@@ -320,10 +320,10 @@ const styles = StyleSheet.create({
   headerTitle: {
     position: "absolute",
     top: 30,
-    left: "28%",
-    fontFamily: "Poppins-Regular",
+    alignSelf: 'center',
+    fontFamily: "Poppins-Bold",
     fontWeight: "bold",
-    fontSize: 30,
+    fontSize: 38,
     color: "#509B9B",
   },
   filterText: {
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "47%",
-    height: 25,
+    height: 28,
     borderRadius: 15,
     borderWidth: 2,
     borderColor: "#E0E0E0",
@@ -364,14 +364,15 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
   graphTitle: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "500",
     textAlign: "center",
     color: "black",
     marginTop: 10,
+    fontFamily: "Poppins-SemiBold",
   },
   graphContainer: {
-    marginTop: 30,
+    marginTop: -8,
     alignItems: "center",
   },
   loadingContainer: {
@@ -384,4 +385,54 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#509B9B",
   },
+
+  // Graph-Specific Styles
+  graphSvg: {
+    marginHorizontal: 10,
+  },
+  yAxisLabel: {
+    fontSize: 12,
+    fill: "#979494",
+    textAnchor: "end",
+    fontFamily: "Poppins-Regular",
+  },
+  yAxisTitle: {
+    fontSize: 14,
+    fill: "black",
+    textAnchor: "middle",
+    fontFamily: "Poppins-Regular",
+  },
+  graphLine: {
+    strokeWidth: 2,
+  },
+  graphCircle: {
+    r: 4,
+  },
+  xAxisLabel: {
+    fontSize: 12,
+    color: "#979494",
+    textAnchor: "middle",
+    fontFamily: "Poppins-Regular",
+  },
+  xAxisTitle: {
+    fontSize: 14,
+    fill: "black",
+    alignSelf: "center",
+    fontFamily: "Poppins-Regular",
+  },
+  filterSection: {
+    paddingTop: 20,
+  },
+  graphSection: {
+    paddingTop: 20,
+  },
+  filterBy: {
+    marginTop: "20%",
+    marginLeft: 45,
+    paddingBottom: 5,
+    fontFamily: "Poppins-Regular",
+    color: "#000000",
+    fontSize: 16,
+  }
 });
+
