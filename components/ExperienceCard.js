@@ -108,25 +108,30 @@ const styles = StyleSheet.create({
     width: 364,
     height: 96,
     padding: 16,
-    justifyContent: "space-between",
+    justifyContent: "center", // Ensures content is centered vertically
+    alignItems: "center", // Ensures content is centered horizontally
+    flexDirection: "row",
   },
   loadingContainer: {
     justifyContent: "center",
     alignItems: "center",
   },
   content: {
-    flex: 1,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center", // Centers both the text and photo horizontally
+    alignItems: "center", // Centers the content vertically
   },
   words: {
     flex: 1,
-    justifyContent: "space-between",
+    justifyContent: "center", // Ensures vertical centering even when the name overflows
+    marginLeft: 16,
   },
   name: {
-    fontSize: 24,
+    fontSize: 22,
     color: "#000000",
     textAlign: "left",
+    flexWrap: 'wrap', // Allows the name to wrap to a second line if needed
+    lineHeight: 22,
   },
   xpRow: {
     flexDirection: "row",
@@ -159,16 +164,20 @@ const styles = StyleSheet.create({
     width: 364,
     height: 96,
     padding: 16,
-    justifyContent: "space-between",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
   },
   contentL: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
+    alignItems: "center",
     alignSelf: 'center',
     paddingTop: 14,
   },
 });
+
 
 
 
