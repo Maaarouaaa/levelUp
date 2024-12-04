@@ -115,7 +115,7 @@ export default function TabLayout() {
           tabBarStyle: {
             backgroundColor: "#D0E4E4", // Customize the tab bar itself
           },
-          headerShown: true,
+          headerShown: false,
         }}
       />
     </Tabs>
