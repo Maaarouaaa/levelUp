@@ -108,6 +108,7 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     textAlign: "center",
     width: 50, // Fixed width to align profile photos
+    fontFamily: "Poppins-Regular"
   },
   profilePicture: {
     width: 60,
@@ -120,19 +121,22 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   name: {
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 18,
     color: "#333",
+    fontFamily: "Poppins-SemiBold",
   },
   xpRow: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 4,
+    fontFamly: "Poppins-Regular",
   },
   xpText: {
     fontSize: 14,
     color: "#000", // Changed to black
     marginLeft: 2,
+    fontFamily: "Poppins-Regular",
+
   },
   button: {
     flexDirection: "row",
@@ -149,6 +153,7 @@ const styles = StyleSheet.create({
     color: "#509B9B",
     fontWeight: "bold",
     marginLeft: 2,
+    fontFamily: "Poppins-SemiBold",
   },
   loadingContainer: {
     flex: 1,
