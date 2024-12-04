@@ -1,7 +1,4 @@
-// back end director for feed stack navigation
 import { Stack } from "expo-router";
-import { View, Text } from "react-native";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Theme from "@/assets/theme";
 
 export default function FeedStackLayout() {
@@ -11,26 +8,69 @@ export default function FeedStackLayout() {
       <Stack.Screen
         name="index" // Matches "feed/index.js"
         options={{
-          //title: "Feed",
-          //headerShown: false, // No header for this screen
           title: "home",
-
           headerStyle: {
             backgroundColor: Theme.colors.backgroundPrimary,
           },
-
           headerTintColor: "#fff",
           headerShown: false,
         }}
       />
 
       {/* New Post Screen */}
-      {/*We can talk about it, if removed, there is the extra button and idk why, I can ask in OH*/}
       <Stack.Screen
-        name="adaptability" // Matches "feed/newpost.js"
+        name="problemS" // Matches "feed/problemS.js"
         options={{
-          headerShown: false, // Show header for this screen
-          presentation: "modal", // Modal presentation for this screen
+          headerShown: false,
+          animation: "slide_from_right", // Slides in from the right
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerTintColor: "#fff",
+        }}
+      />
+
+      <Stack.Screen
+        name="communication" // Matches "feed/communication.js"
+        options={{
+          headerShown: false,
+          animation: "slide_from_right", // Slides in from the right
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerTintColor: "#fff",
+        }}
+      />
+
+      <Stack.Screen
+        name="leadership" // Matches "feed/leadership.js"
+        options={{
+          headerShown: false,
+          animation: "slide_from_right", // Slides in from the right
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerTintColor: "#fff",
+        }}
+      />
+
+      <Stack.Screen
+        name="adaptability" // Matches "feed/adaptability.js"
+        options={{
+          headerShown: false,
+          animation: "slide_from_right", // Slides in from the right
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerTintColor: "#fff",
+        }}
+      />
+
+      <Stack.Screen
+        name="details" // Matches "feed/adaptability.js"
+        options={{
+          headerShown: false,
+          animation: "slide_from_right", // Slides in from the right
           headerStyle: {
             backgroundColor: "#fff",
           },
@@ -40,3 +80,4 @@ export default function FeedStackLayout() {
     </Stack>
   );
 }
+
