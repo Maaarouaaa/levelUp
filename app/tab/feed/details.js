@@ -339,16 +339,19 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   skillTagText: {
+    fontFamily: "Poppins",
     fontSize: 14,
     fontWeight: "600",
   },
   taskName: {
+    fontFamily: "Poppins",
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "left",
     paddingVertical: 4,
   },
   xpText: {
+    fontFamily: "Poppins",
     fontSize: 16,
     color: "#777",
     textAlign: "center",
@@ -359,6 +362,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   description: {
+    fontFamily: "Poppins",
     fontSize: 14,
     color: "#555",
     marginBottom: 24,
@@ -377,9 +381,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     zIndex: 100,
     fontSize: 12,
+    fontFamily: "Poppins",
     color: "#509B9B",
   },
   textInput: {
+    fontFamily: "Poppins",
     borderWidth: 1,
     borderColor: "#509B9B",
     borderRadius: 10,
@@ -406,6 +412,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
+    fontFamily: "Poppins",
     fontWeight: "bold",
     textAlign: "center",
     marginLeft: 10, // Spacing between icon and text
@@ -431,6 +438,7 @@ const styles = StyleSheet.create({
   },
   popupTitle: {
     fontSize: 24,
+    fontFamily: "Poppins",
     fontWeight: "bold",
     marginBottom: 10,
     textAlign: 'center',
@@ -438,6 +446,7 @@ const styles = StyleSheet.create({
   },
   popupMessage: {
     fontSize: 16,
+    fontFamily: "Poppins",
     textAlign: "center",
     marginBottom: 20,
   },
@@ -450,6 +459,7 @@ const styles = StyleSheet.create({
   okayButtonText: {
     color: "#fff",
     fontSize: 16,
+    fontFamily: "Poppins",
     fontWeight: "bold",
   },
 });
