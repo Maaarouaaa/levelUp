@@ -52,7 +52,7 @@ export default function FeedStackLayout() {
         name="newpost" // Matches "feed/newpost.js"
         options={{
           title: "New Post",
-          headerShown: true, // Show header for this screen
+          headerShown: false, // Show header for this screen
           presentation: "modal", // Modal presentation for this screen
           headerStyle: {
             backgroundColor: Theme.colors.backgroundPrimary,
