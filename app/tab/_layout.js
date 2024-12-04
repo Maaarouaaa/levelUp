@@ -45,7 +45,7 @@ export default function TabLayout() {
             backgroundColor: "#D0E4E4", // Use tabBarColor for the tab bar itself
           },
           headerTintColor: "#fff",
-          headerShown: true,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -82,7 +82,7 @@ export default function TabLayout() {
             backgroundColor: "#D0E4E4", // Use tabBarColor for the tab bar itself
           },
           headerTintColor: "#fff",
-          headerShown: true,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -111,21 +111,7 @@ export default function TabLayout() {
             backgroundColor: Theme.colors.backgroundPrimary, // Customize the header background color
           },
           headerTintColor: "#fff", // Customize the color of the back button and header text
-          /*headerTitle: () => (
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <MaterialCommunityIcons name="bee" size={31} color="#f4511e" />
-              <Text
-                style={{
-                  color: "#fff",
-                  marginLeft: 8,
-                  fontSize: 18,
-                  fontWeight: "bold",
-                }}
-              >
-                Buzz
-              </Text>
-            </View>
-          ), */
+
           tabBarStyle: {
             backgroundColor: "#D0E4E4", // Customize the tab bar itself
           },
