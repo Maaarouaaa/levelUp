@@ -105,9 +105,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerText: {
-    fontSize: 40,
+    fontSize: 38,
     color: "#4CA8FF",
     fontWeight: "bold",
+    fontFamily: 'Poppins-Bold',
   },
   searchBarWrapper: {
     position: "absolute",
@@ -128,6 +129,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "#fff",
     color: "#000",
+    fontFamily: 'Poppins-Regular',
   },
   cardWrapper: {
     marginBottom: 15,

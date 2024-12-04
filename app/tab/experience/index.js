@@ -197,6 +197,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     color: "#509B9B",
     fontWeight: "bold",
+    fontFamily: 'Poppins-Bold',
   },
   searchFilterContainer: {
     flexDirection: "row",
@@ -224,6 +225,7 @@ const styles = StyleSheet.create({
   dropdownText: {
     fontSize: 16,
     color: "#000",
+    fontFamily: 'Poppins-Regular',
   },
   dropdownList: {
     position: "absolute", // Makes it float above other content
@@ -245,6 +247,7 @@ const styles = StyleSheet.create({
   dropdownItemText: {
     fontSize: 16,
     color: "#000",
+    fontFamily: 'Poppins-Regular',
   },
   searchBar: {
     flex: 1,
@@ -255,6 +258,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "#fff",
     color: "#000",
+    fontFamily: 'Poppins-Regular',
   },
   toggleWrapper: {
     alignItems: "center",
@@ -291,14 +295,17 @@ const styles = StyleSheet.create({
     right: 4,
   },
   toggleText: {
-    fontSize: 15,
+    fontSize: 14,
     color: "#509B9B",
     zIndex: 1,
     paddingHorizontal: 5,
+    fontFamily: 'Poppins-SemiBold',
   },
   activeText: {
     color: "#fff",
     fontWeight: "bold",
+    fontFamily: 'Poppins-SemiBold',
+
   },
   cardWrapper: {
     marginBottom: 15,
