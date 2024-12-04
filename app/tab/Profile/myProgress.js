@@ -81,7 +81,8 @@ export default function MyProgress() {
       data: chartData.map((row) => (row[filter] / maxValue) * (graphHeight - topMargin)),
     }));
 
-    const yAxisPoints = Array.from({ length: Math.ceil(maxValue / 50) + 1 }, (_, i) => i * 50);
+    const yAxisPoints = Array.from({ length: Math.ceil(maxValue / 50) + 1 }, (_, i) => i * 50).filter(point => point !== 0);
+
 
     return (
       <View style={styles.cardContainer}>
@@ -93,8 +94,8 @@ export default function MyProgress() {
   {yAxisPoints.map((point, index) => (
     <SvgText
       key={`y-axis-${index}`}
-      x={36}
-      y={graphHeight - (point / maxValue) * (graphHeight - topMargin - 20)}
+      x={38}
+      y={graphHeight + 36 - (point / maxValue) * (graphHeight - topMargin)}
       {...styles.yAxisLabel} // Applying style
     >
       {point}
@@ -161,7 +162,7 @@ export default function MyProgress() {
     <SvgText
       key={`label-${index}`}
       x={(index / (chartData.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08 + 6}
-      y={graphHeight + 40}
+      y={graphHeight + 25}
       {...styles.xAxisLabel} // Applying style
     >
       {index + 1}
@@ -169,8 +170,8 @@ export default function MyProgress() {
   ))}
 
   <SvgText
-    x={screenWidth / 2 - 20}
-    y={graphHeight + 70}
+    x={screenWidth / 2 - 18}
+    y={graphHeight + 60}
     {...styles.xAxisTitle} // Applying style
   >
     Days
@@ -320,19 +321,18 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     position: "absolute",
+    alignSelf: "center",
     top: 30,
-    left: "28%",
-    fontFamily: "Poppins-Regular",
-    fontWeight: "bold",
-    fontSize: 30,
+    fontSize: 38,
     color: "#509B9B",
+    fontFamily: "Poppins-Bold",
   },
   filterText: {
     marginTop: "22%",
     marginBottom: "1%",
     marginLeft: 45,
-    fontFamily: "Poppins-Regular",
-    fontSize: 13,
+    fontFamily: "Poppins-SemiBold",
+    fontSize: 14,
     color: "#000000",
   },
   filterContainer: {
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "47%",
-    height: 25,
+    height: 30,
     borderRadius: 15,
     borderWidth: 2,
     borderColor: "#E0E0E0",
@@ -360,19 +360,21 @@ const styles = StyleSheet.create({
   filterTextLabel: {
     fontFamily: "Poppins-Regular",
     fontSize: 12,
+    fontFamily: "Poppins-SemiBold",
   },
   selectedFilterText: {
     fontWeight: "800",
   },
   graphTitle: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "500",
     textAlign: "center",
     color: "black",
-    marginTop: 10,
+    marginTop: -8,
+    fontFamily: "Poppins-SemiBold"
   },
   graphContainer: {
-    marginTop: 0,
+    marginTop: -4,
     alignItems: "center",
   },
   loadingContainer: {
@@ -392,13 +394,15 @@ const styles = StyleSheet.create({
   },
   yAxisLabel: {
     fontSize: 12,
-    fill: "black",
+    fill: "#979494",
     textAnchor: "end",
+    fontFamily: "Poppins-Regular",
   },
   yAxisTitle: {
     fontSize: 14,
     fill: "black",
     textAnchor: "middle",
+    fontFamily: "Poppins-Regular",
   },
   graphLine: {
     strokeWidth: 2,
@@ -408,13 +412,15 @@ const styles = StyleSheet.create({
   },
   xAxisLabel: {
     fontSize: 12,
-    fill: "black",
+    fill: "#979494",
     textAnchor: "middle",
+    fontFamily: "Poppins-Regular",
   },
   xAxisTitle: {
     fontSize: 14,
     fill: "black",
     textAnchor: "middle",
+    fontFamily: "Poppins-Regular",
   },
   filterSection:{
     paddingTop: 10,
