@@ -86,109 +86,98 @@ export default function MyProgress() {
     return (
       <View style={styles.cardContainer}>
         <Svg
-          width={screenWidth * 0.85}
-          height={graphHeight + bottomPadding - 40}
-          style={{ marginHorizontal: 10 }}
-        >
-          {/* Draw Y-Axis Labels */}
-          {yAxisPoints.map((point, index) => (
-            <SvgText
-              key={`y-axis-${index}`}
-              x={10} // Positioned on the left of the graph
-              y={graphHeight - (point / maxValue) * (graphHeight - topMargin)}
-              fontSize="12"
-              fill="black"
-              textAnchor="middle"
-            >
-              {point}
-            </SvgText>
-          ))}
+  width={screenWidth * 0.85}
+  height={graphHeight + bottomPadding}
+  style={styles.graphSvg}
+>
+  {yAxisPoints.map((point, index) => (
+    <SvgText
+      key={`y-axis-${index}`}
+      x={30}
+      y={graphHeight - (point / maxValue) * (graphHeight - topMargin)}
+      {...styles.yAxisLabel} // Applying style
+    >
+      {point}
+    </SvgText>
+  ))}
 
-      {/* Y-Axis Title */}
-      <SvgText
-        x={-50} // Move further to the left
-        y={graphHeight / 2} // Center it vertically along the graph height
-        fontSize="14"
-        fill="black"
-        textAnchor="middle"
-        transform={`rotate(-90, -50, ${graphHeight / 2})`} // Rotate and position appropriately
-      >
-        XP
-      </SvgText>
+  <SvgText
+    x={10}
+    y={graphHeight / 2 + topMargin - 1}
+    transform={`rotate(-90, 10, ${graphHeight / 2 + topMargin})`}
+    {...styles.yAxisTitle} // Applying style
+  >
+    Total XP
+  </SvgText>
 
-          {/* Draw Graphs for Selected Filters */}
-          {scaledData.map(({ filter, data }) => (
-            <React.Fragment key={filter}>
-              {data.map((_, index) => {
-                if (index < data.length - 1) {
-                  return (
-                    <Line
-                      key={`line-${filter}-${index}`}
-                      x1={(index / (data.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08}
-                      y1={graphHeight - data[index]}
-                      x2={((index + 1) / (data.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08}
-                      y2={graphHeight - data[index + 1]}
-                      stroke={
-                        {
-                          total_xp: "#509B9B",
-                          problem_solving_xp: "#FF8460",
-                          communication_xp: "#4CA8FF",
-                          adaptability_xp: "#FFAB45",
-                          leadership_xp: "#58CDB0",
-                        }[filter]
-                      }
-                      strokeWidth={2}
-                    />
-                  );
-                }
-                return null;
-              })}
+  {scaledData.map(({ filter, data }) => (
+    <React.Fragment key={filter}>
+      {data.map((_, index) => {
+        if (index < data.length - 1) {
+          return (
+            <Line
+              key={`line-${filter}-${index}`}
+              x1={(index / (data.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08}
+              y1={graphHeight - data[index]}
+              x2={((index + 1) / (data.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08}
+              y2={graphHeight - data[index + 1]}
+              stroke={
+                {
+                  total_xp: "#509B9B",
+                  problem_solving_xp: "#FF8460",
+                  communication_xp: "#4CA8FF",
+                  adaptability_xp: "#FFAB45",
+                  leadership_xp: "#58CDB0",
+                }[filter]
+              }
+              {...styles.graphLine} // Applying style
+            />
+          );
+        }
+        return null;
+      })}
 
-              {data.map((value, index) => (
-                <Circle
-                  key={`circle-${filter}-${index}`}
-                  cx={(index / (data.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08}
-                  cy={graphHeight - value}
-                  r={4}
-                  fill={
-                    {
-                      total_xp: "#509B9B",
-                      problem_solving_xp: "#FF8460",
-                      communication_xp: "#4CA8FF",
-                      adaptability_xp: "#FFAB45",
-                      leadership_xp: "#58CDB0",
-                    }[filter]
-                  }
-                />
-              ))}
-            </React.Fragment>
-          ))}
+      {data.map((value, index) => (
+        <Circle
+          key={`circle-${filter}-${index}`}
+          cx={(index / (data.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08}
+          cy={graphHeight - value}
+          fill={
+            {
+              total_xp: "#509B9B",
+              problem_solving_xp: "#FF8460",
+              communication_xp: "#4CA8FF",
+              adaptability_xp: "#FFAB45",
+              leadership_xp: "#58CDB0",
+            }[filter]
+          }
+          {...styles.graphCircle} // Applying style
+        />
+      ))}
+    </React.Fragment>
+  ))}
 
-          {/* X-Axis Labels */}
-          {chartData.map((_, index) => (
-            <SvgText
-              key={`label-${index}`}
-              x={(index / (chartData.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08}
-              y={graphHeight + 25}
-              fontSize="12"
-              fill="black"
-              textAnchor="middle"
-            >
-              {index + 1}
-            </SvgText>
-          ))}
+  {chartData.map((_, index) => (
+    <SvgText
+      key={`label-${index}`}
+      x={(index / (chartData.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08}
+      y={graphHeight + 25}
+      {...styles.xAxisLabel} // Applying style
+    >
+      {index + 1}
+    </SvgText>
+  ))}
 
-          {/* X-Axis Title */}
-          <SvgText
-            x={screenWidth / 2 - 20}
-            y={graphHeight + 50}
-            fontSize="14"
-            fill="black"
-            textAnchor="middle"
-          >
-            Days
-          </SvgText>
-        </Svg>
+  <SvgText
+    x={screenWidth / 2 - 20}
+    y={graphHeight + 50}
+    {...styles.xAxisTitle} // Applying style
+  >
+    Days
+  </SvgText>
+</Svg>
+
+
       </View>
     );
   };
@@ -283,28 +272,27 @@ export default function MyProgress() {
 }
 
 const styles = StyleSheet.create({
+  // General Styles
   container: {
-    flex: 1, // Enable flexbox layout
+    flex: 1,
     backgroundColor: "#FFFFFF",
   },
   scrollView: {
-    flexGrow: 1, // Allow content to grow and scroll dynamically
+    flexGrow: 1,
   },
   contentContainer: {
-    flexGrow: 1, // Ensure the content container takes up available space
-    paddingBottom: 20, // Add extra space at the bottom to prevent cutoff
+    paddingBottom: 20,
   },
   cardContainer: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 12, // Rounded edges
-    elevation: 4, // Android shadow
-    shadowColor: "black", // iOS shadow
+    borderRadius: 12,
+    elevation: 4,
+    shadowColor: "black",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    padding: 10,
-    marginVertical: 10, // Adjusted margins
-    marginHorizontal: 15, // Smaller horizontal margin
+    marginVertical: 10,
+    marginTop: 20,
   },
   headerBackground: {
     position: "absolute",
@@ -383,5 +371,36 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 16,
     color: "#509B9B",
+  },
+
+  // Graph-Specific Styles
+  graphSvg: {
+    marginHorizontal: 10,
+  },
+  yAxisLabel: {
+    fontSize: 12,
+    fill: "black",
+    textAnchor: "end",
+  },
+  yAxisTitle: {
+    fontSize: 14,
+    fill: "black",
+    textAnchor: "middle",
+  },
+  graphLine: {
+    strokeWidth: 2,
+  },
+  graphCircle: {
+    r: 4,
+  },
+  xAxisLabel: {
+    fontSize: 12,
+    fill: "black",
+    textAnchor: "middle",
+  },
+  xAxisTitle: {
+    fontSize: 14,
+    fill: "black",
+    textAnchor: "middle",
   },
 });
