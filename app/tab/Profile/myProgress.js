@@ -93,8 +93,8 @@ export default function MyProgress() {
   {yAxisPoints.map((point, index) => (
     <SvgText
       key={`y-axis-${index}`}
-      x={30}
-      y={graphHeight - (point / maxValue) * (graphHeight - topMargin)}
+      x={36}
+      y={graphHeight - (point / maxValue) * (graphHeight - topMargin - 20)}
       {...styles.yAxisLabel} // Applying style
     >
       {point}
@@ -102,12 +102,12 @@ export default function MyProgress() {
   ))}
 
   <SvgText
-    x={10}
-    y={graphHeight / 2 + topMargin - 1}
+    x={28}
+    y={graphHeight / 2 + topMargin }
     transform={`rotate(-90, 10, ${graphHeight / 2 + topMargin})`}
     {...styles.yAxisTitle} // Applying style
   >
-    Total XP
+    XP
   </SvgText>
 
   {scaledData.map(({ filter, data }) => (
@@ -160,8 +160,8 @@ export default function MyProgress() {
   {chartData.map((_, index) => (
     <SvgText
       key={`label-${index}`}
-      x={(index / (chartData.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08}
-      y={graphHeight + 25}
+      x={(index / (chartData.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08 + 6}
+      y={graphHeight + 40}
       {...styles.xAxisLabel} // Applying style
     >
       {index + 1}
@@ -170,7 +170,7 @@ export default function MyProgress() {
 
   <SvgText
     x={screenWidth / 2 - 20}
-    y={graphHeight + 50}
+    y={graphHeight + 70}
     {...styles.xAxisTitle} // Applying style
   >
     Days
@@ -184,95 +184,108 @@ export default function MyProgress() {
 
   return (
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
-      <View style={styles.headerBackground}></View>
-      <Icon name="arrow-back" size={24} style={styles.backArrow} color="#838383" />
-      <Text style={styles.headerTitle}>My Progress</Text>
-      <Text style={styles.filterText}>Filter by</Text>
-      <View style={styles.filterContainer}>
-        <View style={styles.row}>
-          <TouchableOpacity
-            style={[
-              styles.filterButton,
-              selectedFilters.includes("problem_solving_xp") && styles.selectedFilterButton,
-            ]}
-            onPress={() => toggleFilter("problem_solving_xp")}
-          >
-            <Text
-              style={[
-                styles.filterTextLabel,
-                { color: "#FF8460" },
-                selectedFilters.includes("problem_solving_xp") && styles.selectedFilterText,
-              ]}
-            >
-              Problem Solving
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.filterButton,
-              selectedFilters.includes("communication_xp") && styles.selectedFilterButton,
-            ]}
-            onPress={() => toggleFilter("communication_xp")}
-          >
-            <Text
-              style={[
-                styles.filterTextLabel,
-                { color: "#4CA8FF" },
-                selectedFilters.includes("communication_xp") && styles.selectedFilterText,
-              ]}
-            >
-              Communication
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.row}>
-          <TouchableOpacity
-            style={[
-              styles.filterButton,
-              selectedFilters.includes("adaptability_xp") && styles.selectedFilterButton,
-            ]}
-            onPress={() => toggleFilter("adaptability_xp")}
-          >
-            <Text
-              style={[
-                styles.filterTextLabel,
-                { color: "#FFAB45" },
-                selectedFilters.includes("adaptability_xp") && styles.selectedFilterText,
-              ]}
-            >
-              Adaptability
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.filterButton,
-              selectedFilters.includes("leadership_xp") && styles.selectedFilterButton,
-            ]}
-            onPress={() => toggleFilter("leadership_xp")}
-          >
-            <Text
-              style={[
-                styles.filterTextLabel,
-                { color: "#58CDB0" },
-                selectedFilters.includes("leadership_xp") && styles.selectedFilterText,
-              ]}
-            >
-              Leadership
-            </Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.headerBackground}>
+        <Text style={styles.headerTitle}>My Progress</Text>
       </View>
-      <Text style={styles.graphTitle}>Skill Progress</Text>
-      <View style={styles.graphContainer}>{renderGraphs()}</View>
+
+
+      <View style = {styles.filterSection}>
+        <Text style={styles.filterText}>Filter by</Text>
+        <View style={styles.filterContainer}>
+          <View style={styles.row}>
+            <TouchableOpacity
+              style={[
+                styles.filterButton,
+                selectedFilters.includes("problem_solving_xp") && styles.selectedFilterButton,
+              ]}
+              onPress={() => toggleFilter("problem_solving_xp")}
+            >
+              <Text
+                style={[
+                  styles.filterTextLabel,
+                  { color: "#FF8460" },
+                  selectedFilters.includes("problem_solving_xp") && styles.selectedFilterText,
+                ]}
+              >
+                Problem Solving
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.filterButton,
+                selectedFilters.includes("communication_xp") && styles.selectedFilterButton,
+              ]}
+              onPress={() => toggleFilter("communication_xp")}
+            >
+              <Text
+                style={[
+                  styles.filterTextLabel,
+                  { color: "#4CA8FF" },
+                  selectedFilters.includes("communication_xp") && styles.selectedFilterText,
+                ]}
+              >
+                Communication
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.row}>
+            <TouchableOpacity
+              style={[
+                styles.filterButton,
+                selectedFilters.includes("adaptability_xp") && styles.selectedFilterButton,
+              ]}
+              onPress={() => toggleFilter("adaptability_xp")}
+            >
+              <Text
+                style={[
+                  styles.filterTextLabel,
+                  { color: "#FFAB45" },
+                  selectedFilters.includes("adaptability_xp") && styles.selectedFilterText,
+                ]}
+              >
+                Adaptability
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.filterButton,
+                selectedFilters.includes("leadership_xp") && styles.selectedFilterButton,
+              ]}
+              onPress={() => toggleFilter("leadership_xp")}
+            >
+              <Text
+                style={[
+                  styles.filterTextLabel,
+                  { color: "#58CDB0" },
+                  selectedFilters.includes("leadership_xp") && styles.selectedFilterText,
+                ]}
+              >
+                Leadership
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+      </View>
+
+
+
+
+      <View style = {styles.graphSection}>
+        <Text style={styles.graphTitle}>Skill Progress</Text>
+        <View style={styles.graphContainer}>{renderGraphs()}</View>
+      </View>
+
+      
+      
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  // General Styles
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
@@ -297,7 +310,7 @@ const styles = StyleSheet.create({
   headerBackground: {
     position: "absolute",
     width: "100%",
-    height: "32%",
+    height: 190,
     backgroundColor: "rgba(80, 155, 155, 0.27)",
   },
   backArrow: {
@@ -359,7 +372,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   graphContainer: {
-    marginTop: 30,
+    marginTop: 0,
     alignItems: "center",
   },
   loadingContainer: {
@@ -403,4 +416,12 @@ const styles = StyleSheet.create({
     fill: "black",
     textAnchor: "middle",
   },
+  filterSection:{
+    paddingTop: 10,
+  },
+  graphSection:{
+    paddingTop: 30,
+  },
+
 });
+
