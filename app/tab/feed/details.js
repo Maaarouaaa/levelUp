@@ -450,11 +450,12 @@ const styles = StyleSheet.create({
     justifyContent: "center", // Center content
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
     textAlign: "center",
-    marginLeft: 10, // Spacing between icon and text
+    marginLeft: 2, // Spacing between icon and text
     fontFamily: 'Poppins-SemiBold',
+    color: "#509B9B",
   },
   icon: {
     marginLeft: 10, // Spacing between icon and text
