@@ -82,47 +82,50 @@ export default function MyProgress() {
         selectedFilters.map((filter) => row[filter])
       )
     );
-
+  
     const scaledData = selectedFilters.map((filter) => ({
       filter,
       data: chartData.map((row) => (row[filter] / maxValue) * (graphHeight - topMargin)),
     }));
-
+  
     const yAxisPoints = Array.from({ length: Math.ceil(maxValue / 50) + 1 }, (_, i) => i * 50);
-
+  
+    const xSpacingFactor = 0.5; // Smaller value to reduce the spacing between X-axis labels
+    const yOffset = 10; // Offset to move the graph and labels down
+  
     return (
       <View style={styles.cardContainer}>
         <Svg
-          width={screenWidth * 0.85}
-          height={graphHeight + bottomPadding - 40}
+          width={screenWidth * 0.95} // Adjusted width for more space
+          height={graphHeight + bottomPadding + yOffset}
           style={{ marginHorizontal: 10 }}
         >
           {/* Draw Y-Axis Labels */}
           {yAxisPoints.map((point, index) => (
             <SvgText
               key={`y-axis-${index}`}
-              x={10} // Positioned on the left of the graph
-              y={graphHeight - (point / maxValue) * (graphHeight - topMargin)}
+              x={30} // Positioned to the left
+              y={graphHeight - (point / maxValue) * (graphHeight - topMargin) + yOffset} // Added yOffset
               fontSize="12"
               fill="black"
-              textAnchor="middle"
+              textAnchor="end" // Align text to the right
             >
               {point}
             </SvgText>
           ))}
-
-      {/* Y-Axis Title */}
-      <SvgText
-        x={-50} // Move further to the left
-        y={graphHeight / 2} // Center it vertically along the graph height
-        fontSize="14"
-        fill="black"
-        textAnchor="middle"
-        transform={`rotate(-90, -50, ${graphHeight / 2})`} // Rotate and position appropriately
-      >
-        XP
-      </SvgText>
-
+  
+          {/* Y-Axis Title */}
+          <SvgText
+            x={10} // Adjusted for better alignment
+            y={graphHeight / 2 + yOffset} // Added yOffset
+            fontSize="14"
+            fill="black"
+            textAnchor="middle"
+            transform={`rotate(-90, 10, ${graphHeight / 2 + yOffset})`} // Adjusted rotation with yOffset
+          >
+            XP
+          </SvgText>
+  
           {/* Draw Graphs for Selected Filters */}
           {scaledData.map(({ filter, data }) => (
             <React.Fragment key={filter}>
@@ -131,10 +134,10 @@ export default function MyProgress() {
                   return (
                     <Line
                       key={`line-${filter}-${index}`}
-                      x1={(index / (data.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08}
-                      y1={graphHeight - data[index]}
-                      x2={((index + 1) / (data.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08}
-                      y2={graphHeight - data[index + 1]}
+                      x1={(index * xSpacingFactor * screenWidth * 0.35) + 50} // Reduced spacing between points
+                      y1={graphHeight - data[index] + yOffset} // Added yOffset
+                      x2={((index + 1) * xSpacingFactor * screenWidth * 0.35) + 50} // Reduced spacing between points
+                      y2={graphHeight - data[index + 1] + yOffset} // Added yOffset
                       stroke={
                         {
                           total_xp: "#509B9B",
@@ -150,12 +153,12 @@ export default function MyProgress() {
                 }
                 return null;
               })}
-
+  
               {data.map((value, index) => (
                 <Circle
                   key={`circle-${filter}-${index}`}
-                  cx={(index / (data.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08}
-                  cy={graphHeight - value}
+                  cx={(index * xSpacingFactor * screenWidth * 0.35) + 50} // Reduced spacing between points
+                  cy={graphHeight - value + yOffset} // Added yOffset
                   r={4}
                   fill={
                     {
@@ -170,13 +173,13 @@ export default function MyProgress() {
               ))}
             </React.Fragment>
           ))}
-
+  
           {/* X-Axis Labels */}
           {chartData.map((_, index) => (
             <SvgText
               key={`label-${index}`}
-              x={(index / (chartData.length - 1)) * screenWidth * 0.7 + screenWidth * 0.08}
-              y={graphHeight + 25}
+              x={(index * xSpacingFactor * screenWidth * 0.35) + 50} // Reduced spacing between points
+              y={graphHeight + 20 + yOffset} // Added yOffset
               fontSize="12"
               fill="black"
               textAnchor="middle"
@@ -184,11 +187,11 @@ export default function MyProgress() {
               {index + 1}
             </SvgText>
           ))}
-
+  
           {/* X-Axis Title */}
           <SvgText
             x={screenWidth / 2 - 20}
-            y={graphHeight + 50}
+            y={graphHeight + 40 + yOffset} // Added yOffset
             fontSize="14"
             fill="black"
             textAnchor="middle"
@@ -199,8 +202,9 @@ export default function MyProgress() {
       </View>
     );
   };
-
-
+  
+  
+  
 
   return (
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
@@ -310,6 +314,8 @@ const styles = StyleSheet.create({
     paddingBottom: 20, // Add extra space at the bottom to prevent cutoff
   },
   cardContainer: {
+    width: '95%', // Increase percentage or use fixed width
+    height: '75%',
     backgroundColor: "#FFFFFF",
     borderRadius: 12, // Rounded edges
     elevation: 4, // Android shadow
@@ -336,8 +342,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 30,
     left: "28%",
-    fontFamily: "Poppins-Regular",
-    fontWeight: "bold",
+    fontFamily: "Poppins-Bold",
     fontSize: 30,
     color: "#509B9B",
   },
