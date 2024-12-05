@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 import db from "@/database/db"; // Ensure this path points to your database setup
 
 const Profile = ({ id, ranking, friends }) => {
@@ -9,6 +18,15 @@ const Profile = ({ id, ranking, friends }) => {
   const [name, setName] = useState(null);
   const [totalXp, setTotalXp] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const navigation = useNavigation(); // Get navigation object
+  const router = useRouter();
+
+  const handlePress = () => {
+    if (friends) {
+      router.push({ pathname: "/tab/Challenge/challenges" });
+    }
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -67,20 +85,32 @@ const Profile = ({ id, ranking, friends }) => {
           <Text style={styles.name}>{name || "No Name"}</Text>
           <View style={styles.xpRow}>
             <Icon name="star" size={16} color="#509B9B" />
-            <Text style={styles.xpText}>{totalXp !== null ? `${totalXp} XP` : "No XP"}</Text>
+            <Text style={styles.xpText}>
+              {totalXp !== null ? `${totalXp} XP` : "No XP"}
+            </Text>
           </View>
         </View>
 
         {/* Dynamic Button */}
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={handlePress}>
           {friends ? (
             <>
-              <Icon name="paper-plane-outline" size={14} color="#509B9B" style={styles.icon} />
+              <Icon
+                name="paper-plane-outline"
+                size={14}
+                color="#509B9B"
+                style={styles.icon}
+              />
               <Text style={styles.buttonText}>Challenge</Text>
             </>
           ) : (
             <>
-              <Icon name="person-add-outline" size={14} color="#509B9B" style={styles.icon} />
+              <Icon
+                name="person-add-outline"
+                size={14}
+                color="#509B9B"
+                style={styles.icon}
+              />
               <Text style={styles.buttonText}>Add Friend</Text>
             </>
           )}
@@ -170,11 +200,4 @@ const styles = StyleSheet.create({
   },
 });
 
-
 export default Profile;
-
-
-
-
-
-
