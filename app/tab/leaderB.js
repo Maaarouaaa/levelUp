@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 import db from "@/database/db"; // Ensure this points to your database setup
+import { useRouter } from "expo-router";
+import Icon from "react-native-vector-icons/Ionicons";
 import Profile from "@/components/Profile";
 
 export default function Three() {
@@ -15,6 +17,7 @@ export default function Three() {
   const [isToggled, setIsToggled] = useState(false);
   const [friendsProfiles, setFriendsProfiles] = useState([]);
   const [globalProfiles, setGlobalProfiles] = useState([]);
+  
 
   const handleToggle = () => {
     setIsToggled((prev) => !prev);
