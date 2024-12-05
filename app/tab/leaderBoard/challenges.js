@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,26 +7,71 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
+import { useRouter } from "expo-router";
+import Icon from "react-native-vector-icons/Ionicons";
 import ExperienceCard from "@/components/ExperienceCard";
-import db from "@/database/db";
+import db from "@/database/db"; // Ensure this points to your database setup
 
 export default function Three({ navigation }) {
   const [searchText, setSearchText] = useState("");
   const [isToggled, setIsToggled] = useState(false);
   const [toSend, setToSend] = useState(false);
   const [selectedCards, setSelectedCards] = useState([]);
-  userName = "DummyName";
-  const handlePress = () => {
-    console.log("Card pressed!");
+  const [completed, setCompleted] = useState([]);
+  const [allTasks, setAllTasks] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]);
+
+  useEffect(() => {
+    // Fetch all tasks and completed tasks from the 'tasks' table
+    const fetchTasks = async () => {
+      try {
+        const { data, error } = await db.from("tasks").select("*");
+        if (error) {
+          console.error("Error fetching tasks:", error.message);
+          return;
+        }
+        setAllTasks(data);
+
+        // Filter completed tasks based on 'done' column
+        const completedIds = data.filter((task) => task.done).map((task) => task.id);
+        setCompleted(completedIds);
+      } catch (error) {
+        console.error("Unexpected error fetching tasks:", error);
+      }
+    };
+
+    fetchTasks();
+  }, []);
+
+  useEffect(() => {
+    // Apply search filter
+    const filterTasks = () => {
+      const filtered = allTasks.filter((task) => {
+        const name = task.name || "";
+        const description = task.description || "";
+        return (
+          name.toLowerCase().includes(searchText.toLowerCase()) ||
+          description.toLowerCase().includes(searchText.toLowerCase())
+        );
+      });
+
+      setFilteredTasks(filtered);
+    };
+
+    filterTasks();
+  }, [searchText, allTasks]);
+
+  const router = useRouter();
+
+  const navigateBack = () => {
+    router.push("/tab/leaderB");
+  };
+
+  const handlePress = (id) => {
+    console.log("Card pressed!", id);
     setToSend(true); // Set to true to show the Send button
+    setSelectedCards((prev) => [...prev, id]); // Add the selected card's ID
   };
-
-  const handleToggle = () => {
-    setToSend(false); // Hide the Send button after action
-  };
-
-  // Filtered IDs for Remaining state
-  const remainingIds = [1, 5, 4, 12, 13, 2, 3, 11];
 
   const handleSend = async () => {
     console.log("one", selectedCards);
@@ -38,8 +83,8 @@ export default function Three({ navigation }) {
         .insert(
           selectedCards.map((card) => ({
             userName: "DummyName", // User's name
-            //cardId: 3, // Card ID
-            //date: currentDate, // Current date
+            cardId: card, // Card ID
+            date: currentDate, // Current date
           }))
         );
 
@@ -49,6 +94,7 @@ export default function Three({ navigation }) {
         console.log("Data inserted successfully:", data);
         setSelectedCards([]); // Clear selected cards after successful submission
         setToSend(false); // Hide send button
+        router.back(); // Navigate to challenges screen
       }
     } catch (error) {
       console.error("Unexpected error:", error);
@@ -58,6 +104,17 @@ export default function Three({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        onPress={() => navigateBack()}
+        style={{
+          position: "absolute",
+          top: 50, // Adjust the vertical position to sit right above the header
+          left: 16,
+          zIndex: 2, // Ensure it appears above other elements
+        }}
+      >
+        <Icon name="arrow-back" size={24} color="#838383" />
+      </TouchableOpacity>
       {/* Blue Background */}
       <View style={styles.blueBackground}>
         <Text style={styles.headerText}>Challenge</Text>
@@ -72,28 +129,30 @@ export default function Three({ navigation }) {
       />
       {/* Scrollable Cards */}
       <ScrollView contentContainerStyle={styles.cardsContainer}>
-        {!isToggled &&
-          remainingIds.map((id) => (
-            <TouchableOpacity
-              key={id}
-              style={styles.cardWrapper}
-              onPress={handlePress}
-            >
-              <ExperienceCard
-                id={id} // Set the ID for the experience
-                navigate="experience" // Navigate to experience screen
-                bool={true} // Example prop
-              />
-            </TouchableOpacity>
-          ))}
+        {filteredTasks.map((task) => (
+          <TouchableOpacity
+            key={task.id}
+            style={styles.cardWrapper}
+            onPress={() => handlePress(task.id)}
+          >
+            <ExperienceCard
+              id={task.id} // Set the ID for the experience
+              name={task.name || "No Name"} // Display name
+              description={task.description || "No Description"} // Display description
+              navigate="experience" // Navigate to experience screen
+              bool={completed.includes(task.id)} // Mark if completed
+            />
+          </TouchableOpacity>
+        ))}
       </ScrollView>
       {/* Send button */}
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-          <Text style={styles.buttonText}>Send experiences?</Text>
-        </TouchableOpacity>
-      </View>
+      {toSend && (
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+            <Text style={styles.buttonText}>Send Experiences?</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
@@ -113,6 +172,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 40,
     color: "#509B9B",
+    fontFamily: "Poppins-Bold",
     fontWeight: "bold",
   },
   searchBar: {
@@ -130,17 +190,16 @@ const styles = StyleSheet.create({
   },
   cardsContainer: {
     marginTop: 41,
-    //backgroundColor: "red",
+    paddingBottom: 80, // Add padding to create space at the bottom
   },
   cardWrapper: {
     marginBottom: 15, // Adds padding between cards
-    pointerEvents: "box-none",
   },
   buttonContainer: {
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
-    bottom: 20, // Distance from the bottom edge of the screen
+    bottom: 5, // Distance from the bottom edge of the screen
     width: "100%",
   },
   sendButton: {
@@ -152,164 +211,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
+    fontFamily: "Poppins-Regular",
     fontWeight: "bold",
     fontSize: 16,
   },
 });
-
-/*
-import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
-import ExperienceCard from "@/components/ExperienceCard";
-import { useRouter } from "expo-router";
-
-export default function Three({ navigation }) {
-  const [searchText, setSearchText] = useState("");
-  const [isToggled, setIsToggled] = useState(false);
-  const [toSend, setToSend] = useState(false);
-  const handlePress = () => {
-    setToSend((prevState) => !prevState); // Toggles between true and false
-  };
-
-  const handleToggle = () => {
-    setIsToggled((prev) => !prev);
-  };
-
-  // Filtered IDs for Remaining state
-  const remainingIds = [1, 5, 4, 12, 13, 2, 3, 11];
-
-  return (
-    <View style={styles.container}>
-      {/* Blue Background 
-      <View style={styles.blueBackground}>
-        <Text style={styles.headerText}>Challenge</Text>
-      </View>
-      {/* Search Bar 
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Search experiences..."
-        placeholderTextColor="#aaa"
-        value={searchText}
-        onChangeText={setSearchText}
-      />
-      {/* Scrollable Cards 
-      <ScrollView contentContainerStyle={styles.cardsContainer}>
-        {!isToggled &&
-          remainingIds.map((id) => (
-            <View key={id} style={styles.cardWrapper} onPress={handlePress}>
-              <ExperienceCard
-                id={id} // Set the ID for the experience
-                navigate="experience" // Set the ID for the experience
-                //photo={require("@/assets/rubiks_cube.jpg")} // Example placeholder image
-                bool={true}
-              />
-            </View>
-          ))}
-      </ScrollView>
-      {/* Send button 
-      {toSend && (
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.sendButton} onPress={handleToggle}>
-            <Text style={styles.buttonText}>Send experiences?</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  // Style definitions remain the same as your original code
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  blueBackground: {
-    height: "18%",
-    backgroundColor: "rgba(80, 155, 155, .27)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  headerText: {
-    fontSize: 40,
-    color: "#509B9B",
-    fontWeight: "bold",
-  },
-  searchBar: {
-    position: "absolute",
-    top: "15%",
-    alignSelf: "center",
-    height: 40,
-    width: "80%",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    backgroundColor: "#fff",
-    color: "#000",
-  },
-  toggleWrapper: {
-    alignItems: "center",
-    marginVertical: 30,
-  },
-  toggleContainer: {
-    position: "relative",
-    backgroundColor: "#fff", // White background
-    borderRadius: 20,
-    width: 200,
-    height: 40,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
-    paddingHorizontal: 8,
-    elevation: 3, // Drop shadow on Android
-    shadowColor: "#000", // Drop shadow on iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
-  toggleIndicator: {
-    position: "absolute",
-    width: 100,
-    height: 32,
-    backgroundColor: "#509B9B", // Light blue toggle
-    borderRadius: 16,
-    elevation: 2, // Slight elevation for toggle
-  },
-  cardsContainer: {
-    marginTop: 41,
-  },
-  activeText: {
-    color: "#fff", // Blue text when against the light blue toggle
-    fontWeight: "bold",
-  },
-  cardWrapper: {
-    marginBottom: 15, // Adds padding between cards
-  },
-  buttonContainer: {
-    backgroundColor: "red",
-  },
-  sendButton: {
-    position: "absolute",
-    bottom: 15, // Distance from the bottom edge of the screen
-    left: "35%", // Position the button horizontally at the center
-    //right: "50%",
-    //transform: [translateX: -50% ], // Offsetting by 50% of the button's width to truly center it
-    padding: 15,
-    borderRadius: 50,
-    backgroundColor: "#509B9B",
-  },
-  buttonText: {
-    color: "#fff", // Blue text when against the light blue toggle
-    fontWeight: "bold",
-    size: 31,
-  },
-});
-*/
