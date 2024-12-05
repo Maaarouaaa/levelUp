@@ -7,18 +7,9 @@ export default function ChallengeStackLayout() {
     <Stack>
       {/* Main challenge log Screen */}
       <Stack.Screen
-        name="index" 
+        name="index"
         options={{
           title: "idk",
-          headerTintColor: "#fff",
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="challenges"
-        options={{
-          title: "idk",
-
           headerTintColor: "#fff",
           headerShown: false,
         }}
@@ -35,5 +26,3 @@ export default function ChallengeStackLayout() {
     </Stack>
   );
 }
-
-
