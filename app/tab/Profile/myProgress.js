@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Dimensions } from "react-native";
 import Svg, { Line, Circle, Text as SvgText } from "react-native-svg";
+import { useRouter } from "expo-router";
 import Icon from "react-native-vector-icons/Ionicons";
 import db from "@/database/db";
 
@@ -18,6 +19,12 @@ export default function MyProgress() {
         ? prev.filter((item) => item !== filter)
         : [...prev, filter]
     );
+  };
+
+  const router = useRouter();
+
+  const navigateBack = () => {
+    router.back();
   };
 
   useEffect(() => {
@@ -193,10 +200,18 @@ export default function MyProgress() {
     );
   };
 
+
+
   return (
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
       <View style={styles.headerBackground}></View>
-      <Icon name="arrow-back" size={24} style={styles.backArrow} color="#838383" />
+      <TouchableOpacity 
+        onPress={() => navigateBack()} 
+        style={{ position: 'absolute', top: 40, left: 16 }}
+      >
+        <Icon name="arrow-back" size={24} color="#838383" />
+      </TouchableOpacity>
+
       <Text style={styles.headerTitle}>My Progress</Text>
       <Text style={styles.filterText}>Filter by</Text>
       <View style={styles.filterContainer}>
