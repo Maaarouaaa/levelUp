@@ -92,7 +92,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="leaderB"
+        name="leaderBoard"
         options={{
           //title: "",
           tabBarLabel: () => null,
@@ -146,4 +146,3 @@ export default function TabLayout() {
     </Tabs>
   );
 }
-

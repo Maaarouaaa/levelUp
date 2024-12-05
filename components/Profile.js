@@ -24,7 +24,7 @@ const Profile = ({ id, ranking, friends }) => {
 
   const handlePress = () => {
     if (friends) {
-      router.push({ pathname: "/tab/Challenge/challenges" });
+      router.push({ pathname: "/tab/leaderBoard/challenges" });
     }
   };
 
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     textAlign: "center",
     width: 50, // Fixed width to align profile photos
-    fontFamily: "Poppins-Regular"
+    fontFamily: "Poppins-Regular",
   },
   profilePicture: {
     width: 60,
@@ -166,7 +166,6 @@ const styles = StyleSheet.create({
     color: "#000", // Changed to black
     marginLeft: 2,
     fontFamily: "Poppins-Regular",
-
   },
   button: {
     flexDirection: "row",
