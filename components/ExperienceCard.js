@@ -99,7 +99,7 @@ export default function ExperienceCard({ id, navigate, bool }) {
           <View style={styles.words}>
             <Text style={styles.name}>{name || "No Name"}</Text>
             <View style={styles.xpRow}>
-              <Icon name="star" size={25} color="#509B9B" />
+              <Icon name="star" size={18} color="#509B9B" />
               <Text style={styles.xp}>
                 {xp !== null ? `${xp} XP` : "No XP"}
               </Text>
@@ -152,25 +152,31 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     flexDirection: "row",
+    alignItems: "center",
     justifyContent: "space-between",
   },
   words: {
     flex: 1,
     justifyContent: "space-between",
+    margineBottom: 4,
   },
   name: {
-    fontSize: 24,
+    fontSize: 20,
     color: "#000000",
     textAlign: "left",
+    flexWrap: "wrap", // Allows the name to wrap to a second line if needed
+    lineHeight: 24,
+    paddingTop: 2,
+    fontFamily: 'Poppins-Regular',
   },
   xpRow: {
     flexDirection: "row",
     alignItems: "center",
   },
   xp: {
-    fontSize: 20,
+    fontSize: 18,
     color: "#000000",
-    marginLeft: 8,
+    marginLeft: 4,
   },
   details: {
     flexDirection: "row",

@@ -211,10 +211,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#509B9B",
     zIndex: 1,
+    fontFamily: "Poppins-SemiBold",
   },
   activeText: {
     color: "#fff",
-    fontWeight: "bold",
+    fontFamily: "Poppins-SemiBold",
   },
   cardsContainer: {
     paddingHorizontal: 15,

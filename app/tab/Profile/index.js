@@ -196,21 +196,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   header: {
-    height: Dimensions.get("window").height * 0.20, // Set header to 22% of screen height
+    height: Dimensions.get("window").height * 0.22, // Set header to 22% of screen height
     backgroundColor: "rgba(80, 155, 155, 0.27)",
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
   },
   headerTitle: {
-    fontFamily: "Poppins",
+    fontFamily: "Poppins-Bold",
     fontSize: 34,
-    fontWeight: "700",
     color: "#509B9B",
   },
   profileSection: {
     alignItems: "center",
-    marginTop: -40, // Pull the profile picture upwards to overlap the header
+    marginTop: -50, // Pull the profile picture upwards to overlap the header
     marginBottom: -15,
     zIndex: 1, // Ensure the profile picture stays on top
   },
@@ -259,7 +258,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins",
     fontSize: 17,
     fontWeight: "600",
-    marginBottom: 5,
+    marginTop: 5,
   },
   skillsGrid: {
     flexDirection: "row",
@@ -269,6 +268,7 @@ const styles = StyleSheet.create({
   skillBox: {
     width: "48%",
     marginBottom: 10,
+    marginTop: 10,
   },
   skillName: {
     fontFamily: "Poppins",
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   progressBar: {
-    height: 10,
+    height: 20,
     backgroundColor: "#E0E0E0",
     borderRadius: 20,
     overflow: "hidden",
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     marginTop: -15,
-    paddingVertical: 0,
+    paddingVertical: 10,
     paddingHorizontal: 0,
   },
   button: {
