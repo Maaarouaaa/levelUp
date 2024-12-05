@@ -313,7 +313,6 @@ const styles = StyleSheet.create({
   cardsContainer: {
     paddingTop: 10,
     paddingHorizontal: 16,
-    alignItems: 'center',
   },
   loadingContainer: {
     flex: 1,

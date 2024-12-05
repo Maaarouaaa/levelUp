@@ -20,17 +20,32 @@ export default function Three() {
     setIsToggled((prev) => !prev);
   };
 
-  
-
   const navigateToDetails = () => {
     const getRandomId = () => {
       return Math.floor(Math.random() * 40) + 1;
     };
-  
-    id = getRandomId()
-    console.log(id)
+
+    const id = getRandomId();
+    console.log(id);
     router.push({ pathname: "/tab/Challenge/detailsC", params: { id: id } });
   };
+
+  const cards = [
+    { id: 1, name: "FROM: Varsha", time: "4 Hours Ago" },
+    { id: 2, name: "FROM: Paige", time: "9 Hours Ago" },
+    { id: 3, name: "FROM: Varsha", time: "2 Days Ago" },
+    { id: 4, name: "FROM: Nick", time: "3 Days Ago" },
+    { id: 5, name: "FROM: Maroua", time: "9 Days Ago" },
+  ];
+
+  const sentCards = [
+    { id: 6, name: "TO: Maroua", time: "Just Now" },
+    { id: 7, name: "TO: Nick", time: "5 Days Ago" },
+  ];
+
+  const filteredCards = (!isToggled ? cards : sentCards).filter((card) =>
+    card.name.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   return (
     <View style={styles.container}>
@@ -64,97 +79,20 @@ export default function Three() {
       </View>
 
       <ScrollView contentContainerStyle={styles.cardsContainer}>
-        {!isToggled ? (
-          <>
-            <View style={styles.sentCard}>
-              <View style={styles.cardContent}>
-                <Icon name="time-outline" size={30} color="#FFAB45" style={styles.icon} />
-                <View style={styles.cardText}>
-                  <Text style={styles.sentToText}>FROM: Varsha</Text>
-                  <Text style={styles.sentDateText}>Received: 4 Hours Ago</Text>
-                </View>
-                <TouchableOpacity onPress = {navigateToDetails} style={styles.viewTaskButton}>
-                  <Text style={styles.viewTaskText}>View Task</Text>
-                </TouchableOpacity>
+        {filteredCards.map((card) => (
+          <View key={card.id} style={styles.sentCard}>
+            <View style={styles.cardContent}>
+              <Icon name="time-outline" size={30} color="#FFAB45" style={styles.icon} />
+              <View style={styles.cardText}>
+                <Text style={styles.sentToText}>{card.name}</Text>
+                <Text style={styles.sentDateText}>{isToggled ? `Sent: ${card.time}` : `Received: ${card.time}`}</Text>
               </View>
+              <TouchableOpacity onPress={navigateToDetails} style={styles.viewTaskButton}>
+                <Text style={styles.viewTaskText}>View Task</Text>
+              </TouchableOpacity>
             </View>
-            <View style={styles.sentCard}>
-              <View style={styles.cardContent}>
-                <Icon name="time-outline" size={30} color="#FFAB45" style={styles.icon} />
-                <View style={styles.cardText}>
-                  <Text style={styles.sentToText}>FROM: Paige</Text>
-                  <Text style={styles.sentDateText}>Received: 9 hours ago</Text>
-                </View>
-                <TouchableOpacity onPress = {navigateToDetails} style={styles.viewTaskButton}>
-                  <Text style={styles.viewTaskText}>View Task</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View style={styles.sentCard}>
-              <View style={styles.cardContent}>
-                <Icon name="time-outline" size={30} color="#FFAB45" style={styles.icon} />
-                <View style={styles.cardText}>
-                  <Text style={styles.sentToText}>FROM: Varsha</Text>
-                  <Text style={styles.sentDateText}>Received: 2 days ago</Text>
-                </View>
-                <TouchableOpacity onPress = {navigateToDetails} style={styles.viewTaskButton}>
-                  <Text style={styles.viewTaskText}>View Task</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View style={styles.sentCard}>
-              <View style={styles.cardContent}>
-                <Icon name="checkmark" size={30} color="#509B9B" style={styles.icon} />
-                <View style={styles.cardText}>
-                  <Text style={styles.sentToText}>FROM: Nick</Text>
-                  <Text style={styles.sentDateText}>Completed: 3 days ago</Text>
-                </View>
-                <TouchableOpacity onPress = {navigateToDetails} style={styles.viewTaskButton}>
-                  <Text style={styles.viewTaskText}>View Task</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View style={styles.sentCard}>
-              <View style={styles.cardContent}>
-                <Icon name="checkmark" size={30} color="#509B9B" style={styles.icon} />
-                <View style={styles.cardText}>
-                  <Text style={styles.sentToText}>FROM: Maroua</Text>
-                  <Text style={styles.sentDateText}>Completed: 9 days ago</Text>
-                </View>
-                <TouchableOpacity onPress = {navigateToDetails} style={styles.viewTaskButton}>
-                  <Text style={styles.viewTaskText}>View Task</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </>
-        ) : (
-          <>
-            <View style={styles.sentCard}>
-              <View style={styles.cardContent}>
-                <Icon name="time-outline" size={30} color="#FFAB45" style={styles.icon} />
-                <View style={styles.cardText}>
-                  <Text style={styles.sentToText}>TO: Maroua</Text>
-                  <Text style={styles.sentDateText}>Sent: Just now</Text>
-                </View>
-                <TouchableOpacity style={styles.viewTaskButton}>
-                  <Text style={styles.viewTaskText}>View Task</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View style={styles.sentCard}>
-              <View style={styles.cardContent}>
-                <Icon name="time-outline" size={30} color="#FFAB45" style={styles.icon} />
-                <View style={styles.cardText}>
-                  <Text style={styles.sentToText}>TO: Nick</Text>
-                  <Text style={styles.sentDateText}>Sent: 5 days ago</Text>
-                </View>
-                <TouchableOpacity style={styles.viewTaskButton}>
-                  <Text style={styles.viewTaskText}>View Task</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </>
-        )}
+          </View>
+        ))}
       </ScrollView>
     </View>
   );
@@ -174,6 +112,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 40,
+    fontFamily: "Poppins-Bold",
     color: "#509B9B",
     fontWeight: "700",
   },
@@ -185,7 +124,7 @@ const styles = StyleSheet.create({
     width: "80%",
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 20,
+    borderRadius: 8,
     paddingHorizontal: 10,
     backgroundColor: "#fff",
     color: "#000",
@@ -225,6 +164,7 @@ const styles = StyleSheet.create({
   },
   toggleText: {
     fontSize: 16,
+    fontFamily: "Poppins-Regular",
     color: "#509B9B",
     zIndex: 1,
   },
@@ -234,13 +174,13 @@ const styles = StyleSheet.create({
   },
   cardsContainer: {
     paddingHorizontal: 15,
-    paddingBottom: 20,
+    paddingBottom: 10,
   },
   sentCard: {
     height: 96,
     backgroundColor: "rgba(0,0,0,0)",
     borderRadius: 25,
-    marginBottom: 20,
+    marginBottom: 0,
     paddingVertical: 20,
     paddingHorizontal: 4,
     shadowColor: "#000",
@@ -261,12 +201,12 @@ const styles = StyleSheet.create({
   },
   sentToText: {
     fontSize: 20,
-    fontWeight: "600",
+    fontFamily: "Poppins-Regular",
     marginBottom: 5,
   },
   sentDateText: {
     fontSize: 16,
-    fontWeight: "400",
+    fontFamily: "Poppins-Regular",
     color: "#555",
   },
   waiting: {
@@ -312,6 +252,3 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-SemiBold",
   },
 });
-
-
-
