@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#509B9B",
     justifyContent: "center",
     alignItems: "center",
-    top: screenHeight * 0.25 - 25, // Center the dot at 33% of the screen height
+    top: screenHeight * 0.25 + 38, // Center the dot at 33% of the screen height
     left: screenWidth * 0.85 - 25, // Center the dot at 85% of the screen width
   },
   blueDot: {

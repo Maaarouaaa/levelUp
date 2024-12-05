@@ -35,12 +35,14 @@ export default function Three() {
       const { data, error } = await db
         .from("tasks")
         .select("id, name, description, skill, locked, done");
-
+  
       if (error) {
         console.error("Error fetching tasks:", error.message);
       } else if (data) {
-        setAllTasks(data);
-        setFilteredTasks(data.filter((task) => !task.locked));
+        // Only keep unlocked tasks
+        const unlockedTasks = data.filter((task) => !task.locked);
+        setAllTasks(unlockedTasks);
+        setFilteredTasks(unlockedTasks); // Set initial filtered tasks
       }
     } catch (err) {
       console.error("Error:", err);
@@ -48,6 +50,7 @@ export default function Three() {
       setLoading(false);
     }
   };
+  
 
   // Use useFocusEffect to refetch data when the screen is focused
   useFocusEffect(

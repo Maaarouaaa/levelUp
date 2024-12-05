@@ -1,45 +1,51 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { StyleSheet, Text, View, TextInput, ScrollView, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from "react-native";
 import ExperienceCard from "@/components/ExperienceCard";
 import { useRouter } from "expo-router";
 import Icon from "react-native-vector-icons/Ionicons";
 import db from "@/database/db";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function Three() {
   const [searchText, setSearchText] = useState("");
   const [allTasks, setAllTasks] = useState([]); // All tasks including locked ones
   const [filteredTasks, setFilteredTasks] = useState([]); // Tasks to display (filtered)
+  const [refresh, setRefresh] = useState(false); // Tracks manual refresh trigger
 
   const router = useRouter();
 
-  const navigateBack = () => {
-    router.back();
+  const fetchTasks = async () => {
+    try {
+      const { data, error } = await db
+        .from("tasks")
+        .select("id, name, description, done, locked")
+        .gte("id", 1)
+        .lte("id", 10)
+        .order("id", { ascending: true }); // Fetch all tasks, both locked and unlocked
+
+      if (error) {
+        console.error("Error fetching tasks:", error.message);
+      } else {
+        console.log("Fetched tasks:", data); // Debug log
+        setAllTasks(data); // Store all tasks
+        setFilteredTasks(data); // Initially display all tasks
+      }
+    } catch (err) {
+      console.error("Error:", err);
+    }
   };
 
+  // Refetch tasks when the component mounts or when refresh is toggled
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const { data, error } = await db
-          .from("tasks")
-          .select("id, name, description, done, locked")
-          .gte("id", 1)
-          .lte("id", 10)
-          .order("id", { ascending: true }); // Fetch all tasks, both locked and unlocked
-
-        if (error) {
-          console.error("Error fetching tasks:", error.message);
-        } else {
-          console.log("Fetched tasks:", data); // Debug log
-          setAllTasks(data); // Store all tasks
-          setFilteredTasks(data); // Initially display all tasks
-        }
-      } catch (err) {
-        console.error("Error:", err);
-      }
-    };
-
     fetchTasks();
-  }, []);
+  }, [refresh]);
+
+  // Refetch tasks when the screen gains focus
+  useFocusEffect(
+    useCallback(() => {
+      fetchTasks();
+    }, [])
+  );
 
   useEffect(() => {
     if (searchText === "") {
@@ -61,21 +67,26 @@ export default function Three() {
     }
   }, [searchText, allTasks]);
 
+  const handleBack = () => {
+    setRefresh((prev) => !prev); // Toggle refresh to trigger refetch
+    router.back();
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         {/* Blue Background */}
-        <TouchableOpacity 
-  onPress={() => navigateBack()} 
-  style={{ 
-    position: 'absolute', 
-    top: 50, // Adjust the vertical position to sit right above the header
-    left: 16, 
-    zIndex: 2 // Ensure it appears above other elements 
-  }}
->
-  <Icon name="arrow-back" size={24} color="#838383" />
-</TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleBack}
+          style={{
+            position: "absolute",
+            top: 50, // Adjust the vertical position to sit right above the header
+            left: 16,
+            zIndex: 2, // Ensure it appears above other elements
+          }}
+        >
+          <Icon name="arrow-back" size={24} color="#838383" />
+        </TouchableOpacity>
 
         <View style={styles.blueBackground}>
           <Text style={styles.headerText}>Problem Solving</Text>
@@ -128,7 +139,7 @@ const styles = StyleSheet.create({
     fontSize: 34,
     color: "#FF8460",
     fontWeight: "bold",
-    fontFamily: 'Poppins-Bold',
+    fontFamily: "Poppins-Bold",
   },
   searchBarWrapper: {
     position: "absolute",
@@ -149,7 +160,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "#fff",
     color: "#000",
-    fontFamily: 'Poppins-Regular',
+    fontFamily: "Poppins-Regular",
   },
   cardWrapper: {
     marginBottom: 15,
@@ -159,3 +170,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+
