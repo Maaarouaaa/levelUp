@@ -11,6 +11,7 @@ import {
   Modal,
   Dimensions,
 } from "react-native";
+import { useRouter } from "expo-router";
 import Icon from "react-native-vector-icons/Ionicons";
 import db from "@/database/db";
 
@@ -26,6 +27,12 @@ export default function Details() {
   const [loading, setLoading] = useState(true);
   const [isDone, setIsDone] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+
+  const router = useRouter();
+
+  const navigateBack = () => {
+    router.back();
+  };
 
   const skillColors = {
     "problem solving": "#FF6030",
@@ -199,6 +206,27 @@ export default function Details() {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity 
+  onPress={() => navigateBack()}  
+  style={{ 
+    position: 'absolute', 
+    top: 50, // Adjust the vertical position
+    left: 16, 
+    zIndex: 2 // Ensure it appears above other elements 
+  }}
+>
+  <View style={{
+    width: 40,
+    height: 40,
+    backgroundColor: 'rgba(255,255,255,.8)', // Background color of the circle
+    borderRadius: 20, // Half of width/height for a perfect circle
+    justifyContent: 'center',
+    alignItems: 'center',
+  }}>
+    <Icon name="arrow-back" size={24} color="#000000" />
+  </View>
+</TouchableOpacity>
+
       <View style={styles.imageContainer}>
         <Image source={{ uri: photo }} style={styles.image} />
       </View>
@@ -312,7 +340,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   imageContainer: {
-    height: screenHeight * 0.25, // 33% of the screen height
+    height: screenHeight * 0.33, // 33% of the screen height
   },
   image: {
     width: "100%",

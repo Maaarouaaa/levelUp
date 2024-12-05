@@ -34,8 +34,9 @@ export default function FeedStackLayout() {
         name="myProgress" // Matches "feed/newpost.js"
         options={{
           title: "My Progress",
+          animation: "slide_from_right", // Slides in from the right
           headerShown: false, // Show header for this screen
-          presentation: "modal", // Modal presentation for this screen
+          presentation: "absolute", // Modal presentation for this screen
           headerStyle: {
             backgroundColor: Theme.colors.backgroundPrimary,
           },

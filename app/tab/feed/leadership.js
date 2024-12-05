@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableWithoutFeedback, Keyboard } from "react-native";
+import { StyleSheet, Text, View, TextInput, ScrollView, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from "react-native";
 import ExperienceCard from "@/components/ExperienceCard";
+import { useRouter } from "expo-router";
+import Icon from "react-native-vector-icons/Ionicons";
 import db from "@/database/db";
 
 export default function Three() {
   const [searchText, setSearchText] = useState("");
   const [allTasks, setAllTasks] = useState([]);
   const [filteredTasks, setFilteredTasks] = useState([]); 
+
+  const router = useRouter();
+
+  const navigateBack = () => {
+    router.back();
+  };
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -55,7 +63,20 @@ export default function Three() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+
+      
       <View style={styles.container}>
+      <TouchableOpacity 
+  onPress={() => navigateBack()} 
+  style={{ 
+    position: 'absolute', 
+    top: 50, // Adjust the vertical position to sit right above the header
+    left: 16, 
+    zIndex: 2 // Ensure it appears above other elements 
+  }}
+>
+  <Icon name="arrow-back" size={24} color="#838383" />
+</TouchableOpacity>
         {/* Blue Background */}
         <View style={styles.blueBackground}>
           <Text style={styles.headerText}>Leadership</Text>
@@ -99,20 +120,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   blueBackground: {
-    height: "18%",
+    height: "22%",
     backgroundColor: "#C9F0E7",
     justifyContent: "center",
     alignItems: "center",
   },
+  
   headerText: {
-    fontSize: 38,
+    paddingVertical: 80,
+    fontSize: 36,
     color: "#58CDB0",
     fontWeight: "bold",
     fontFamily: 'Poppins-Bold',
   },
   searchBarWrapper: {
     position: "absolute",
-    top: "15%",
+    top: "19%",
     alignSelf: "center",
     width: "80%",
     backgroundColor: "#fff",
@@ -136,5 +159,6 @@ const styles = StyleSheet.create({
   },
   cardsContainer: {
     paddingTop: 10, // Add padding to prevent overlap with the search bar
+    alignItems: "center",
   },
 });

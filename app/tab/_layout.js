@@ -45,7 +45,7 @@ export default function TabLayout() {
             backgroundColor: "#D0E4E4", // Use tabBarColor for the tab bar itself
           },
           headerTintColor: "#fff",
-          headerShown: true,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -82,7 +82,7 @@ export default function TabLayout() {
             backgroundColor: "#D0E4E4", // Use tabBarColor for the tab bar itself
           },
           headerTintColor: "#fff",
-          headerShown: true,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -135,3 +135,4 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+

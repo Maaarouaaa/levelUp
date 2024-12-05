@@ -1,13 +1,21 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableWithoutFeedback, Keyboard } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
+import React, { useState, useEffect, useCallback} from "react";
+import { StyleSheet, Text, View, TextInput, ScrollView, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from "react-native";
 import ExperienceCard from "@/components/ExperienceCard";
+import { useRouter } from "expo-router";
+import Icon from "react-native-vector-icons/Ionicons";
 import db from "@/database/db";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function Three() {
   const [searchText, setSearchText] = useState("");
   const [allTasks, setAllTasks] = useState([]);
   const [filteredTasks, setFilteredTasks] = useState([]);
+
+  const router = useRouter();
+
+  const navigateBack = () => {
+    router.back();
+  };
 
   const fetchTasks = async () => {
     try {
@@ -61,6 +69,17 @@ export default function Three() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         {/* Blue Background */}
+        <TouchableOpacity 
+  onPress={() => navigateBack()} 
+  style={{ 
+    position: 'absolute', 
+    top: 50, // Adjust the vertical position to sit right above the header
+    left: 16, 
+    zIndex: 2 // Ensure it appears above other elements 
+  }}
+>
+  <Icon name="arrow-back" size={24} color="#838383" />
+</TouchableOpacity>
         <View style={styles.blueBackground}>
           <Text style={styles.headerText}>Adaptability</Text>
         </View>
@@ -104,20 +123,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   blueBackground: {
-    height: "18%",
+    height: "22%",
     backgroundColor: "#FFE8CD",
     justifyContent: "center",
     alignItems: "center",
   },
+
   headerText: {
-    fontSize: 38,
+    paddingVertical: 80,
+    fontSize: 34,
     color: "#FFAB45",
     fontWeight: "bold",
     fontFamily: 'Poppins-Bold',
   },
   searchBarWrapper: {
     position: "absolute",
-    top: "15%",
+    top: "19%",
     alignSelf: "center",
     width: "80%",
     backgroundColor: "#fff",
@@ -140,6 +161,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   cardsContainer: {
-    paddingTop: 10, 
+    paddingTop: 10, // Add padding to prevent overlap with the search bar
+    alignItems: "center",
   },
 });

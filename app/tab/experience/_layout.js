@@ -41,6 +41,21 @@ export default function FeedStackLayout() {
           headerTintColor: "#fff",
         }}
       />
+
+      <Stack.Screen
+        name="details" // Matches "feed/newpost.js"
+        options={{
+          title: "Completed tasks",
+          headerShown: false, // Show header for this screen
+          presentation: "absolute", // Modal presentation for this screen
+          animation: "slide_from_right", // Slides in from the right
+          headerStyle: {
+            backgroundColor: Theme.colors.backgroundPrimary,
+          },
+          headerTintColor: "#fff",
+        }}
+      />
     </Stack>
   );
 }
+
