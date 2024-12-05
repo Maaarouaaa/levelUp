@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
     height: 96,
     backgroundColor: "rgba(0,0,0,0)",
     borderRadius: 25,
-    marginBottom: 20,
+    marginBottom: -20,
     paddingVertical: 20,
     paddingHorizontal: 4,
     shadowColor: "#000",
