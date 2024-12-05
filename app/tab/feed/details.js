@@ -11,6 +11,7 @@ import {
   Modal,
   Dimensions,
 } from "react-native";
+import { useRouter } from "expo-router";
 import Icon from "react-native-vector-icons/Ionicons";
 import db from "@/database/db";
 
@@ -27,6 +28,12 @@ export default function Details() {
   const [isDone, setIsDone] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
 
+  const router = useRouter();
+
+  const navigateBack = () => {
+    router.back();
+  };
+
   const skillColors = {
     "problem solving": "#FF6030",
     leadership: "#37C9A5",
@@ -40,23 +47,65 @@ export default function Details() {
 
   const handleMarkAsDone = async () => {
     try {
-      // Step 1: Mark the current task as done
-      const { error: taskError } = await db
+      const { error } = await db
         .from("tasks")
-        .update({ done: 'TRUE' })
+        .update({ done: "TRUE" }) // Mark the task as done
         .eq("id", id);
   
-      if (taskError) {
-        console.error("Error marking task as done:", taskError.message);
+      if (error) {
+        console.error("Error marking task as done:", error.message);
         return;
       }
   
-      // Step 2: Call RPC to update XP
+      const nSkill = skill.replace(/\s+/g, "").toLowerCase();
+  
+      // Fetch the current value of {skill}_last
+      const { data: userData, error: userError } = await db
+        .from("users")
+        .select(`${nSkill}_last`) // Dynamically select the column
+        .eq("id", 1)
+        .single();
+  
+      if (userError) {
+        console.error("Error fetching user's last task:", userError.message);
+        return;
+      }
+  
+      const currentLast = userData[`${nSkill}_last`];
+      const nextTaskId = currentLast + 1;
+  
+      // Only unlock the next task if the current task ID is not a multiple of 10
+      if (id % 10 !== 0) {
+        const { error: unlockError } = await db
+          .from("tasks")
+          .update({ locked: false }) // Unlock the next task
+          .eq("id", nextTaskId);
+  
+        if (unlockError) {
+          console.error("Error unlocking the next task:", unlockError.message);
+          return;
+        }
+      } else {
+        console.log("Current task is a milestone (multiple of 10); next task will not be unlocked.");
+      }
+  
+      // Increment the {skill}_last column
+      const { error: incrementError } = await db
+        .from("users")
+        .update({ [`${nSkill}_last`]: currentLast + 1 }) // Update dynamically
+        .eq("id", 1);
+  
+      if (incrementError) {
+        console.error("Error incrementing user's last task:", incrementError.message);
+        return;
+      }
+  
+      // Update XP using the RPC
       const { error: xpError } = await db.rpc("update_xp_for_user", {
-        skill_name: `${skill}`,
-        xp_value: xp,
-        user_id: 1,
-        mark_done: true,
+        skill_name: skill, // Pass the skill name
+        xp_value: xp, // XP value to add
+        user_id: 1, // Hardcoded user ID
+        mark_done: true, // Mark as done
       });
   
       if (xpError) {
@@ -64,52 +113,22 @@ export default function Details() {
         return;
       }
   
-      // Step 3: Unlock the next task and update user progress
-      const skillLastColumn = `${skill}_last`; // Dynamically determine the column name
-      const { data: userData, error: userError } = await db
-        .from("users")
-        .select(skillLastColumn)
-        .eq("id", 1)
-        .single();
-  
-      if (userError) {
-        console.error("Error fetching user data:", userError.message);
-        return;
-      }
-  
-      const nextTaskId = userData[skillLastColumn] + 1;
-  
-      // Unlock the next task
-      const { error: unlockError } = await db
-        .from("tasks")
-        .update({ locked: false })
-        .eq("id", nextTaskId);
-  
-      if (unlockError) {
-        console.error("Error unlocking the next task:", unlockError.message);
-        return;
-      }
-  
-      // Increment `{skill}_last` in the users table
-      const { error: updateUserError } = await db
-        .from("users")
-        .update({ [skillLastColumn]: nextTaskId })
-        .eq("id", 1);
-  
-      if (updateUserError) {
-        console.error("Error updating user progress:", updateUserError.message);
-        return;
-      }
-  
-      // Step 4: Update local state and show success
+      // Update UI state
       setIsDone(true);
       setShowPopup(true);
-      console.log("Task marked as done, XP updated, next task unlocked, and user progress updated.");
+  
+      console.log(
+        "Task marked as done, XP updated, next task unlocked (if applicable), and user's last task incremented."
+      );
     } catch (err) {
       console.error("Error:", err);
     }
   };
   
+  
+  
+  
+
   const handleMarkAsNotDone = async () => {
     try {
         const { error } = await db
@@ -187,6 +206,27 @@ export default function Details() {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity 
+  onPress={() => navigateBack()}  
+  style={{ 
+    position: 'absolute', 
+    top: 50, // Adjust the vertical position
+    left: 16, 
+    zIndex: 2 // Ensure it appears above other elements 
+  }}
+>
+  <View style={{
+    width: 40,
+    height: 40,
+    backgroundColor: 'rgba(255,255,255,.8)', // Background color of the circle
+    borderRadius: 20, // Half of width/height for a perfect circle
+    justifyContent: 'center',
+    alignItems: 'center',
+  }}>
+    <Icon name="arrow-back" size={24} color="#000000" />
+  </View>
+</TouchableOpacity>
+
       <View style={styles.imageContainer}>
         <Image source={{ uri: photo }} style={styles.image} />
       </View>
@@ -300,7 +340,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   imageContainer: {
-    height: screenHeight * 0.25, // 33% of the screen height
+    height: screenHeight * 0.33, // 33% of the screen height
   },
   image: {
     width: "100%",
@@ -328,7 +368,7 @@ const styles = StyleSheet.create({
   },  
   contentContainer: {
     flex: 1, // This will take up the remaining space
-    padding: 16,
+    padding: 14,
   },
   skillTag: {
     alignSelf: "flex-start",
@@ -341,16 +381,18 @@ const styles = StyleSheet.create({
   skillTagText: {
     fontSize: 14,
     fontWeight: "600",
+    fontFamily: 'Poppins-Regular',
   },
   taskName: {
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "left",
     paddingVertical: 4,
+    fontFamily: 'Poppins-SemiBold',
   },
   xpText: {
     fontSize: 16,
-    color: "#777",
+    color: "#000",
     textAlign: "center",
   },
   xpRow: {
@@ -364,6 +406,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     textAlign: "left",
     paddingTop: 6,
+    fontFamily: 'Poppins-Regular',
   },
   inputContainer: {
     marginTop: 10,
@@ -378,6 +421,7 @@ const styles = StyleSheet.create({
     zIndex: 100,
     fontSize: 12,
     color: "#509B9B",
+    fontFamily: 'Poppins-Regular',
   },
   textInput: {
     borderWidth: 1,
@@ -387,6 +431,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#000",
     height: 80, // Adjusted height
+    fontFamily: 'Poppins-Regular',
   },
   buttonContainer: {
     flexDirection: "row",
@@ -409,6 +454,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginLeft: 10, // Spacing between icon and text
+    fontFamily: 'Poppins-SemiBold',
   },
   icon: {
     marginLeft: 10, // Spacing between icon and text
@@ -435,11 +481,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: 'center',
     alignSelf: 'center',
+    fontFamily: 'Poppins-SemiBold',
   },
   popupMessage: {
     fontSize: 16,
     textAlign: "center",
     marginBottom: 20,
+    fontFamily: 'Poppins-Regular',
   },
   okayButton: {
     backgroundColor: "#509B9B",
@@ -451,5 +499,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+    fontFamily: 'Poppins-SemiBold',
   },
 });

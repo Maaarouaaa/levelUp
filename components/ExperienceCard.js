@@ -285,7 +285,7 @@ export default function ExperienceCard({ id, navigate }) {
           <View style={styles.words}>
             <Text style={styles.name}>{name || "No Name"}</Text>
             <View style={styles.xpRow}>
-              <Icon name="star" size={25} color="#509B9B" />
+              <Icon name="star" size={18} color="#509B9B" />
               <Text style={styles.xp}>{xp !== null ? `${xp} XP` : "No XP"}</Text>
             </View>
           </View>
@@ -316,34 +316,44 @@ const styles = StyleSheet.create({
     width: 364,
     height: 96,
     padding: 16,
-    justifyContent: "space-between",
+    justifyContent: "center", // Ensures content is centered vertically
+    alignItems: "center", // Ensures content is centered horizontally
+    flexDirection: "row",
   },
   loadingContainer: {
     justifyContent: "center",
     alignItems: "center",
   },
   content: {
-    flex: 1,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center", // Centers both the text and photo horizontally
+    alignItems: "center", // Centers the content vertically
   },
   words: {
     flex: 1,
-    justifyContent: "space-between",
+    justifyContent: "center", // Ensures vertical centering
+    alignItems: "flex-start", // Aligns text to the left
+    marginLeft: 12,
   },
   name: {
-    fontSize: 24,
+    fontSize: 22,
     color: "#000000",
     textAlign: "left",
+    flexWrap: "wrap", // Allows the name to wrap to a second line if needed
+    lineHeight: 24,
+    paddingTop: 4,
+    marginBottom: 1, // Adds spacing below the name
+    fontFamily: 'Poppins-Regular',
   },
   xpRow: {
     flexDirection: "row",
     alignItems: "center",
+    marginTop: 1, // Adds spacing above the XP row
   },
   xp: {
-    fontSize: 20,
+    fontSize: 18,
     color: "#000000",
-    marginLeft: 8,
+    marginLeft: 4,
   },
   details: {
     flexDirection: "row",
@@ -367,14 +377,18 @@ const styles = StyleSheet.create({
     width: 364,
     height: 96,
     padding: 16,
-    justifyContent: "space-between",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
   },
   contentL: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
+    alignItems: "center",
     alignSelf: 'center',
     paddingTop: 14,
   },
 });
 */
+

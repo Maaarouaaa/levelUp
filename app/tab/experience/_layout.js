@@ -21,7 +21,7 @@ export default function FeedStackLayout() {
         name="completed" // Matches "feed/newpost.js"
         options={{
           title: "Completed tasks",
-          headerShown: true, // Show header for this screen
+          headerShown: false, // Show header for this screen
           presentation: "modal", // Modal presentation for this screen
           headerStyle: {
             backgroundColor: Theme.colors.backgroundPrimary,
@@ -33,8 +33,22 @@ export default function FeedStackLayout() {
         name="remaining" // Matches "feed/newpost.js"
         options={{
           title: "Remaining Tasks",
-          headerShown: true, // Show header for this screen
+          headerShown: false, // Show header for this screen
           presentation: "modal", // Modal presentation for this screen
+          headerStyle: {
+            backgroundColor: Theme.colors.backgroundPrimary,
+          },
+          headerTintColor: "#fff",
+        }}
+      />
+
+      <Stack.Screen
+        name="details" // Matches "feed/newpost.js"
+        options={{
+          title: "Completed tasks",
+          headerShown: false, // Show header for this screen
+          presentation: "absolute", // Modal presentation for this screen
+          animation: "slide_from_right", // Slides in from the right
           headerStyle: {
             backgroundColor: Theme.colors.backgroundPrimary,
           },
@@ -44,3 +58,4 @@ export default function FeedStackLayout() {
     </Stack>
   );
 }
+

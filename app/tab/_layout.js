@@ -106,12 +106,15 @@ export default function TabLayout() {
           tabBarStyle: {
             backgroundColor: "#D0E4E4", // Use tabBarColor for the tab bar itself
           },
+            
+        challenges
           headerTintColor: "#509B9B",
           headerTitleStyle: {
             fontSize: 24, // Adjust the font size
             fontWeight: "bold", // Set the font weight to bold
           },
-          headerShown: false,
+
+          headerTintColor: "#fff",
         }}
       />
       <Tabs.Screen
@@ -150,3 +153,4 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+

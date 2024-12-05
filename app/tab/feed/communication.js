@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableWithoutFeedback, Keyboard } from "react-native";
+import { StyleSheet, Text, View, TextInput, ScrollView, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from "react-native";
 import ExperienceCard from "@/components/ExperienceCard";
+import { useRouter } from "expo-router";
+import Icon from "react-native-vector-icons/Ionicons";
 import db from "@/database/db";
 
 export default function Three() {
   const [searchText, setSearchText] = useState("");
   const [allTasks, setAllTasks] = useState([]); 
   const [filteredTasks, setFilteredTasks] = useState([]);
+
+  const router = useRouter();
+
+  const navigateBack = () => {
+    router.back();
+  };
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -57,6 +65,17 @@ export default function Three() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         {/* Blue Background */}
+        <TouchableOpacity 
+  onPress={() => navigateBack()} 
+  style={{ 
+    position: 'absolute', 
+    top: 50, // Adjust the vertical position to sit right above the header
+    left: 16, 
+    zIndex: 2 // Ensure it appears above other elements 
+  }}
+>
+  <Icon name="arrow-back" size={24} color="#838383" />
+</TouchableOpacity>
         <View style={styles.blueBackground}>
           <Text style={styles.headerText}>Communication</Text>
         </View>
@@ -99,19 +118,21 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   blueBackground: {
-    height: "18%",
+    height: "22%",
     backgroundColor: "#CFE8FF",
     justifyContent: "center",
     alignItems: "center",
   },
   headerText: {
-    fontSize: 40,
+    paddingVertical: 80,
+    fontSize: 34,
     color: "#4CA8FF",
     fontWeight: "bold",
+    fontFamily: 'Poppins-Bold',
   },
   searchBarWrapper: {
     position: "absolute",
-    top: "15%",
+    top: "19%",
     alignSelf: "center",
     width: "80%",
     backgroundColor: "#fff",
@@ -128,11 +149,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "#fff",
     color: "#000",
+    fontFamily: 'Poppins-Regular',
   },
   cardWrapper: {
     marginBottom: 15,
   },
   cardsContainer: {
-    paddingTop: 10, 
+    paddingTop: 10, // Add padding to prevent overlap with the search bar
+    alignItems: "center",
   },
 });

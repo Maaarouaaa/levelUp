@@ -11,6 +11,7 @@ import {
   Modal,
   Dimensions,
 } from "react-native";
+import { useRouter } from "expo-router";
 import Icon from "react-native-vector-icons/Ionicons";
 import db from "@/database/db";
 
@@ -26,6 +27,12 @@ export default function Details() {
   const [loading, setLoading] = useState(true);
   const [isDone, setIsDone] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+
+  const router = useRouter();
+
+  const navigateBack = () => {
+    router.back();
+  };
 
   const skillColors = {
     "problem solving": "#FF6030",
@@ -49,9 +56,9 @@ export default function Details() {
         console.error("Error marking task as done:", error.message);
         return;
       }
-      
-      const nSkill = skill.replace(/\s+/g, "").toLowerCase()
-
+  
+      const nSkill = skill.replace(/\s+/g, "").toLowerCase();
+  
       // Fetch the current value of {skill}_last
       const { data: userData, error: userError } = await db
         .from("users")
@@ -67,15 +74,19 @@ export default function Details() {
       const currentLast = userData[`${nSkill}_last`];
       const nextTaskId = currentLast + 1;
   
-      // Unlock the next task
-      const { error: unlockError } = await db
-        .from("tasks")
-        .update({ locked: false }) // Unlock the next task
-        .eq("id", nextTaskId);
+      // Only unlock the next task if the current task ID is not a multiple of 10
+      if (id % 10 !== 0) {
+        const { error: unlockError } = await db
+          .from("tasks")
+          .update({ locked: false }) // Unlock the next task
+          .eq("id", nextTaskId);
   
-      if (unlockError) {
-        console.error("Error unlocking the next task:", unlockError.message);
-        return;
+        if (unlockError) {
+          console.error("Error unlocking the next task:", unlockError.message);
+          return;
+        }
+      } else {
+        console.log("Current task is a milestone (multiple of 10); next task will not be unlocked.");
       }
   
       // Increment the {skill}_last column
@@ -106,11 +117,14 @@ export default function Details() {
       setIsDone(true);
       setShowPopup(true);
   
-      console.log("Task marked as done, XP updated, next task unlocked, and user's last task incremented.");
+      console.log(
+        "Task marked as done, XP updated, next task unlocked (if applicable), and user's last task incremented."
+      );
     } catch (err) {
       console.error("Error:", err);
     }
   };
+  
   
   
   
@@ -192,6 +206,27 @@ export default function Details() {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity 
+  onPress={() => navigateBack()}  
+  style={{ 
+    position: 'absolute', 
+    top: 50, // Adjust the vertical position
+    left: 16, 
+    zIndex: 2 // Ensure it appears above other elements 
+  }}
+>
+  <View style={{
+    width: 40,
+    height: 40,
+    backgroundColor: 'rgba(255,255,255,.8)', // Background color of the circle
+    borderRadius: 20, // Half of width/height for a perfect circle
+    justifyContent: 'center',
+    alignItems: 'center',
+  }}>
+    <Icon name="arrow-back" size={24} color="#000000" />
+  </View>
+</TouchableOpacity>
+
       <View style={styles.imageContainer}>
         <Image source={{ uri: photo }} style={styles.image} />
       </View>
@@ -305,7 +340,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   imageContainer: {
-    height: screenHeight * 0.25, // 33% of the screen height
+    height: screenHeight * 0.33, // 33% of the screen height
   },
   image: {
     width: "100%",
@@ -333,7 +368,7 @@ const styles = StyleSheet.create({
   },  
   contentContainer: {
     flex: 1, // This will take up the remaining space
-    padding: 16,
+    padding: 14,
   },
   skillTag: {
     alignSelf: "flex-start",
@@ -346,16 +381,18 @@ const styles = StyleSheet.create({
   skillTagText: {
     fontSize: 14,
     fontWeight: "600",
+    fontFamily: 'Poppins-Regular',
   },
   taskName: {
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "left",
     paddingVertical: 4,
+    fontFamily: 'Poppins-SemiBold',
   },
   xpText: {
     fontSize: 16,
-    color: "#777",
+    color: "#000",
     textAlign: "center",
   },
   xpRow: {
@@ -369,6 +406,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     textAlign: "left",
     paddingTop: 6,
+    fontFamily: 'Poppins-Regular',
   },
   inputContainer: {
     marginTop: 10,
@@ -383,6 +421,7 @@ const styles = StyleSheet.create({
     zIndex: 100,
     fontSize: 12,
     color: "#509B9B",
+    fontFamily: 'Poppins-Regular',
   },
   textInput: {
     borderWidth: 1,
@@ -392,6 +431,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#000",
     height: 80, // Adjusted height
+    fontFamily: 'Poppins-Regular',
   },
   buttonContainer: {
     flexDirection: "row",
@@ -414,6 +454,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginLeft: 10, // Spacing between icon and text
+    fontFamily: 'Poppins-SemiBold',
   },
   icon: {
     marginLeft: 10, // Spacing between icon and text
@@ -440,11 +481,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: 'center',
     alignSelf: 'center',
+    fontFamily: 'Poppins-SemiBold',
   },
   popupMessage: {
     fontSize: 16,
     textAlign: "center",
     marginBottom: 20,
+    fontFamily: 'Poppins-Regular',
   },
   okayButton: {
     backgroundColor: "#509B9B",
@@ -456,9 +499,9 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+    fontFamily: 'Poppins-SemiBold',
   },
 });
-
 
 
 

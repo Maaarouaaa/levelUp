@@ -26,7 +26,7 @@ export default function Three() {
         // Fetch all users ordered by total_xp in descending order, including 'friends' column
         const { data: users, error } = await db
           .from("users")
-          .select("id, total_xp, friends") // Including 'friends' column
+          .select("id, name, total_xp, friends") // Including 'name' column for search
           .order("total_xp", { ascending: false });
 
         if (error) {
@@ -40,17 +40,14 @@ export default function Three() {
         // Global list contains all users
         const globalList = users;
 
-        console.log(friendsList)
-        console.log(globalList)
-
-
         const addRankings = (list) =>
           list.map((user, index) => ({
             id: user.id.toString(),
+            name: user.name || "Unknown", // Use 'name' for display
             ranking: `${index + 1}${["st", "nd", "rd", "th"][Math.min(index, 3)]}`, // Ordinal suffix
+            totalXP: user.total_xp,
             friends: user.friends, // Pass 'friends' value to the Profile
           }));
-          
 
         setFriendsProfiles(addRankings(friendsList));
         setGlobalProfiles(addRankings(globalList));
@@ -62,11 +59,12 @@ export default function Three() {
     fetchLeaderboards();
   }, []);
 
-  // Filter profiles by search text
-  const filteredProfiles = (profiles) =>
-    profiles.filter((profile) =>
-      profile.id.toLowerCase().includes(searchText.toLowerCase())
-    );
+ // Filter profiles by search text
+const filteredProfiles = (profiles) =>
+profiles.filter((profile) =>
+  profile.name?.toLowerCase().includes(searchText.toLowerCase())
+);
+
 
   // Profiles to display based on toggle
   const profilesToDisplay = isToggled
@@ -83,7 +81,7 @@ export default function Three() {
       {/* Search Bar */}
       <TextInput
         style={styles.searchBar}
-        placeholder="Search members..."
+        placeholder="Search members by name..."
         placeholderTextColor="#aaa"
         value={searchText}
         onChangeText={setSearchText}
@@ -113,14 +111,13 @@ export default function Three() {
           <Profile
             key={profile.id}
             id={profile.id}
+            name={profile.name}
             ranking={profile.ranking}
             totalXP={profile.totalXP}
             friends={friendsProfiles.some((friend) => friend.id === profile.id)} // Use friendsProfiles state for the check
           />
         ))}
       </ScrollView>
-
-
     </View>
   );
 }
@@ -137,6 +134,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerText: {
+    fontFamily: "Poppins-Bold",
     fontSize: 40,
     color: "#509B9B",
     fontWeight: "bold",
@@ -153,6 +151,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "#fff",
     color: "#000",
+    fontFamily: "Poppins-Regular",
   },
   toggleWrapper: {
     alignItems: "center",
@@ -189,114 +188,18 @@ const styles = StyleSheet.create({
     right: 4,
   },
   toggleText: {
-    fontSize: 16,
+    fontFamily: "Poppins-SemiBold",
+    fontSize: 15,
     color: "#509B9B",
     zIndex: 1,
     paddingHorizontal: 18,
   },
   activeText: {
     color: "#fff",
+    fontFamily: "Poppins-SemiBold",
     fontWeight: "bold",
   },
   profilesContainer: {
     padding: 16,
   },
 });
-
-
-
-
-
-/*
-  return (
-    <View style={styles.container}>
-      <Text style={styles.centerText}>This is screen three</Text>
-      <TodaysExperience
-        name="Solve a Rubik's Cube"
-        xp="20"
-        photo={require("@/assets/rubiks_cube.jpg")}
-        description="Learn how to solve a Rubik’s Cube! Then, challenge your friends"
-        onPress={() =>
-          navigation.navigate("Details", {
-            name: "Solve a Rubik's Cube",
-            xp: "20",
-            photo: "@/assets/rubiks_cube.jpg",
-            description:
-              "Learn how to solve a Rubik’s Cube! Then, challenge your friends",
-          })
-        }
-      />
-      <View>
-        <Text>placeholder</Text>
-        {loading ? (
-          <Text>Loading users...</Text>
-        ) : (
-          <FlatList
-            data={users}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItem}
-          />
-        )}
-      </View>
-      <ExperienceCard
-        name="Solve a Rubik's Cube"
-        xp="20"
-        photo={require("@/assets/rubiks_cube.jpg")}
-        onPress={() => console.log("Go to Rubik's Cube Experience")}
-      />
-    </View>
-  );
-*/
-
-/*
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import TodaysExperience from "@/components/TodaysExperience"; 
-import ExperienceCard from "@/components/ExperienceCard"; 
-import LockedExperience from "@/components/LockedExperience"; 
-
-
-export default function Three({ navigation }) {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.centerText}>This is screen three</Text>
-      <TodaysExperience
-        name="Solve a Rubik's Cube"
-        xp="20"
-        photo={require("@/assets/rubiks_cube.jpg")} 
-        description="Learn how to solve a Rubik’s Cube! Then, challenge your friends"
-        onPress={() => navigation.navigate("Details", {
-          name: "Solve a Rubik's Cube",
-          xp: "20",
-          photo: "@/assets/rubiks_cube.jpg",
-          description: "Learn how to solve a Rubik’s Cube! Then, challenge your friends",
-        })}
-      />
-      <View>
-        <Text>placeholder</Text>
-      </View>
-      <ExperienceCard
-        name="Solve a Rubik's Cube"
-        xp="20"
-        photo={require("@/assets/rubiks_cube.jpg")} 
-        onPress={() => console.log("Go to Rubik's Cube Experience")}
-      />
-      <LockedExperience/>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff", // Neutral background color
-  },
-  centerText: {
-    fontSize: 18, // Adjust font size as needed
-    color: "#000", // Neutral text color
-    marginBottom: 20, // Add spacing between text and the button
-  },
-});
-*/

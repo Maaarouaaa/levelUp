@@ -1,53 +1,65 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableWithoutFeedback, Keyboard } from "react-native";
+import React, { useState, useEffect, useCallback} from "react";
+import { StyleSheet, Text, View, TextInput, ScrollView, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from "react-native";
 import ExperienceCard from "@/components/ExperienceCard";
+import { useRouter } from "expo-router";
+import Icon from "react-native-vector-icons/Ionicons";
 import db from "@/database/db";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function Three() {
   const [searchText, setSearchText] = useState("");
-  const [allTasks, setAllTasks] = useState([]); 
-  const [filteredTasks, setFilteredTasks] = useState([]); 
+  const [allTasks, setAllTasks] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]);
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const { data, error } = await db
-          .from("tasks")
-          .select("id, name, description, done, locked")
-          .gte("id", 31)
-          .lte("id", 40)
-          .order("id", { ascending: true }); 
+  const router = useRouter();
 
-        if (error) {
-          console.error("Error fetching tasks:", error.message);
-        } else {
-          console.log("Fetched tasks:", data); 
-          setAllTasks(data); 
-          setFilteredTasks(data); 
-        }
-      } catch (err) {
-        console.error("Error:", err);
+  const navigateBack = () => {
+    router.back();
+  };
+
+  const fetchTasks = async () => {
+    try {
+      const { data, error } = await db
+        .from("tasks")
+        .select("id, name, description, done, locked")
+        .gte("id", 31)
+        .lte("id", 40)
+        .order("id", { ascending: true });
+
+      if (error) {
+        console.error("Error fetching tasks:", error.message);
+      } else {
+        console.log("Fetched tasks:", data);
+        setAllTasks(data);
+        setFilteredTasks(data);
       }
-    };
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  };
 
-    fetchTasks();
-  }, []);
+  // Refetch tasks when the screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      fetchTasks();
+    }, [])
+  );
 
   useEffect(() => {
     if (searchText === "") {
-      setFilteredTasks(allTasks); 
+      setFilteredTasks(allTasks);
     } else {
       const filtered = allTasks.filter((task) => {
-        const name = task.name || ""; 
-        const description = task.description || ""; 
-        
+        const name = task.name || "";
+        const description = task.description || "";
+
         if (!task.locked) {
           return (
             name.toLowerCase().includes(searchText.toLowerCase()) ||
             description.toLowerCase().includes(searchText.toLowerCase())
           );
         }
-        return false; 
+        return false;
       });
       setFilteredTasks(filtered);
     }
@@ -57,6 +69,17 @@ export default function Three() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         {/* Blue Background */}
+        <TouchableOpacity 
+  onPress={() => navigateBack()} 
+  style={{ 
+    position: 'absolute', 
+    top: 50, // Adjust the vertical position to sit right above the header
+    left: 16, 
+    zIndex: 2 // Ensure it appears above other elements 
+  }}
+>
+  <Icon name="arrow-back" size={24} color="#838383" />
+</TouchableOpacity>
         <View style={styles.blueBackground}>
           <Text style={styles.headerText}>Adaptability</Text>
         </View>
@@ -74,8 +97,8 @@ export default function Three() {
 
         {/* Scrollable Cards */}
         <ScrollView
-          contentContainerStyle={[styles.cardsContainer, { paddingTop: 10 }]} 
-          style={{ marginTop: 40 }} 
+          contentContainerStyle={[styles.cardsContainer, { paddingTop: 10 }]}
+          style={{ marginTop: 40 }}
         >
           {filteredTasks.map((task) => (
             <View key={task.id} style={styles.cardWrapper}>
@@ -83,7 +106,7 @@ export default function Three() {
                 id={task.id}
                 name={task.name || "No Name"}
                 description={task.description || "No Description"}
-                navigate="home" 
+                navigate="home"
               />
             </View>
           ))}
@@ -93,25 +116,29 @@ export default function Three() {
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
   },
   blueBackground: {
-    height: "18%",
+    height: "22%",
     backgroundColor: "#FFE8CD",
     justifyContent: "center",
     alignItems: "center",
   },
+
   headerText: {
-    fontSize: 40,
+    paddingVertical: 80,
+    fontSize: 34,
     color: "#FFAB45",
     fontWeight: "bold",
+    fontFamily: 'Poppins-Bold',
   },
   searchBarWrapper: {
     position: "absolute",
-    top: "15%",
+    top: "19%",
     alignSelf: "center",
     width: "80%",
     backgroundColor: "#fff",
@@ -128,11 +155,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "#fff",
     color: "#000",
+    fontFamily: 'Poppins-Regular',
   },
   cardWrapper: {
     marginBottom: 15,
   },
   cardsContainer: {
-    paddingTop: 10, 
+    paddingTop: 10, // Add padding to prevent overlap with the search bar
+    alignItems: "center",
   },
 });
