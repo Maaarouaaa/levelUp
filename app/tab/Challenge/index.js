@@ -20,14 +20,15 @@ export default function Three() {
     setIsToggled((prev) => !prev);
   };
 
-  const getRandomId = () => {
-    return Math.floor(Math.random() * 40) + 1;
-  };
-
-  id = getRandomId()
-  console.log(id)
+  
 
   const navigateToDetails = () => {
+    const getRandomId = () => {
+      return Math.floor(Math.random() * 40) + 1;
+    };
+  
+    id = getRandomId()
+    console.log(id)
     router.push({ pathname: "/tab/Challenge/detailsC", params: { id: id } });
   };
 
@@ -72,7 +73,7 @@ export default function Three() {
                   <Text style={styles.sentToText}>FROM: Varsha</Text>
                   <Text style={styles.sentDateText}>Received: 4 Hours Ago</Text>
                 </View>
-                <TouchableOpacity style={styles.viewTaskButton}>
+                <TouchableOpacity onPress = {navigateToDetails} style={styles.viewTaskButton}>
                   <Text style={styles.viewTaskText}>View Task</Text>
                 </TouchableOpacity>
               </View>
@@ -84,7 +85,7 @@ export default function Three() {
                   <Text style={styles.sentToText}>FROM: Paige</Text>
                   <Text style={styles.sentDateText}>Received: 9 hours ago</Text>
                 </View>
-                <TouchableOpacity style={styles.viewTaskButton}>
+                <TouchableOpacity onPress = {navigateToDetails} style={styles.viewTaskButton}>
                   <Text style={styles.viewTaskText}>View Task</Text>
                 </TouchableOpacity>
               </View>
@@ -96,7 +97,7 @@ export default function Three() {
                   <Text style={styles.sentToText}>FROM: Varsha</Text>
                   <Text style={styles.sentDateText}>Received: 2 days ago</Text>
                 </View>
-                <TouchableOpacity style={styles.viewTaskButton}>
+                <TouchableOpacity onPress = {navigateToDetails} style={styles.viewTaskButton}>
                   <Text style={styles.viewTaskText}>View Task</Text>
                 </TouchableOpacity>
               </View>
@@ -108,7 +109,7 @@ export default function Three() {
                   <Text style={styles.sentToText}>FROM: Nick</Text>
                   <Text style={styles.sentDateText}>Completed: 3 days ago</Text>
                 </View>
-                <TouchableOpacity style={styles.viewTaskButton}>
+                <TouchableOpacity onPress = {navigateToDetails} style={styles.viewTaskButton}>
                   <Text style={styles.viewTaskText}>View Task</Text>
                 </TouchableOpacity>
               </View>
@@ -120,7 +121,7 @@ export default function Three() {
                   <Text style={styles.sentToText}>FROM: Maroua</Text>
                   <Text style={styles.sentDateText}>Completed: 9 days ago</Text>
                 </View>
-                <TouchableOpacity style={styles.viewTaskButton}>
+                <TouchableOpacity onPress = {navigateToDetails} style={styles.viewTaskButton}>
                   <Text style={styles.viewTaskText}>View Task</Text>
                 </TouchableOpacity>
               </View>

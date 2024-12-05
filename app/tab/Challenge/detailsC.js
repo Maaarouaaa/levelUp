@@ -15,7 +15,7 @@ import { useRouter } from "expo-router";
 import Icon from "react-native-vector-icons/Ionicons";
 import db from "@/database/db";
 
-export default function Details() {
+export default function DetailsC() {
   const param = useLocalSearchParams();
   const id = param.id;
 
