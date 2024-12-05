@@ -196,68 +196,70 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   header: {
-    height: "20%", // Header height as 20% of the screen height
+    height: Dimensions.get("window").height * 0.20, // Set header to 22% of screen height
     backgroundColor: "rgba(80, 155, 155, 0.27)",
     justifyContent: "center",
     alignItems: "center",
+    position: "relative",
   },
   headerTitle: {
     fontFamily: "Poppins",
-    fontSize: Dimensions.get("window").width * 0.08, // Font size relative to screen width
+    fontSize: 34,
     fontWeight: "700",
     color: "#509B9B",
   },
   profileSection: {
     alignItems: "center",
-    marginTop: "-10%", // Pull profile picture upwards relative to header
-    marginBottom: "-3%", 
-    zIndex: 1, 
+    marginTop: -40, // Pull the profile picture upwards to overlap the header
+    marginBottom: -15,
+    zIndex: 1, // Ensure the profile picture stays on top
   },
   profilePicture: {
-    height: Dimensions.get("window").width * 0.3, // Profile picture as 30% of screen width
-    width: Dimensions.get("window").width * 0.3,
-    borderRadius: Dimensions.get("window").width * 0.15, // Circular profile picture
-    marginBottom: "3%",
+    height: 120,
+    width: 120,
+    borderRadius: 60,
+    marginBottom: 10,
   },
   profileName: {
     fontFamily: "Poppins",
-    fontSize: Dimensions.get("window").width * 0.07, // Relative font size
+    fontSize: 28,
     fontWeight: "700",
     color: "#509B9B",
   },
   memberInfo: {
     fontFamily: "Poppins",
-    fontSize: Dimensions.get("window").width * 0.04,
+    fontSize: 16,
     color: "#4B4B4B",
   },
   statsContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginTop: "5%",
-    marginBottom: "5%",
+    marginTop: 30,
+    marginBottom: 20,
   },
   statBox: {
     alignItems: "center",
   },
   statNumber: {
     fontFamily: "Poppins",
-    fontSize: Dimensions.get("window").width * 0.05,
+    fontSize: 20,
     fontWeight: "600",
-    marginVertical: "2%",
+    marginBottom: 3,
+    marginTop: 3,
   },
   statLabel: {
     fontFamily: "Poppins",
-    fontSize: Dimensions.get("window").width * 0.035,
+    fontSize: 12,
   },
   skillsContainer: {
-    marginBottom: "5%",
-    marginHorizontal: "5%",
+    marginBottom: 20,
+    marginHorizontal: 30,
   },
   skillsHeading: {
     fontFamily: "Poppins",
-    fontSize: Dimensions.get("window").width * 0.045,
+    fontSize: 17,
     fontWeight: "600",
-    marginBottom: "2%",
+    marginBottom: 5,
   },
   skillsGrid: {
     flexDirection: "row",
@@ -265,42 +267,48 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   skillBox: {
-    width: "48%", // Skill box takes 48% of the row width
-    marginBottom: "5%",
+    width: "48%",
+    marginBottom: 10,
   },
   skillName: {
     fontFamily: "Poppins",
-    fontSize: Dimensions.get("window").width * 0.035,
+    fontSize: 14,
     fontWeight: "700",
-    marginBottom: "2%",
+    marginBottom: 5,
   },
   progressBar: {
-    height: Dimensions.get("window").height * 0.01,
+    height: 10,
     backgroundColor: "#E0E0E0",
     borderRadius: 20,
     overflow: "hidden",
-    elevation: 5,
-  },
+    shadowColor: "#000", // Color of the shadow
+    shadowOffset: { width: 0, height: 2 }, // Offset for the shadow (horizontal, vertical)
+    shadowOpacity: 0.8, // Opacity of the shadow
+    shadowRadius: 4, // Blur radius of the shadow
+    elevation: 5, // Elevation for Android shadow
+  },  
   progress: {
     height: "100%",
   },
   xpText: {
     fontFamily: "Poppins",
-    fontSize: Dimensions.get("window").width * 0.035,
-    marginTop: "2%",
+    fontSize: 14,
+    marginTop: 2,
   },
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginVertical: "2%",
+    marginTop: -15,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
   },
   button: {
     flexDirection: "row",
     alignItems: "center",
-    width: "40%", // Button width is 40% of the row width
-    height: Dimensions.get("window").height * 0.05,
-    paddingVertical: "1%",
-    paddingHorizontal: "3%",
+    width: 160,
+    height: 40,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
     borderRadius: 8,
     borderColor: "#509B9B",
     borderWidth: 1,
@@ -308,9 +316,11 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontFamily: "Poppins",
-    fontSize: Dimensions.get("window").width * 0.035,
+    fontSize: 14,
     color: "#509B9B",
     fontWeight: "bold",
-    marginLeft: "2%",
+    marginLeft: 2,
   },
 });
+
+
