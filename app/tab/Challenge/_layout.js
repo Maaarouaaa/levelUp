@@ -1,23 +1,39 @@
+import { Stack } from "expo-router";
 import { Slot } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
-
-export default function SlotLayout() {
-  return <Slot />;
-  {
-    /*
+export default function ChallengeStackLayout() {
   return (
     <Stack>
-      
+      {/* Main challenge log Screen */}
       <Stack.Screen
-        name="challenges" // Matches "feed/index.js"
+        name="index" 
         options={{
-          title: "experience",
+          title: "idk",
+          headerTintColor: "#fff",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="challenges"
+        options={{
+          title: "idk",
+
+          headerTintColor: "#fff",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="detailsC"
+        options={{
+          title: "idk",
+
+          headerTintColor: "#fff",
           headerShown: false,
         }}
       />
     </Stack>
   );
-  */
-  }
 }
+
+

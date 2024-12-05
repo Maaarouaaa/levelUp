@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,26 +7,55 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
+import { useRouter } from "expo-router";
+import Icon from "react-native-vector-icons/Ionicons";
 import ExperienceCard from "@/components/ExperienceCard";
-import db from "@/database/db";
+import db from "@/database/db"; // Ensure this points to your database setup
 
 export default function Three({ navigation }) {
   const [searchText, setSearchText] = useState("");
   const [isToggled, setIsToggled] = useState(false);
   const [toSend, setToSend] = useState(false);
   const [selectedCards, setSelectedCards] = useState([]);
-  userName = "DummyName";
+  const [completed, setCompleted] = useState([]);
+
+  useEffect(() => {
+    // Fetch completed tasks from the 'tasks' table
+    const fetchCompletedTasks = async () => {
+      try {
+        const { data, error } = await db
+          .from("tasks")
+          .select("id")
+          .eq("done", true); // Filter for tasks where 'done' is true
+
+        if (error) {
+          console.error("Error fetching completed tasks:", error.message);
+          return;
+        }
+
+        // Extract IDs from the fetched data
+        const completedIds = data.map((task) => task.id);
+        setCompleted(completedIds);
+      } catch (error) {
+        console.error("Unexpected error fetching completed tasks:", error);
+      }
+    };
+
+    fetchCompletedTasks();
+  }, []);
+
+
+  const userName = "DummyName";
+  const router = useRouter();
+
+  const navigateBack = () => {
+    router.push("/tab/leaderB");
+  };
+
   const handlePress = () => {
     console.log("Card pressed!");
     setToSend(true); // Set to true to show the Send button
   };
-
-  const handleToggle = () => {
-    setToSend(false); // Hide the Send button after action
-  };
-
-  // Filtered IDs for Remaining state
-  const remainingIds = [1, 5, 4, 12, 13, 2, 3, 11];
 
   const handleSend = async () => {
     console.log("one", selectedCards);
@@ -49,6 +78,7 @@ export default function Three({ navigation }) {
         console.log("Data inserted successfully:", data);
         setSelectedCards([]); // Clear selected cards after successful submission
         setToSend(false); // Hide send button
+        router.back(); // Navigate to challenges screen
       }
     } catch (error) {
       console.error("Unexpected error:", error);
@@ -58,6 +88,17 @@ export default function Three({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        onPress={() => navigateBack()}
+        style={{
+          position: "absolute",
+          top: 50, // Adjust the vertical position to sit right above the header
+          left: 16,
+          zIndex: 2, // Ensure it appears above other elements
+        }}
+      >
+        <Icon name="arrow-back" size={24} color="#838383" />
+      </TouchableOpacity>
       {/* Blue Background */}
       <View style={styles.blueBackground}>
         <Text style={styles.headerText}>Challenge</Text>
@@ -73,7 +114,7 @@ export default function Three({ navigation }) {
       {/* Scrollable Cards */}
       <ScrollView contentContainerStyle={styles.cardsContainer}>
         {!isToggled &&
-          remainingIds.map((id) => (
+          completed.map((id) => (
             <TouchableOpacity
               key={id}
               style={styles.cardWrapper}
@@ -88,10 +129,9 @@ export default function Three({ navigation }) {
           ))}
       </ScrollView>
       {/* Send button */}
-
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-          <Text style={styles.buttonText}>Send experiences?</Text>
+          <Text style={styles.buttonText}>Send Experiences?</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -130,7 +170,7 @@ const styles = StyleSheet.create({
   },
   cardsContainer: {
     marginTop: 41,
-    //backgroundColor: "red",
+    paddingBottom: 80, // Add padding to create space at the bottom
   },
   cardWrapper: {
     marginBottom: 15, // Adds padding between cards
@@ -140,7 +180,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
-    bottom: 20, // Distance from the bottom edge of the screen
+    bottom: 5, // Distance from the bottom edge of the screen
     width: "100%",
   },
   sendButton: {
@@ -156,6 +196,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
 
 /*
 import React, { useState } from "react";
