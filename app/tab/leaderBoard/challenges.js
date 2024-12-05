@@ -18,23 +18,27 @@ export default function Three({ navigation }) {
   const [toSend, setToSend] = useState(false);
   const [selectedCards, setSelectedCards] = useState([]);
   const [completed, setCompleted] = useState([]);
-  const [allTasks, setAllTasks] = useState([]);
   const [filteredTasks, setFilteredTasks] = useState([]);
 
+  const router = useRouter();
+
   useEffect(() => {
-    // Fetch all tasks and completed tasks from the 'tasks' table
+    // Fetch unlocked and completed tasks from the 'tasks' table
     const fetchTasks = async () => {
       try {
-        const { data, error } = await db.from("tasks").select("*");
+        const { data, error } = await db
+          .from("tasks")
+          .select("*")
+          .eq("locked", false)
+          .eq("done", true);
+
         if (error) {
           console.error("Error fetching tasks:", error.message);
           return;
         }
-        setAllTasks(data);
 
-        // Filter completed tasks based on 'done' column
-        const completedIds = data.filter((task) => task.done).map((task) => task.id);
-        setCompleted(completedIds);
+        setFilteredTasks(data); // Set filtered tasks directly as they are already filtered
+        setCompleted(data.map((task) => task.id)); // Track completed task IDs
       } catch (error) {
         console.error("Unexpected error fetching tasks:", error);
       }
@@ -43,48 +47,40 @@ export default function Three({ navigation }) {
     fetchTasks();
   }, []);
 
-  useEffect(() => {
-    // Apply search filter
-    const filterTasks = () => {
-      const filtered = allTasks.filter((task) => {
+  const handleSearch = (text) => {
+    setSearchText(text);
+
+    // Update filtered tasks based on search text
+    setFilteredTasks((prevTasks) =>
+      prevTasks.filter((task) => {
         const name = task.name || "";
         const description = task.description || "";
         return (
-          name.toLowerCase().includes(searchText.toLowerCase()) ||
-          description.toLowerCase().includes(searchText.toLowerCase())
+          name.toLowerCase().includes(text.toLowerCase()) ||
+          description.toLowerCase().includes(text.toLowerCase())
         );
-      });
-
-      setFilteredTasks(filtered);
-    };
-
-    filterTasks();
-  }, [searchText, allTasks]);
-
-  const router = useRouter();
-
-  const navigateBack = () => {
-    router.push("/tab/leaderB");
+      })
+    );
   };
 
   const handlePress = (id) => {
     console.log("Card pressed!", id);
-    setToSend(true); // Set to true to show the Send button
+    setToSend(true); // Show the Send button
     setSelectedCards((prev) => [...prev, id]); // Add the selected card's ID
   };
 
   const handleSend = async () => {
-    console.log("one", selectedCards);
+    console.log("Selected Cards:", selectedCards);
     try {
-      const currentDate = new Date().toISOString(); // Get the current date in ISO format
+      const currentDate = new Date().toISOString();
 
       const { data, error } = await db
-        .from("Sent") // The table name in Supabase
+        .from("Sent")
         .insert(
           selectedCards.map((card) => ({
-            userName: "DummyName", // User's name
-            cardId: card, // Card ID
-            date: currentDate, // Current date
+            userName: "DummyName",
+            cardId: card,
+            date: currentDate,
           }))
         );
 
@@ -92,42 +88,43 @@ export default function Three({ navigation }) {
         console.error("Error inserting data:", error.message);
       } else {
         console.log("Data inserted successfully:", data);
-        setSelectedCards([]); // Clear selected cards after successful submission
-        setToSend(false); // Hide send button
-        router.back(); // Navigate to challenges screen
+        setSelectedCards([]); // Clear selected cards
+        setToSend(true); // Hide send button
+        router.back(); // Navigate back
+
       }
     } catch (error) {
       console.error("Unexpected error:", error);
     }
-    console.log("two", selectedCards);
+  };
+
+  const navigateBack = () => {
+    router.back();
   };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        onPress={() => navigateBack()}
+        onPress={navigateBack}
         style={{
           position: "absolute",
-          top: 50, // Adjust the vertical position to sit right above the header
+          top: 50,
           left: 16,
-          zIndex: 2, // Ensure it appears above other elements
+          zIndex: 2,
         }}
       >
         <Icon name="arrow-back" size={24} color="#838383" />
       </TouchableOpacity>
-      {/* Blue Background */}
       <View style={styles.blueBackground}>
         <Text style={styles.headerText}>Challenge</Text>
       </View>
-      {/* Search Bar */}
       <TextInput
         style={styles.searchBar}
         placeholder="Search experiences..."
         placeholderTextColor="#aaa"
         value={searchText}
-        onChangeText={setSearchText}
+        onChangeText={handleSearch}
       />
-      {/* Scrollable Cards */}
       <ScrollView contentContainerStyle={styles.cardsContainer}>
         {filteredTasks.map((task) => (
           <TouchableOpacity
@@ -136,23 +133,22 @@ export default function Three({ navigation }) {
             onPress={() => handlePress(task.id)}
           >
             <ExperienceCard
-              id={task.id} // Set the ID for the experience
-              name={task.name || "No Name"} // Display name
-              description={task.description || "No Description"} // Display description
-              navigate="experience" // Navigate to experience screen
-              bool={completed.includes(task.id)} // Mark if completed
+              id={task.id}
+              name={task.name || "No Name"}
+              description={task.description || "No Description"}
+              navigate="experience"
+              bool={completed.includes(task.id)}
             />
           </TouchableOpacity>
         ))}
       </ScrollView>
-      {/* Send button */}
-      {toSend && (
+      
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
             <Text style={styles.buttonText}>Send Experiences?</Text>
           </TouchableOpacity>
         </View>
-      )}
+      
     </View>
   );
 }
@@ -161,7 +157,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    pointerEvents: "box-none",
   },
   blueBackground: {
     height: "18%",
@@ -190,20 +185,20 @@ const styles = StyleSheet.create({
   },
   cardsContainer: {
     marginTop: 41,
-    paddingBottom: 80, // Add padding to create space at the bottom
+    paddingBottom: 80,
   },
   cardWrapper: {
-    marginBottom: 15, // Adds padding between cards
+    marginBottom: 15,
   },
   buttonContainer: {
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
-    bottom: 5, // Distance from the bottom edge of the screen
+    bottom: 5,
     width: "100%",
   },
   sendButton: {
-    width: "60%", // Adjust the button width as necessary
+    width: "60%",
     padding: 15,
     borderRadius: 25,
     backgroundColor: "#509B9B",
