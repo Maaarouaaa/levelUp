@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   header: {
-    height: Dimensions.get("window").height * 0.22, // Set header to 22% of screen height
+    height: Dimensions.get("window").height * 0.20, // Set header to 22% of screen height
     backgroundColor: "rgba(80, 155, 155, 0.27)",
     justifyContent: "center",
     alignItems: "center",
@@ -211,6 +211,7 @@ const styles = StyleSheet.create({
   profileSection: {
     alignItems: "center",
     marginTop: -40, // Pull the profile picture upwards to overlap the header
+    marginBottom: -15,
     zIndex: 1, // Ensure the profile picture stays on top
   },
   profilePicture: {
@@ -256,9 +257,9 @@ const styles = StyleSheet.create({
   },
   skillsHeading: {
     fontFamily: "Poppins",
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: "600",
-    marginBottom: 10,
+    marginBottom: 5,
   },
   skillsGrid: {
     flexDirection: "row",
@@ -292,13 +293,14 @@ const styles = StyleSheet.create({
   xpText: {
     fontFamily: "Poppins",
     fontSize: 14,
-    marginTop: 5,
+    marginTop: 2,
   },
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    paddingVertical: 10,
-    paddingHorizontal: 10,
+    marginTop: -15,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
   },
   button: {
     flexDirection: "row",
