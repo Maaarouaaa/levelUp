@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
   headerBackground: {
     position: "absolute",
     width: "100%",
-    height: "32%",
+    height: "30%",
     backgroundColor: "rgba(80, 155, 155, 0.27)",
   },
   backArrow: {
@@ -340,22 +340,23 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     position: "absolute",
-    top: 30,
-    left: "28%",
+    top: 50,
+    left: "22%",
     fontFamily: "Poppins-Bold",
-    fontSize: 30,
+    fontSize: 34,
     color: "#509B9B",
   },
   filterText: {
-    marginTop: "22%",
+    marginTop: "28%",
     marginBottom: "1%",
     marginLeft: 45,
-    fontFamily: "Poppins-Regular",
-    fontSize: 13,
+    fontFamily: "Poppins-SemiBold",
+    fontSize: 14,
     color: "#000000",
   },
   filterContainer: {
     alignItems: "center",
+    paddingTop: 4,
   },
   row: {
     flexDirection: "row",
@@ -367,7 +368,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "47%",
-    height: 25,
+    height: 30,
     borderRadius: 15,
     borderWidth: 2,
     borderColor: "#E0E0E0",
@@ -384,14 +385,15 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
   graphTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "500",
     textAlign: "center",
     color: "black",
-    marginTop: 10,
+    marginTop: 30,
+    fontFamily: "Poppins-SemiBold"
   },
   graphContainer: {
-    marginTop: 30,
+    marginTop: 4,
     alignItems: "center",
   },
   loadingContainer: {

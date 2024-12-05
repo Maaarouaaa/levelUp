@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   blueBackground: {
-    height: "18%",
+    height: "22%",
     backgroundColor: "rgba(80, 155, 155, .27)",
     justifyContent: "center",
     alignItems: "center",
@@ -201,6 +201,7 @@ const styles = StyleSheet.create({
     color: "#509B9B",
     fontWeight: "bold",
     fontFamily: 'Poppins-Bold',
+    marginTop: 40,
   },
   searchFilterContainer: {
     flexDirection: "row",
@@ -224,6 +225,7 @@ const styles = StyleSheet.create({
     width: "20%",
     height: 40,
     marginRight: 10,
+    marginTop: -30,
   },
   dropdownText: {
     fontSize: 16,
@@ -262,10 +264,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     color: "#000",
     fontFamily: 'Poppins-Regular',
+    marginTop: -32,
   },
   toggleWrapper: {
     alignItems: "center",
-    marginVertical: 30,
+    marginVertical: 10,
   },
   toggleContainer: {
     position: "relative",

@@ -299,7 +299,7 @@ export default function Details() {
           >
             <Icon
               name="paper-plane"
-              size={20}
+              size={16}
               color="#509B9B"
               style={styles.icon}
             />
