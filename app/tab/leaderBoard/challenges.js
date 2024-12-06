@@ -142,16 +142,14 @@ export default function Three({ navigation }) {
           </TouchableOpacity>
         ))}
       </ScrollView>
-      
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-            <Text style={styles.buttonText}>Send Experiences?</Text>
-          </TouchableOpacity>
-        </View>
-      
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+          <Text style={styles.buttonText}>Send Experiences?</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
-}
+}  
 
 const styles = StyleSheet.create({
   container: {
@@ -172,20 +170,22 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     position: "absolute",
-    top: "15%",
-    alignSelf: "center",
-    height: 40,
+    top: "15%", // Ensures it overlaps with the header
+    left: "10%", // Centered horizontally (adjust if necessary)
     width: "80%",
+    height: 40,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
     paddingHorizontal: 10,
     backgroundColor: "#fff",
     color: "#000",
+    zIndex: 2, // Ensures it stays above other elements
   },
   cardsContainer: {
-    marginTop: 41,
+    marginTop: "20%", // Pushes the cards below the search bar
     paddingBottom: 80,
+    alignItems: "center",
   },
   cardWrapper: {
     marginBottom: 15,
@@ -211,3 +211,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+

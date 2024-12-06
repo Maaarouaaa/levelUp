@@ -31,7 +31,8 @@
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "~0.19.10",
     "expo-font": "~12.0.10",
-    "expo-splash-screen": "~0.27.7"
+    "expo-splash-screen": "~0.27.7",
+    "expo-blur": "~13.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0"

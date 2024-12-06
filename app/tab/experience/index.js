@@ -35,14 +35,13 @@ export default function Three() {
       const { data, error } = await db
         .from("tasks")
         .select("id, name, description, skill, locked, done");
-  
+
       if (error) {
         console.error("Error fetching tasks:", error.message);
       } else if (data) {
-        // Only keep unlocked tasks
         const unlockedTasks = data.filter((task) => !task.locked);
         setAllTasks(unlockedTasks);
-        setFilteredTasks(unlockedTasks); // Set initial filtered tasks
+        setFilteredTasks(unlockedTasks);
       }
     } catch (err) {
       console.error("Error:", err);
@@ -50,13 +49,12 @@ export default function Three() {
       setLoading(false);
     }
   };
-  
 
-  // Use useFocusEffect to refetch data when the screen is focused
+  // Refetch data when the screen is focused
   useFocusEffect(
     useCallback(() => {
       fetchTasks();
-    }, []) // Ensure the dependency array is empty to refetch data every time
+    }, [])
   );
 
   // Apply filtering logic
@@ -64,12 +62,10 @@ export default function Three() {
     const filterTasks = () => {
       let tasks = allTasks;
 
-      // Step 1: Apply category filter
       if (selectedCategory !== "All") {
         tasks = tasks.filter((task) => task.skill === selectedCategory);
       }
 
-      // Step 2: Apply search filter
       if (searchText) {
         tasks = tasks.filter((task) => {
           const name = task.name || "";
@@ -81,14 +77,9 @@ export default function Three() {
         });
       }
 
-      // Step 3: Apply toggle filter for Remaining/Completed
       tasks = tasks.filter((task) => (isToggled ? task.done : !task.done));
 
-      // Step 4: Sort tasks (unlocked first, then locked)
-      tasks = tasks.sort((a, b) => {
-        if (a.locked === b.locked) return 0; // No change if both are the same
-        return a.locked ? 1 : -1; // Unlocked (false) tasks come first
-      });
+      tasks = tasks.sort((a, b) => (a.locked ? 1 : -1));
 
       setFilteredTasks(tasks);
     };
@@ -106,22 +97,31 @@ export default function Three() {
 
   return (
     <View style={styles.container}>
-      {/* Blue Background */}
       <View style={styles.blueBackground}>
         <Text style={styles.headerText}>My Experiences</Text>
       </View>
 
-      {/* Search Bar and Dropdown */}
       <View style={styles.searchFilterContainer}>
-        {/* Dropdown */}
-        <TouchableOpacity
-          style={styles.dropdown}
-          onPress={() => setShowDropdown(!showDropdown)}
-        >
-          <Text style={styles.dropdownText}>{selectedCategory}</Text>
-          <Icon name="chevron-down" size={20} color="#000" />
-        </TouchableOpacity>
+        <View style={styles.searchBarContainer}>
+          {/* Dropdown Button */}
+          <TouchableOpacity
+            style={styles.dropdownInsideSearchBar}
+            onPress={() => setShowDropdown(!showDropdown)}
+          >
+            <Text style={styles.dropdownText}>{selectedCategory}</Text>
+            <Icon name="chevron-down" size={16} color="#fff" />
+          </TouchableOpacity>
 
+          <TextInput
+            style={styles.searchBar}
+            placeholder="Search experiences..."
+            placeholderTextColor="#aaa"
+            value={searchText}
+            onChangeText={setSearchText}
+          />
+        </View>
+
+        {/* Dropdown List */}
         {showDropdown && (
           <View style={styles.dropdownList}>
             {categories.map((category) => (
@@ -129,8 +129,8 @@ export default function Three() {
                 key={category}
                 style={styles.dropdownItem}
                 onPress={() => {
-                  setSelectedCategory(category); // Update selected category
-                  setShowDropdown(false); // Close dropdown
+                  setSelectedCategory(category);
+                  setShowDropdown(false);
                 }}
               >
                 <Text style={styles.dropdownItemText}>{category}</Text>
@@ -138,18 +138,9 @@ export default function Three() {
             ))}
           </View>
         )}
-
-        {/* Search Bar */}
-        <TextInput
-          style={styles.searchBar}
-          placeholder="Search experiences..."
-          placeholderTextColor="#aaa"
-          value={searchText}
-          onChangeText={setSearchText}
-        />
       </View>
 
-      {/* Oval Toggle */}
+      {/* Toggle Button */}
       <View style={styles.toggleWrapper}>
         <TouchableOpacity style={styles.toggleContainer} onPress={handleToggle}>
           <View
@@ -167,8 +158,10 @@ export default function Three() {
         </TouchableOpacity>
       </View>
 
-      {/* Scrollable Cards */}
-      <ScrollView contentContainerStyle={styles.cardsContainer}>
+      <ScrollView
+        contentContainerStyle={styles.cardsContainer}
+        keyboardShouldPersistTaps="handled" // Ensures dropdown remains tappable
+      >
         {filteredTasks.map((task) => (
           <View key={task.id} style={styles.cardWrapper}>
             <ExperienceCard
@@ -183,7 +176,6 @@ export default function Three() {
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -200,75 +192,79 @@ const styles = StyleSheet.create({
     fontSize: 40,
     color: "#509B9B",
     fontWeight: "bold",
-    fontFamily: 'Poppins-Bold',
+    fontFamily: "Poppins-Bold",
     marginTop: 40,
   },
   searchFilterContainer: {
+    zIndex: 10, // Ensure dropdown stays above other components
+    position: "relative",
+  },
+  searchBarContainer: {
+    marginTop: -20,
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    width: "80%",
+    position: "relative",
+    overflow: "hidden",
+    alignSelf: "center",
+  },
+  dropdownInsideSearchBar: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 10,
-    paddingHorizontal: 20,
-    position: "relative", // Ensures the dropdown list aligns correctly
-  },
-
-  dropdown: {
-    position: "Absolute",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    backgroundColor: "#509B9B",
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+    height: "100%",
     paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 10,
-    backgroundColor: "#fff",
-    width: "20%",
-    height: 40,
-    marginRight: 10,
-    marginTop: -30,
   },
   dropdownText: {
-    fontSize: 16,
-    color: "#000",
-    fontFamily: 'Poppins-Regular',
+    fontSize: 14,
+    color: "#fff",
+    fontFamily: "Poppins-Regular",
+    marginRight: 4,
   },
   dropdownList: {
-    position: "absolute", // Makes it float above other content
-    top: 50, // Adjust this value to position below the dropdown button
-    left: 20, // Align it properly based on your layout
-    width: "40%", // Keep the same width as the dropdown
+    position: "absolute",
+    top: 50,
+    left: 0,
     backgroundColor: "#fff",
     borderRadius: 10,
     borderWidth: 1,
     borderColor: "#ccc",
-    zIndex: 100, // Ensure it appears above other components
-    elevation: 5, // For shadow on Android  
+    width: "50%",
+    zIndex: 100, // Ensure dropdown list appears on top
+    elevation: 5,
+    marginTop: -30,
+    marginLeft: 37,
   },
-
   dropdownItem: {
     paddingVertical: 10,
     paddingHorizontal: 15,
   },
   dropdownItemText: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#000",
-    fontFamily: 'Poppins-Regular',
+    fontFamily: "Poppins-Regular",
   },
   searchBar: {
     flex: 1,
     height: 40,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 10,
-    paddingHorizontal: 10,
     backgroundColor: "#fff",
     color: "#000",
-    fontFamily: 'Poppins-Regular',
-    marginTop: -32,
+    fontFamily: "Poppins-Regular",
+    paddingHorizontal: 10,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
   },
   toggleWrapper: {
     alignItems: "center",
     marginVertical: 10,
+    zIndex: 5, // Stays above task cards but below dropdown
   },
   toggleContainer: {
     position: "relative",
@@ -305,21 +301,20 @@ const styles = StyleSheet.create({
     color: "#509B9B",
     zIndex: 1,
     paddingHorizontal: 5,
-    fontFamily: 'Poppins-SemiBold',
+    fontFamily: "Poppins-SemiBold",
   },
   activeText: {
     color: "#fff",
     fontWeight: "bold",
-    fontFamily: 'Poppins-SemiBold',
-
-  },
-  cardWrapper: {
-    marginBottom: 15,
+    fontFamily: "Poppins-SemiBold",
   },
   cardsContainer: {
     paddingTop: 10,
     paddingHorizontal: 16,
-    alignItems: 'center',
+    alignItems: "center",
+  },
+  cardWrapper: {
+    marginBottom: 15,
   },
   loadingContainer: {
     flex: 1,
@@ -327,3 +322,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+
+
+

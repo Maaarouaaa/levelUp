@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useRouter } from "expo-router";
+import { BlurView } from "expo-blur"; // To apply blur effect
 
 import db from "@/database/db";
 
@@ -66,7 +67,7 @@ export default function ExperienceCard({ id, navigate, bool }) {
 
   const handlePress = () => {
     if (bool) {
-      // If `bool` is true, toggle the "selected" state
+      // If bool is true, toggle the "selected" state
       setIsSelected((prev) => !prev);
     } else {
       // Otherwise, navigate to the appropriate screen
@@ -88,10 +89,23 @@ export default function ExperienceCard({ id, navigate, bool }) {
       <TouchableOpacity
         style={[
           styles.container,
-          isSelected && bool && styles.selectedContainer, // Blue background when selected and `bool` is true
+          isSelected && bool && styles.selectedContainer, // Blue background when selected and bool is true
         ]}
         onPress={handlePress}
       >
+        {/* Apply the blur to the entire card */}
+        <BlurView intensity={100} style={StyleSheet.absoluteFillObject}>
+          {/* Blur effect */}
+        </BlurView>
+
+        {/* Blue overlay with "SELECTED" text */}
+        {isSelected && bool && (
+          <View style={styles.overlay}>
+            <Text style={styles.selectedText}>SELECTED</Text>
+          </View>
+        )}
+
+        {/* Card content */}
         <View style={styles.content}>
           <View style={styles.details}>
             <Image source={{ uri: photo }} style={styles.image} />
@@ -106,9 +120,6 @@ export default function ExperienceCard({ id, navigate, bool }) {
             </View>
           </View>
         </View>
-        {isSelected && bool && (
-          <Text style={styles.selectedText}>SELECTED</Text>
-        )}
       </TouchableOpacity>
     );
   } else {
@@ -125,7 +136,7 @@ export default function ExperienceCard({ id, navigate, bool }) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 12,
+    borderRadius: 22, // Rounded corners
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
@@ -135,9 +146,20 @@ const styles = StyleSheet.create({
     height: 96,
     padding: 16,
     justifyContent: "space-between",
+    position: "relative", // Needed for positioning the blur overlay and selected text
   },
   selectedContainer: {
-    backgroundColor: "#509B9B", // Blue background when selected
+    backgroundColor: "transparent", // No background color, blur will cover it
+    borderRadius: 22, // Ensure rounded corners match the container
+    overflow: "hidden", // Clip children (important for rounded corners with blur effect)
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject, // Fill the entire container
+    backgroundColor: "rgba(80, 155, 155, 0.7)", // Blue semi-transparent overlay
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1, // Make sure overlay is on top
+    borderRadius: 22, // Match container's rounded corners
   },
   selectedText: {
     fontSize: 26,
@@ -154,11 +176,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    position: "relative", // Ensures this content stays above the blur and overlay
   },
   words: {
     flex: 1,
     justifyContent: "space-between",
-    margineBottom: 4,
+    marginBottom: 4,
   },
   name: {
     fontSize: 20,
@@ -167,7 +190,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap", // Allows the name to wrap to a second line if needed
     lineHeight: 24,
     paddingTop: 2,
-    fontFamily: 'Poppins-Regular',
+    fontFamily: "Poppins-Regular",
   },
   xpRow: {
     flexDirection: "row",
@@ -191,7 +214,7 @@ const styles = StyleSheet.create({
   },
   containerL: {
     backgroundColor: "#A3A3A3",
-    borderRadius: 12,
+    borderRadius: 22, // Rounded corners
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
@@ -210,6 +233,13 @@ const styles = StyleSheet.create({
     paddingTop: 14,
   },
 });
+
+
+
+
+
+
+
 
 /*
 import React, { useEffect, useState } from "react";
