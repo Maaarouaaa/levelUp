@@ -239,6 +239,8 @@ const styles = StyleSheet.create({
     width: "50%",
     zIndex: 100, // Ensure dropdown list appears on top
     elevation: 5,
+    marginTop: -30,
+    marginLeft: 37,
   },
   dropdownItem: {
     paddingVertical: 10,
