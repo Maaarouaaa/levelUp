@@ -33,7 +33,7 @@ export default function MyProgress() {
         console.log("Fetching data from the database...");
         const { data, error } = await db
           .from("graph_data")
-          .select("total_xp, problem_solving_xp, communication_xp, leadership_xp, adaptability_xp");
+          .select("total_xp, \"problem solving_xp\", communication_xp, leadership_xp, adaptability_xp");
 
         if (error) {
           console.error("Error fetching data:", error.message);
@@ -83,12 +83,15 @@ export default function MyProgress() {
       )
     );
   
+    // Dynamically determine the Y-axis interval
+    const interval = maxValue >= 500 ? 100 : 50;
+  
     const scaledData = selectedFilters.map((filter) => ({
       filter,
       data: chartData.map((row) => (row[filter] / maxValue) * (graphHeight - topMargin)),
     }));
   
-    const yAxisPoints = Array.from({ length: Math.ceil(maxValue / 50) + 1 }, (_, i) => i * 50);
+    const yAxisPoints = Array.from({ length: Math.ceil(maxValue / interval) + 1 }, (_, i) => i * interval);
   
     const xSpacingFactor = 0.5; // Smaller value to reduce the spacing between X-axis labels
     const yOffset = 10; // Offset to move the graph and labels down
@@ -106,9 +109,7 @@ export default function MyProgress() {
               key={`y-axis-${index}`}
               x={30} // Positioned to the left
               y={graphHeight - (point / maxValue) * (graphHeight - topMargin) + yOffset} // Added yOffset
-              fontSize="12"
-              fill="black"
-              textAnchor="end" // Align text to the right
+              style={styles.graphAxisText} // Use style for font
             >
               {point}
             </SvgText>
@@ -118,10 +119,8 @@ export default function MyProgress() {
           <SvgText
             x={10} // Adjusted for better alignment
             y={graphHeight / 2 + yOffset} // Added yOffset
-            fontSize="14"
-            fill="black"
-            textAnchor="middle"
             transform={`rotate(-90, 10, ${graphHeight / 2 + yOffset})`} // Adjusted rotation with yOffset
+            style={styles.graphAxisTitle} // Use style for font
           >
             XP
           </SvgText>
@@ -179,10 +178,8 @@ export default function MyProgress() {
             <SvgText
               key={`label-${index}`}
               x={(index * xSpacingFactor * screenWidth * 0.35) + 50} // Reduced spacing between points
-              y={graphHeight + 20 + yOffset} // Added yOffset
-              fontSize="12"
-              fill="black"
-              textAnchor="middle"
+              y={graphHeight + 50 + yOffset} // Added yOffset
+              style={styles.graphAxisText} // Use style for font
             >
               {index + 1}
             </SvgText>
@@ -191,10 +188,8 @@ export default function MyProgress() {
           {/* X-Axis Title */}
           <SvgText
             x={screenWidth / 2 - 20}
-            y={graphHeight + 40 + yOffset} // Added yOffset
-            fontSize="14"
-            fill="black"
-            textAnchor="middle"
+            y={graphHeight + 80 + yOffset} // Added yOffset
+            style={styles.graphAxisTitle} // Use style for font
           >
             Days
           </SvgText>
@@ -203,15 +198,13 @@ export default function MyProgress() {
     );
   };
   
-  
-  
 
   return (
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
       <View style={styles.headerBackground}></View>
-      <TouchableOpacity 
-        onPress={() => navigateBack()} 
-        style={{ position: 'absolute', top: 40, left: 16 }}
+      <TouchableOpacity
+        onPress={() => navigateBack()}
+        style={{ position: "absolute", top: 40, left: 16 }}
       >
         <Icon name="arrow-back" size={24} color="#838383" />
       </TouchableOpacity>
@@ -219,87 +212,105 @@ export default function MyProgress() {
       <Text style={styles.headerTitle}>My Progress</Text>
       <Text style={styles.filterText}>Filter by</Text>
       <View style={styles.filterContainer}>
-        <View style={styles.row}>
-          <TouchableOpacity
-            style={[
-              styles.filterButton,
-              selectedFilters.includes("problem_solving_xp") && styles.selectedFilterButton,
-            ]}
-            onPress={() => toggleFilter("problem_solving_xp")}
-          >
-            <Text
-              style={[
-                styles.filterTextLabel,
-                { color: "#FF8460" },
-                selectedFilters.includes("problem_solving_xp") && styles.selectedFilterText,
-              ]}
-            >
-              Problem Solving
-            </Text>
-          </TouchableOpacity>
+  <View style={styles.row}>
+    {/* Problem Solving Filter */}
+    <TouchableOpacity
+      style={[
+        styles.filterButton,
+        selectedFilters.includes("problem_solving_xp") && styles.selectedFilterButton,
+      ]}
+      onPress={() => toggleFilter("problem_solving_xp")}
+    >
+      <Text
+        style={[
+          styles.filterTextLabel,
+          { color: "#FF8460" }, // Same color as the graph for Problem Solving
+          selectedFilters.includes("problem_solving_xp") && styles.selectedFilterText,
+        ]}
+      >
+        Problem Solving
+      </Text>
+    </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[
-              styles.filterButton,
-              selectedFilters.includes("communication_xp") && styles.selectedFilterButton,
-            ]}
-            onPress={() => toggleFilter("communication_xp")}
-          >
-            <Text
-              style={[
-                styles.filterTextLabel,
-                { color: "#4CA8FF" },
-                selectedFilters.includes("communication_xp") && styles.selectedFilterText,
-              ]}
-            >
-              Communication
-            </Text>
-          </TouchableOpacity>
-        </View>
+    {/* Communication Filter */}
+    <TouchableOpacity
+      style={[
+        styles.filterButton,
+        selectedFilters.includes("communication_xp") && styles.selectedFilterButton,
+      ]}
+      onPress={() => toggleFilter("communication_xp")}
+    >
+      <Text
+        style={[
+          styles.filterTextLabel,
+          { color: "#4CA8FF" }, // Same color as the graph for Communication
+          selectedFilters.includes("communication_xp") && styles.selectedFilterText,
+        ]}
+      >
+        Communication
+      </Text>
+    </TouchableOpacity>
+  </View>
 
-        <View style={styles.row}>
-          <TouchableOpacity
-            style={[
-              styles.filterButton,
-              selectedFilters.includes("adaptability_xp") && styles.selectedFilterButton,
-            ]}
-            onPress={() => toggleFilter("adaptability_xp")}
-          >
-            <Text
-              style={[
-                styles.filterTextLabel,
-                { color: "#FFAB45" },
-                selectedFilters.includes("adaptability_xp") && styles.selectedFilterText,
-              ]}
-            >
-              Adaptability
-            </Text>
-          </TouchableOpacity>
+  <View style={styles.row}>
+    {/* Adaptability Filter */}
+    <TouchableOpacity
+      style={[
+        styles.filterButton,
+        selectedFilters.includes("adaptability_xp") && styles.selectedFilterButton,
+      ]}
+      onPress={() => toggleFilter("adaptability_xp")}
+    >
+      <Text
+        style={[
+          styles.filterTextLabel,
+          { color: "#FFAB45" }, // Same color as the graph for Adaptability
+          selectedFilters.includes("adaptability_xp") && styles.selectedFilterText,
+        ]}
+      >
+        Adaptability
+      </Text>
+    </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[
-              styles.filterButton,
-              selectedFilters.includes("leadership_xp") && styles.selectedFilterButton,
-            ]}
-            onPress={() => toggleFilter("leadership_xp")}
-          >
-            <Text
-              style={[
-                styles.filterTextLabel,
-                { color: "#58CDB0" },
-                selectedFilters.includes("leadership_xp") && styles.selectedFilterText,
-              ]}
-            >
-              Leadership
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <Text style={styles.graphTitle}>Skill Progress</Text>
-      <View style={styles.graphContainer}>{renderGraphs()}</View>
-    </ScrollView>
-  );
-}
+    {/* Leadership Filter */}
+    <TouchableOpacity
+      style={[
+        styles.filterButton,
+        selectedFilters.includes("leadership_xp") && styles.selectedFilterButton,
+      ]}
+      onPress={() => toggleFilter("leadership_xp")}
+    >
+      <Text
+        style={[
+          styles.filterTextLabel,
+          { color: "#58CDB0" }, // Same color as the graph for Leadership
+          selectedFilters.includes("leadership_xp") && styles.selectedFilterText,
+        ]}
+      >
+        Leadership
+        </Text>
+    </TouchableOpacity>
+  </View>
+</View>
+
+<Text style={styles.graphTitle}>Skill Progress</Text>
+<View style={styles.graphContainer}>
+  {/* Legend Positioned in Top Right */}
+  <View style={styles.legendContainer}>
+    <View style={[styles.legendCircle, { backgroundColor: "#509B9B" }]} />
+    <Text style={styles.legendText}>Total XP</Text>
+  </View>
+  
+  {/* Render the Graph */}
+  {renderGraphs()}
+</View>
+
+
+</ScrollView>
+);
+      }
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -395,6 +406,8 @@ const styles = StyleSheet.create({
   graphContainer: {
     marginTop: 4,
     alignItems: "center",
+    padding: 16, // Add padding to the container if needed
+    position: "relative", // Ensure relative positioning for the legend to align correctly
   },
   loadingContainer: {
     flex: 1,
@@ -406,4 +419,58 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#509B9B",
   },
+  legendContainer: {
+    position: "absolute",
+    top: 35, // Adjust as needed for vertical alignment
+    right: 35, // Adjust as needed for horizontal alignment
+    flexDirection: "row",
+    alignItems: "center",
+    zIndex: 1, // Ensure it stays above the graph
+  },
+  graphAxisText: {
+    fontSize: 12,
+    fill: "black",
+    marginBottom: 10,
+    fontFamily: "Poppins-Regular", // Set font family to Poppins
+    textAnchor: "middle", // Align text
+  },
+  graphAxisTitle: {
+    fontSize: 14,
+    fill: "black",
+    fontFamily: "Poppins-Bold", // Set font family to Poppins
+    textAnchor: "middle", // Align text
+  },
+  defaultGraphText: {
+    marginTop: 5,
+    fontSize: 12,
+    fontFamily: "Poppins-Regular",
+    color: "#838383",
+    textAlign: "center",
+  },  
+  defaultGraphLegend: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "left",
+    marginLeft: 48,
+    marginTop: 4,
+    marginBottom: 5,
+  },
+  legendCircle: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 6,
+  },
+  legendText: {
+    fontSize: 12,
+    fontFamily: "Poppins-Regular",
+    color: "#838383",
+  },
+  defaultGraphText: {
+    fontSize: 12,
+    fontFamily: "Poppins-Regular",
+    color: "#838383",
+    textAlign: "center",
+  },
+  
 });
