@@ -108,7 +108,7 @@ export default function Profile() {
           },
           {
             icon: <Icon name="people" size={24} color="#509B9B" />,
-            number: 13,
+            number: 5,
             label: "Friends",
           },
         ].map((stat, index) => (
@@ -160,10 +160,6 @@ export default function Profile() {
         <TouchableOpacity style={styles.button} onPress={navigateToProgress}>
           <Icon name="stats-chart" size={16} color="#509B9B" />
           <Text style={styles.buttonText}>My Progress</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
-          <Icon name="people-circle" size={18} color="#509B9B" />
-          <Text style={styles.buttonText}>My Friends</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -309,7 +305,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: 160,
     height: 40,
-    paddingVertical: 8,
+    paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: 8,
     borderColor: "#509B9B",

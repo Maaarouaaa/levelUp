@@ -40,9 +40,8 @@ export default function MyProgress() {
         console.log("Fetching data from the database...");
         const { data, error } = await db
           .from("graph_data")
-          .select(
-            'total_xp, "problem solving_xp", communication_xp, leadership_xp, adaptability_xp'
-          );
+          .select('total_xp, \"problem solving_xp\", communication_xp, leadership_xp, adaptability_xp')
+          .order("id", { ascending: true }); // Add ordering by 'id'
 
         if (error) {
           console.error("Error fetching data:", error.message);
@@ -52,7 +51,7 @@ export default function MyProgress() {
           const cumulativeData = [];
           let cumulativeSums = {
             total_xp: 0,
-            problem_solving_xp: 0,
+            "problem solving_xp": 0,
             communication_xp: 0,
             leadership_xp: 0,
             adaptability_xp: 0,
@@ -161,7 +160,7 @@ export default function MyProgress() {
                       stroke={
                         {
                           total_xp: "#509B9B",
-                          problem_solving_xp: "#FF8460",
+                          "problem solving_xp": "#FF8460",
                           communication_xp: "#4CA8FF",
                           adaptability_xp: "#FFAB45",
                           leadership_xp: "#58CDB0",
@@ -183,7 +182,7 @@ export default function MyProgress() {
                   fill={
                     {
                       total_xp: "#509B9B",
-                      problem_solving_xp: "#FF8460",
+                      "problem solving_xp": "#FF8460",
                       communication_xp: "#4CA8FF",
                       adaptability_xp: "#FFAB45",
                       leadership_xp: "#58CDB0",
@@ -240,16 +239,16 @@ export default function MyProgress() {
           <TouchableOpacity
             style={[
               styles.filterButton,
-              selectedFilters.includes("problem_solving_xp") &&
+              selectedFilters.includes("problem solving_xp") &&
                 styles.selectedFilterButton,
             ]}
-            onPress={() => toggleFilter("problem_solving_xp")}
+            onPress={() => toggleFilter("problem solving_xp")}
           >
             <Text
               style={[
                 styles.filterTextLabel,
                 { color: "#FF8460" }, // Same color as the graph for Problem Solving
-                selectedFilters.includes("problem_solving_xp") &&
+                selectedFilters.includes("problem solving_xp") &&
                   styles.selectedFilterText,
               ]}
             >
