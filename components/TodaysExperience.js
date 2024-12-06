@@ -156,9 +156,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
-    fontFamily: "Poppins",
+    fontFamily: "Poppins-Semibold",
     color: "#FFFFFF",
-    fontWeight: "semibold",
     marginTop: 4,
   },
 });

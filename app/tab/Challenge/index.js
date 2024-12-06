@@ -202,12 +202,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: -20,
   },
   blueBackground: {
-    height: "18%",
+    height: "22%",
     backgroundColor: "rgba(80, 155, 155, 0.27)",
     justifyContent: "center",
     alignItems: "center",
   },
   headerText: {
+    marginBottom: -42,
     fontFamily: "Poppins-Bold",
     fontSize: 40,
     color: "#509B9B",
@@ -215,7 +216,7 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     position: "absolute",
-    top: "15%",
+    top: "19%",
     alignSelf: "center",
     height: 40,
     width: "80%",

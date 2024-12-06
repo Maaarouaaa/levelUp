@@ -585,6 +585,7 @@ const styles = StyleSheet.create({
   },
   xpText: {
     fontSize: 16,
+    marginLeft: 3,
     color: "#000",
     textAlign: "center",
   },
@@ -724,6 +725,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0)",
   },
   modalContent: {
+    borderWidth: 2,
+    borderColor: "#E3E3E3",
     backgroundColor: "#fff",
     height: Dimensions.get("window").height * 0.45,
     borderTopLeftRadius: 20,
