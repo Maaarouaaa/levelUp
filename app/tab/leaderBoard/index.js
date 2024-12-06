@@ -84,7 +84,7 @@ profiles.filter((profile) =>
       {/* Search Bar */}
       <TextInput
         style={styles.searchBar}
-        placeholder="Search members by name..."
+        placeholder="Search members..."
         placeholderTextColor="#aaa"
         value={searchText}
         onChangeText={setSearchText}
