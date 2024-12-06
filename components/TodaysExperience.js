@@ -54,7 +54,7 @@ export default function TodaysExperience({ id, onPress }) {
   }
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <View style={styles.container}>
       <View style={styles.content}>
         <Text
           style={styles.name}
@@ -78,7 +78,7 @@ export default function TodaysExperience({ id, onPress }) {
           <Text style={styles.buttonText}>Go to Experience</Text>
         </TouchableOpacity>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 }
 
@@ -162,6 +162,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 });
+
 
 
 
