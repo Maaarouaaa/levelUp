@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  FlatList,
   ActivityIndicator,
   Modal,
   Dimensions,
@@ -27,11 +28,27 @@ export default function Details() {
   const [loading, setLoading] = useState(true);
   const [isDone, setIsDone] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [showFriendPopup, setShowFriendPopup] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [selectedFriends, setSelectedFriends] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(true);
+  const [sendButtonText, setSendButtonText] = useState("Send");
 
   const router = useRouter();
 
   const navigateBack = () => {
     router.back();
+  };
+
+  const handleSend = () => {
+    console.log("Selected Friends:", selectedFriends); // Log selected friends
+    setSendButtonText("Sent"); // Temporarily set the button text to "Sent"
+
+    // Close the modal after 1 second
+    setTimeout(() => {
+      setSendButtonText("Send"); // Reset the button text to "Send"
+      closeFriendPopup(); // Close the modal
+    }, 1000); // 1000ms = 1 second
   };
 
   const skillColors = {
@@ -41,9 +58,16 @@ export default function Details() {
     adaptability: "#FFAB45",
   };
 
-  const getSkillColor = (skillName) => {
-    return skillColors[skillName] || "#000000";
+  const skillBackgroundColors = {
+    "problem solving": "#FFD4C7",
+    communication: "#CFE8FF",
+    leadership: "#D7F9F0",
+    adaptability: "#FFE8CD",
   };
+
+  const getSkillColor = (skillName) => skillColors[skillName] || "#000000";
+  const getSkillBackgroundColor = (skillName) =>
+    skillBackgroundColors[skillName] || "#E0E0E0";
 
   const updateGraphData = async (id, skillName, updates) => {
     try {
@@ -204,7 +228,45 @@ export default function Details() {
   const closePopup = () => {
     setShowPopup(false); // Close the popup
   };
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  const openFriendPopup = () => setShowFriendPopup(true);
+  const closeFriendPopup = () => setShowFriendPopup(false);
 
+  //const closePopup = () => setShowPopup(false);
+
+  const toggleFriendSelection = (name) => {
+    setSelectedFriends((prev) =>
+      prev.includes(name)
+        ? prev.filter((friend) => friend !== name)
+        : [...prev, name]
+    );
+  };
+
+  const fetchUsers = async () => {
+    try {
+      setLoadingUsers(true);
+      const { data, error } = await db
+        .from("users")
+        .select("name, photo")
+        .eq("friends", true) // Filter for friends = TRUE
+        .neq("id", 1); // Exclude user with id = 1
+
+      if (error) throw error;
+
+      setUsers(data || []);
+    } catch (err) {
+      console.error("Error fetching users:", err);
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showFriendPopup) {
+      fetchUsers();
+    }
+  }, [showFriendPopup]);
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   useEffect(() => {
     const fetchExperienceData = async () => {
       try {
@@ -279,9 +341,21 @@ export default function Details() {
           </View>
         </View>
       )}
-
+      {/*
       <View style={styles.contentContainer}>
         <View style={styles.skillTag}>
+          <Text style={[styles.skillTagText, { color: getSkillColor(skill) }]}>
+            {skill || "No Name"}
+          </Text>
+        </View>
+        */}
+      <View style={styles.contentContainer}>
+        <View
+          style={[
+            styles.skillTag,
+            { backgroundColor: getSkillBackgroundColor(skill) },
+          ]}
+        >
           <Text style={[styles.skillTagText, { color: getSkillColor(skill) }]}>
             {skill || "No Name"}
           </Text>
@@ -334,10 +408,7 @@ export default function Details() {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => console.log("Challenge Friend functionality")}
-          >
+          <TouchableOpacity style={styles.button} onPress={openFriendPopup}>
             <Icon
               name="paper-plane"
               size={16}
@@ -363,6 +434,66 @@ export default function Details() {
           </View>
         </View>
       </Modal>
+      <Modal visible={showFriendPopup} transparent={true} animationType="slide">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <TouchableOpacity
+              style={styles.closeIconButton}
+              onPress={closeFriendPopup}
+            >
+              <Icon name="close" size={24} color="#000" />
+            </TouchableOpacity>
+
+            {loadingUsers ? (
+              <ActivityIndicator size="large" color="#509B9B" />
+            ) : (
+              <FlatList
+                data={users}
+                keyExtractor={(item, index) => index.toString()}
+                numColumns={3}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.friendItem}
+                    onPress={() => toggleFriendSelection(item.name)}
+                  >
+                    <Image
+                      source={{ uri: item.photo }}
+                      style={styles.friendImage}
+                    />
+                    <Text style={styles.friendName}>{item.name}</Text>
+                    {selectedFriends.includes(item.name) && (
+                      <View style={styles.checkIconContainer}>
+                        <Icon
+                          name="checkmark-circle"
+                          size={24}
+                          color="#509B9B"
+                        />
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                )}
+              />
+            )}
+            <TouchableOpacity
+              style={[
+                styles.submitButton,
+                sendButtonText === "Sent" && styles.sentButton, // Apply a gray style when button is "Sent"
+              ]}
+              onPress={handleSend}
+              disabled={sendButtonText === "Sent"} // Optional: Disable button after it's clicked
+            >
+              <Text
+                style={[
+                  styles.submitButtonText,
+                  sendButtonText === "Sent" && styles.sentButtonText, // Change text color to gray
+                ]}
+              >
+                {sendButtonText}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -375,6 +506,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 16,
+    zIndex: 2,
+  },
+  backIconWrapper: {
+    width: 40,
+    height: 40,
+    backgroundColor: "rgba(255,255,255,.8)",
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   loadingContainer: {
     justifyContent: "center",
     alignItems: "center",
@@ -386,6 +531,14 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%", // Fill the image container
     borderRadius: 0,
+  },
+  sentButton: {
+    backgroundColor: "#ccc", // Gray background for "Sent"
+    borderColor: "#aaa", // Optional: Gray border for "Sent"
+  },
+
+  sentButtonText: {
+    color: "#777", // Gray text color for "Sent"
   },
   doneIndicator: {
     position: "absolute",
@@ -421,7 +574,7 @@ const styles = StyleSheet.create({
   skillTagText: {
     fontSize: 14,
     fontWeight: "600",
-    fontFamily: "Poppins-Regular",
+    fontFamily: "Poppins-SemiBold",
   },
   taskName: {
     fontSize: 24,
@@ -478,6 +631,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 16,
   },
+  closeIconButton: {
+    position: "absolute",
+    top: 10, // Adjust this value to control vertical position
+    right: 10, // Adjust this value to control horizontal position
+    zIndex: 10, // Ensure it appears on top of all other content
+  },
   button: {
     flex: 1,
     marginHorizontal: 8,
@@ -496,6 +655,10 @@ const styles = StyleSheet.create({
     marginLeft: 2, // Spacing between icon and text
     fontFamily: "Poppins-SemiBold",
     color: "#509B9B",
+  },
+  disabledButton: {
+    backgroundColor: "#ccc", // Gray background for disabled button
+    borderColor: "#aaa", // Optional: Change border color
   },
   icon: {
     marginLeft: 10, // Spacing between icon and text
@@ -540,6 +703,66 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+    fontFamily: "Poppins-SemiBold",
+  },
+  closeButton: {
+    backgroundColor: "#509B9B",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 5,
+    alignSelf: "center",
+    marginTop: 16,
+  },
+  closeButtonText: {
+    color: "#fff",
+    fontFamily: "Poppins-SemiBold",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0, 0, 0, 0)",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    height: Dimensions.get("window").height * 0.45,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 16,
+    alignItems: "center",
+  },
+  friendItem: {
+    alignItems: "center",
+    margin: 8,
+    width: 80,
+  },
+  friendImage: {
+    width: 85,
+    height: 85,
+    borderRadius: 40,
+  },
+  friendName: {
+    fontSize: 12,
+    fontFamily: "Poppins-Regular",
+    textAlign: "center",
+    marginTop: 4,
+  },
+  checkIconContainer: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    borderRadius: 12,
+  },
+  submitButton: {
+    backgroundColor: "#509B9B",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignSelf: "center",
+    marginTop: 16,
+  },
+  submitButtonText: {
+    color: "#fff",
     fontFamily: "Poppins-SemiBold",
   },
 });
