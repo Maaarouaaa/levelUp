@@ -85,12 +85,7 @@ export default function Details() {
     }
   };
 
-  ///
-
   const handleMarkAsDone = async () => {
-    updateGraphData(1, { total_xp: 100, xp: 50 });
-    //updateGraphData(2, ${nSkill}, { total_xp: 150, xp: 60 });
-
     try {
       const { error } = await db
         .from("tasks")
@@ -173,6 +168,7 @@ export default function Details() {
     } catch (err) {
       console.error("Error:", err);
     }
+    updateGraphData(5, skill, { total_xp: xp, xp: xp });
   };
 
   const handleMarkAsNotDone = async () => {

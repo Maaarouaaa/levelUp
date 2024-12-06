@@ -12,7 +12,6 @@ import {
   Dimensions,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import db from "@/database/db";
 
@@ -30,7 +29,6 @@ export default function Details() {
   const [showPopup, setShowPopup] = useState(false);
 
   const router = useRouter();
-  const navigation = useNavigation();
 
   const navigateBack = () => {
     router.back();
@@ -45,6 +43,46 @@ export default function Details() {
 
   const getSkillColor = (skillName) => {
     return skillColors[skillName] || "#000000";
+  };
+
+  const updateGraphData = async (id, skillName, updates) => {
+    try {
+      // Fetch the current row for the given ID
+      const { data: currentData, error: fetchError } = await db
+        .from("graph_data")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (fetchError) {
+        console.error("Error fetching current data:", fetchError.message);
+        return;
+      }
+
+      // Dynamically construct the skill-specific field
+      const skillXpField = `${skillName}_xp`; // e.g., problem_solving_xp, adaptability_xp
+
+      // Increment the fields dynamically
+      const updatedData = {
+        total_xp: (currentData.total_xp || 0) + (updates.total_xp || 0), // Increment total_xp
+        [skillXpField]: (currentData[skillXpField] || 0) + (updates.xp || 0), // Increment specific skill XP
+      };
+
+      // Update the table with the incremented values
+      const { error: updateError } = await db
+        .from("graph_data")
+        .update(updatedData)
+        .eq("id", id);
+
+      if (updateError) {
+        console.error("Error updating graph_data:", updateError.message);
+        return;
+      }
+
+      console.log(`Graph data for ID ${id} updated successfully:`, updatedData);
+    } catch (err) {
+      console.error("Error in updateGraphData:", err);
+    }
   };
 
   const handleMarkAsDone = async () => {
@@ -130,6 +168,7 @@ export default function Details() {
     } catch (err) {
       console.error("Error:", err);
     }
+    updateGraphData(5, skill, { total_xp: xp, xp: xp });
   };
 
   const handleMarkAsNotDone = async () => {
@@ -207,7 +246,7 @@ export default function Details() {
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        onPress={() => navigation.goBack()}
+        onPress={() => navigateBack()}
         style={{
           position: "absolute",
           top: 50, // Adjust the vertical position
