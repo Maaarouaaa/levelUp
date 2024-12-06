@@ -54,9 +54,16 @@ export default function TodaysExperience({ id, onPress }) {
   }
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <View style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.name}>{name}</Text>
+        <Text
+          style={styles.name}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.5} // Adjusts down to 50% of original size
+        >
+          {name}
+        </Text>
         <View style={styles.xpRow}>
           <Icon name="star" size={20} color="#509B9B" />
           <Text style={styles.xp}>{xp} XP</Text>
@@ -71,7 +78,7 @@ export default function TodaysExperience({ id, onPress }) {
           <Text style={styles.buttonText}>Go to Experience</Text>
         </TouchableOpacity>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 }
 
@@ -155,6 +162,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 });
+
+
 
 
 
