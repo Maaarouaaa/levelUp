@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     zIndex: 2, // Ensures it stays above other elements
   },
   cardsContainer: {
-    marginTop: "20%", // Pushes the cards below the search bar
+    marginTop: "12%", // Pushes the cards below the search bar
     paddingBottom: 135,
 
     alignItems: "center",
