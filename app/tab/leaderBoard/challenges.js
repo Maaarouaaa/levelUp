@@ -19,6 +19,7 @@ export default function Three({ navigation }) {
   const [selectedCards, setSelectedCards] = useState([]);
   const [completed, setCompleted] = useState([]);
   const [filteredTasks, setFilteredTasks] = useState([]);
+  const [allTasks, setAllTasks] = useState([]); // Store the original list of tasks
 
   const router = useRouter();
 
@@ -37,6 +38,7 @@ export default function Three({ navigation }) {
           return;
         }
 
+        setAllTasks(data); // Store all tasks
         setFilteredTasks(data); // Set filtered tasks directly as they are already filtered
         setCompleted(data.map((task) => task.id)); // Track completed task IDs
       } catch (error) {
@@ -50,17 +52,20 @@ export default function Three({ navigation }) {
   const handleSearch = (text) => {
     setSearchText(text);
 
-    // Update filtered tasks based on search text
-    setFilteredTasks((prevTasks) =>
-      prevTasks.filter((task) => {
-        const name = task.name || "";
-        const description = task.description || "";
-        return (
-          name.toLowerCase().includes(text.toLowerCase()) ||
-          description.toLowerCase().includes(text.toLowerCase())
-        );
-      })
-    );
+    if (text.trim() === "") {
+      setFilteredTasks(allTasks); // Reset to the full list
+    } else {
+      setFilteredTasks(
+        allTasks.filter((task) => {
+          const name = task.name || "";
+          const description = task.description || "";
+          return (
+            name.toLowerCase().includes(text.toLowerCase()) ||
+            description.toLowerCase().includes(text.toLowerCase())
+          );
+        })
+      );
+    }
   };
 
   const handlePress = (id) => {
@@ -91,7 +96,6 @@ export default function Three({ navigation }) {
         setSelectedCards([]); // Clear selected cards
         setToSend(true); // Hide send button
         router.back(); // Navigate back
-
       }
     } catch (error) {
       console.error("Unexpected error:", error);
@@ -119,17 +123,14 @@ export default function Three({ navigation }) {
         <Text style={styles.headerText}>Select Challenges</Text>
       </View>
 
+      <TextInput
+        style={styles.searchBar}
+        placeholder="Search experiences..."
+        placeholderTextColor="#aaa"
+        value={searchText}
+        onChangeText={handleSearch}
+      />
 
-        <TextInput
-          style={styles.searchBar}
-          placeholder="Search experiences..."
-          placeholderTextColor="#aaa"
-          value={searchText}
-          onChangeText={handleSearch}
-        />
-
-
-      
       <ScrollView contentContainerStyle={styles.cardsContainer}>
         {filteredTasks.map((task) => (
           <TouchableOpacity
@@ -154,7 +155,7 @@ export default function Three({ navigation }) {
       </View>
     </View>
   );
-}  
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -176,8 +177,8 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     position: "absolute",
-    top: "19.7%", // Ensures it overlaps with the header
-    left: "10%", // Centered horizontally (adjust if necessary)
+    top: "19.7%",
+    left: "10%",
     width: "80%",
     height: 40,
     borderWidth: 1,
@@ -186,12 +187,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "#fff",
     color: "#000",
-    zIndex: 2, // Ensures it stays above other elements
+    zIndex: 2,
   },
   cardsContainer: {
-    marginTop: "12%", // Pushes the cards below the search bar
+    marginTop: "12%",
     paddingBottom: 135,
-
     alignItems: "center",
   },
   cardWrapper: {
@@ -220,4 +220,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
