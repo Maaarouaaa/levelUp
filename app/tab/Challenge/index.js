@@ -83,12 +83,13 @@ export default function Three() {
       </View>
 
       <TextInput
-        style={styles.searchBar}
-        placeholder="Search challenges..."
-        placeholderTextColor="#aaa"
-        value={searchText}
-        onChangeText={setSearchText}
-      />
+  style={[styles.searchBar, { fontFamily: 'Poppins-Regular' }]} // Apply Poppins font
+  placeholder="Search challenges..."
+  placeholderTextColor="#aaa"
+  value={searchText}
+  onChangeText={setSearchText}
+/>
+
 
       <View style={styles.toggleWrapper}>
         <TouchableOpacity style={styles.toggleContainer} onPress={handleToggle}>
