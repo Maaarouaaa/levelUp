@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,15 +9,49 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useRouter } from "expo-router";
+import db from "@/database/db";
 
 export default function Three() {
   const [searchText, setSearchText] = useState("");
   const [isToggled, setIsToggled] = useState(false);
-
-  const router = useRouter(); // For navigation
+  const [completedTaskIds, setCompletedTaskIds] = useState([]);
+  const router = useRouter();
 
   const handleToggle = () => {
     setIsToggled((prev) => !prev);
+  };
+
+  const fetchCompletedIds = async () => {
+    try {
+      const { data, error } = await db.from("tasks").select("id, done");
+
+      if (error) {
+        console.error("Error fetching tasks:", error.message);
+        return [];
+      }
+
+      const completedIds = data.filter((task) => task.done).map((task) => task.id);
+      setCompletedTaskIds(completedIds); // Store in state
+    } catch (err) {
+      console.error("Error fetching completed IDs:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchCompletedIds();
+  }, []);
+
+  const navigateToDetailsComplete = () => {
+    if (!completedTaskIds || completedTaskIds.length === 0) {
+      console.warn("No completed IDs available.");
+      return;
+    }
+
+    const randomId =
+      completedTaskIds[Math.floor(Math.random() * completedTaskIds.length)];
+    console.log("Random completed ID:", randomId);
+
+    router.push({ pathname: "/tab/Challenge/detailsC", params: { id: randomId } });
   };
 
   const navigateToDetails = () => {
@@ -34,8 +68,8 @@ export default function Three() {
     { sentTo: "Varsha", date: "4 Hours Ago", type: "FROM" },
     { sentTo: "Paige", date: "9 Hours Ago", type: "FROM" },
     { sentTo: "Varsha", date: "2 Days Ago", type: "FROM" },
-    { sentTo: "Nick", date: "3 Days Ago", type: "FROM" },
-    { sentTo: "Maroua", date: "9 Days Ago", type: "FROM" },
+    { sentTo: "Nick", date: "3 Days Ago", type: "FROM", isComplete: true },
+    { sentTo: "Maroua", date: "9 Days Ago", type: "FROM", isComplete: true },
   ];
 
   const filteredTasks = taskData.filter((task) =>
@@ -80,9 +114,13 @@ export default function Three() {
               <View key={index} style={styles.sentCard}>
                 <View style={styles.cardContent}>
                   <Icon
-                    name="time-outline"
+                    name={
+                      task.isComplete
+                        ? "checkmark-circle-outline" // Green checkmark for Nick and Maroua
+                        : "time-outline" // Yellow clock for others
+                    }
                     size={30}
-                    color="#FFAB45"
+                    color={task.isComplete ? "#4CAF50" : "#FFAB45"}
                     style={styles.icon}
                   />
                   <View style={styles.cardText}>
@@ -92,7 +130,11 @@ export default function Three() {
                     <Text style={styles.sentDateText}>Received: {task.date}</Text>
                   </View>
                   <TouchableOpacity
-                    onPress={navigateToDetails}
+                    onPress={
+                      task.isComplete
+                        ? navigateToDetailsComplete // Use navigateToDetailsComplete for Nick and Maroua
+                        : navigateToDetails // Use navigateToDetails for others
+                    }
                     style={styles.viewTaskButton}
                   >
                     <Text style={styles.viewTaskText}>View Task</Text>
@@ -115,7 +157,10 @@ export default function Three() {
                   <Text style={styles.sentToText}>TO: Maroua</Text>
                   <Text style={styles.sentDateText}>Sent: Just now</Text>
                 </View>
-                <TouchableOpacity style={styles.viewTaskButton}>
+                <TouchableOpacity
+                  onPress={navigateToDetailsComplete}
+                  style={styles.viewTaskButton}
+                >
                   <Text style={styles.viewTaskText}>View Task</Text>
                 </TouchableOpacity>
               </View>
@@ -132,7 +177,10 @@ export default function Three() {
                   <Text style={styles.sentToText}>TO: Nick</Text>
                   <Text style={styles.sentDateText}>Sent: 5 days ago</Text>
                 </View>
-                <TouchableOpacity style={styles.viewTaskButton}>
+                <TouchableOpacity
+                  onPress={navigateToDetailsComplete}
+                  style={styles.viewTaskButton}
+                >
                   <Text style={styles.viewTaskText}>View Task</Text>
                 </TouchableOpacity>
               </View>
@@ -143,6 +191,9 @@ export default function Three() {
     </View>
   );
 }
+
+
+
 
 const styles = StyleSheet.create({
   container: {
