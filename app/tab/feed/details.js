@@ -168,6 +168,7 @@ export default function Details() {
     } catch (err) {
       console.error("Error:", err);
     }
+    console.log("SKILLLLLL", skill);
     updateGraphData(5, skill, { total_xp: xp, xp: xp });
   };
 

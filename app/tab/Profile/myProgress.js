@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Dimensions } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import Svg, { Line, Circle, Text as SvgText } from "react-native-svg";
 import { useRouter } from "expo-router";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -33,7 +40,9 @@ export default function MyProgress() {
         console.log("Fetching data from the database...");
         const { data, error } = await db
           .from("graph_data")
-          .select("total_xp, problem_solving_xp, communication_xp, leadership_xp, adaptability_xp");
+          .select(
+            "total_xp, problem solving_xp, communication_xp, leadership_xp, adaptability_xp"
+          );
 
         if (error) {
           console.error("Error fetching data:", error.message);
@@ -43,7 +52,7 @@ export default function MyProgress() {
           const cumulativeData = [];
           let cumulativeSums = {
             total_xp: 0,
-            problem_solving_xp: 0,
+            "problem solving_xp": 0,
             communication_xp: 0,
             leadership_xp: 0,
             adaptability_xp: 0,
@@ -82,17 +91,22 @@ export default function MyProgress() {
         selectedFilters.map((filter) => row[filter])
       )
     );
-  
+
     const scaledData = selectedFilters.map((filter) => ({
       filter,
-      data: chartData.map((row) => (row[filter] / maxValue) * (graphHeight - topMargin)),
+      data: chartData.map(
+        (row) => (row[filter] / maxValue) * (graphHeight - topMargin)
+      ),
     }));
-  
-    const yAxisPoints = Array.from({ length: Math.ceil(maxValue / 50) + 1 }, (_, i) => i * 50);
-  
+
+    const yAxisPoints = Array.from(
+      { length: Math.ceil(maxValue / 50) + 1 },
+      (_, i) => i * 50
+    );
+
     const xSpacingFactor = 0.5; // Smaller value to reduce the spacing between X-axis labels
     const yOffset = 10; // Offset to move the graph and labels down
-  
+
     return (
       <View style={styles.cardContainer}>
         <Svg
@@ -105,7 +119,11 @@ export default function MyProgress() {
             <SvgText
               key={`y-axis-${index}`}
               x={30} // Positioned to the left
-              y={graphHeight - (point / maxValue) * (graphHeight - topMargin) + yOffset} // Added yOffset
+              y={
+                graphHeight -
+                (point / maxValue) * (graphHeight - topMargin) +
+                yOffset
+              } // Added yOffset
               fontSize="12"
               fill="black"
               textAnchor="end" // Align text to the right
@@ -113,7 +131,7 @@ export default function MyProgress() {
               {point}
             </SvgText>
           ))}
-  
+
           {/* Y-Axis Title */}
           <SvgText
             x={10} // Adjusted for better alignment
@@ -125,7 +143,7 @@ export default function MyProgress() {
           >
             XP
           </SvgText>
-  
+
           {/* Draw Graphs for Selected Filters */}
           {scaledData.map(({ filter, data }) => (
             <React.Fragment key={filter}>
@@ -134,14 +152,16 @@ export default function MyProgress() {
                   return (
                     <Line
                       key={`line-${filter}-${index}`}
-                      x1={(index * xSpacingFactor * screenWidth * 0.35) + 50} // Reduced spacing between points
+                      x1={index * xSpacingFactor * screenWidth * 0.35 + 50} // Reduced spacing between points
                       y1={graphHeight - data[index] + yOffset} // Added yOffset
-                      x2={((index + 1) * xSpacingFactor * screenWidth * 0.35) + 50} // Reduced spacing between points
+                      x2={
+                        (index + 1) * xSpacingFactor * screenWidth * 0.35 + 50
+                      } // Reduced spacing between points
                       y2={graphHeight - data[index + 1] + yOffset} // Added yOffset
                       stroke={
                         {
                           total_xp: "#509B9B",
-                          problem_solving_xp: "#FF8460",
+                          "problem solving_xp": "#FF8460",
                           communication_xp: "#4CA8FF",
                           adaptability_xp: "#FFAB45",
                           leadership_xp: "#58CDB0",
@@ -153,17 +173,17 @@ export default function MyProgress() {
                 }
                 return null;
               })}
-  
+
               {data.map((value, index) => (
                 <Circle
                   key={`circle-${filter}-${index}`}
-                  cx={(index * xSpacingFactor * screenWidth * 0.35) + 50} // Reduced spacing between points
+                  cx={index * xSpacingFactor * screenWidth * 0.35 + 50} // Reduced spacing between points
                   cy={graphHeight - value + yOffset} // Added yOffset
                   r={4}
                   fill={
                     {
                       total_xp: "#509B9B",
-                      problem_solving_xp: "#FF8460",
+                      "problem solving_xp": "#FF8460",
                       communication_xp: "#4CA8FF",
                       adaptability_xp: "#FFAB45",
                       leadership_xp: "#58CDB0",
@@ -173,12 +193,12 @@ export default function MyProgress() {
               ))}
             </React.Fragment>
           ))}
-  
+
           {/* X-Axis Labels */}
           {chartData.map((_, index) => (
             <SvgText
               key={`label-${index}`}
-              x={(index * xSpacingFactor * screenWidth * 0.35) + 50} // Reduced spacing between points
+              x={index * xSpacingFactor * screenWidth * 0.35 + 50} // Reduced spacing between points
               y={graphHeight + 20 + yOffset} // Added yOffset
               fontSize="12"
               fill="black"
@@ -187,7 +207,7 @@ export default function MyProgress() {
               {index + 1}
             </SvgText>
           ))}
-  
+
           {/* X-Axis Title */}
           <SvgText
             x={screenWidth / 2 - 20}
@@ -202,16 +222,16 @@ export default function MyProgress() {
       </View>
     );
   };
-  
-  
-  
 
   return (
-    <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
+    <ScrollView
+      style={styles.scrollView}
+      contentContainerStyle={styles.contentContainer}
+    >
       <View style={styles.headerBackground}></View>
-      <TouchableOpacity 
-        onPress={() => navigateBack()} 
-        style={{ position: 'absolute', top: 40, left: 16 }}
+      <TouchableOpacity
+        onPress={() => navigateBack()}
+        style={{ position: "absolute", top: 40, left: 16 }}
       >
         <Icon name="arrow-back" size={24} color="#838383" />
       </TouchableOpacity>
@@ -223,15 +243,17 @@ export default function MyProgress() {
           <TouchableOpacity
             style={[
               styles.filterButton,
-              selectedFilters.includes("problem_solving_xp") && styles.selectedFilterButton,
+              selectedFilters.includes("problem solving_xp") &&
+                styles.selectedFilterButton,
             ]}
-            onPress={() => toggleFilter("problem_solving_xp")}
+            onPress={() => toggleFilter("problem solving_xp")}
           >
             <Text
               style={[
                 styles.filterTextLabel,
                 { color: "#FF8460" },
-                selectedFilters.includes("problem_solving_xp") && styles.selectedFilterText,
+                selectedFilters.includes("problem solving_xp") &&
+                  styles.selectedFilterText,
               ]}
             >
               Problem Solving
@@ -241,7 +263,8 @@ export default function MyProgress() {
           <TouchableOpacity
             style={[
               styles.filterButton,
-              selectedFilters.includes("communication_xp") && styles.selectedFilterButton,
+              selectedFilters.includes("communication_xp") &&
+                styles.selectedFilterButton,
             ]}
             onPress={() => toggleFilter("communication_xp")}
           >
@@ -249,7 +272,8 @@ export default function MyProgress() {
               style={[
                 styles.filterTextLabel,
                 { color: "#4CA8FF" },
-                selectedFilters.includes("communication_xp") && styles.selectedFilterText,
+                selectedFilters.includes("communication_xp") &&
+                  styles.selectedFilterText,
               ]}
             >
               Communication
@@ -261,7 +285,8 @@ export default function MyProgress() {
           <TouchableOpacity
             style={[
               styles.filterButton,
-              selectedFilters.includes("adaptability_xp") && styles.selectedFilterButton,
+              selectedFilters.includes("adaptability_xp") &&
+                styles.selectedFilterButton,
             ]}
             onPress={() => toggleFilter("adaptability_xp")}
           >
@@ -269,7 +294,8 @@ export default function MyProgress() {
               style={[
                 styles.filterTextLabel,
                 { color: "#FFAB45" },
-                selectedFilters.includes("adaptability_xp") && styles.selectedFilterText,
+                selectedFilters.includes("adaptability_xp") &&
+                  styles.selectedFilterText,
               ]}
             >
               Adaptability
@@ -279,7 +305,8 @@ export default function MyProgress() {
           <TouchableOpacity
             style={[
               styles.filterButton,
-              selectedFilters.includes("leadership_xp") && styles.selectedFilterButton,
+              selectedFilters.includes("leadership_xp") &&
+                styles.selectedFilterButton,
             ]}
             onPress={() => toggleFilter("leadership_xp")}
           >
@@ -287,7 +314,8 @@ export default function MyProgress() {
               style={[
                 styles.filterTextLabel,
                 { color: "#58CDB0" },
-                selectedFilters.includes("leadership_xp") && styles.selectedFilterText,
+                selectedFilters.includes("leadership_xp") &&
+                  styles.selectedFilterText,
               ]}
             >
               Leadership
@@ -314,8 +342,8 @@ const styles = StyleSheet.create({
     paddingBottom: 20, // Add extra space at the bottom to prevent cutoff
   },
   cardContainer: {
-    width: '95%', // Increase percentage or use fixed width
-    height: '75%',
+    width: "95%", // Increase percentage or use fixed width
+    height: "75%",
     backgroundColor: "#FFFFFF",
     borderRadius: 12, // Rounded edges
     elevation: 4, // Android shadow
@@ -390,7 +418,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "black",
     marginTop: 30,
-    fontFamily: "Poppins-SemiBold"
+    fontFamily: "Poppins-SemiBold",
   },
   graphContainer: {
     marginTop: 4,
