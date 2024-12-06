@@ -93,7 +93,8 @@ export default function MyProgress() {
     );
 
     // Dynamically determine the Y-axis interval
-    const interval = maxValue >= 500 ? 100 : 50;
+    const interval = maxValue >= 1000 ? 200 : maxValue >= 500 ? 100 : 50;
+
 
     const scaledData = selectedFilters.map((filter) => ({
       filter,
