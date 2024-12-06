@@ -38,12 +38,24 @@ export default function Details() {
     "problem solving": "#FF6030",
     leadership: "#37C9A5",
     communication: "#4CA8FF",
-    adaptability: "#FFAB45",
+    adaptability: "#FF9B21",
   };
 
   const getSkillColor = (skillName) => {
     return skillColors[skillName] || "#000000";
   };
+
+  const skillBackgroundColors = {
+    "problem solving": "#FFD4C7",
+    communication: "#CFE8FF",
+    leadership: "#D7F9F0",
+    adaptability: "#FFE8CD",
+  };
+  
+  const getSkillBackgroundColor = (skillName) => {
+    return skillBackgroundColors[skillName] || "#E0E0E0"; // Default background color
+  };
+  
 
   const handleMarkAsDone = async () => {
     try {
@@ -238,9 +250,10 @@ export default function Details() {
           </View>
         </View>
       )}
+      
 
       <View style={styles.contentContainer}>
-        <View style={styles.skillTag}>
+        <View style={[styles.skillTag, {backgroundColor: getSkillBackgroundColor(skill)}, ]}>
           <Text style={[styles.skillTagText, { color: getSkillColor(skill) }]}>
             {skill || "No Name"}
           </Text>
@@ -380,8 +393,7 @@ const styles = StyleSheet.create({
   },
   skillTagText: {
     fontSize: 14,
-    fontWeight: "600",
-    fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-SemiBold',
   },
   taskName: {
     fontSize: 24,

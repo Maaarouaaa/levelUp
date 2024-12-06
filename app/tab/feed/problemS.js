@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerText: {
-    paddingVertical: 80,
+    paddingVertical: 70,
     fontSize: 34,
     color: "#FF8460",
     fontWeight: "bold",
