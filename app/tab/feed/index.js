@@ -8,7 +8,7 @@ import db from "@/database/db";
 import { useFocusEffect } from "@react-navigation/native";
 
 export default function Feed() {
-  const id = 2;
+  const id = 40;
   const router = useRouter();
   const navigateToDetails = () => {
     router.push({ pathname: "/tab/feed/details", params: { id: id } });
