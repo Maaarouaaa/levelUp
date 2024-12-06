@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
+import { Keyboard } from "react-native";
 
 import {
   StyleSheet,
@@ -33,8 +34,7 @@ export default function Details() {
   const [users, setUsers] = useState([]);
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
-  const [sendButtonText, setSendButtonText] = useState("Send"); // State for the button text
-
+  const [sendButtonText, setSendButtonText] = useState("Send");
 
   const router = useRouter();
 
@@ -43,16 +43,14 @@ export default function Details() {
   };
 
   const handleSend = () => {
-    console.log("Selected Friends:", selectedFriends); // Log selected friends
-    setSendButtonText("Sent"); // Temporarily set the button text to "Sent"
-  
-    // Close the modal after 1 second
+    console.log("Selected Friends:", selectedFriends);
+    setSendButtonText("Sent");
+
     setTimeout(() => {
-      setSendButtonText("Send"); // Reset the button text to "Send"
-      closeFriendPopup(); // Close the modal
-    }, 1000); // 1000ms = 1 second
+      setSendButtonText("Send");
+      closeFriendPopup();
+    }, 1000);
   };
-  
 
   const skillColors = {
     "problem solving": "#FF6030",
@@ -74,10 +72,7 @@ export default function Details() {
 
   const handleMarkAsDone = async () => {
     try {
-      const { error } = await db
-        .from("tasks")
-        .update({ done: "TRUE" })
-        .eq("id", id);
+      const { error } = await db.from("tasks").update({ done: "TRUE" }).eq("id", id);
       if (error) throw new Error(error.message);
 
       setIsDone(true);
@@ -89,10 +84,7 @@ export default function Details() {
 
   const handleMarkAsNotDone = async () => {
     try {
-      const { error } = await db
-        .from("tasks")
-        .update({ done: "FALSE" })
-        .eq("id", id);
+      const { error } = await db.from("tasks").update({ done: "FALSE" }).eq("id", id);
       if (error) throw new Error(error.message);
 
       setIsDone(false);
@@ -103,8 +95,6 @@ export default function Details() {
 
   const openFriendPopup = () => setShowFriendPopup(true);
   const closeFriendPopup = () => setShowFriendPopup(false);
-
-  const closePopup = () => setShowPopup(false);
 
   const toggleFriendSelection = (name) => {
     setSelectedFriends((prev) =>
@@ -120,8 +110,8 @@ export default function Details() {
       const { data, error } = await db
         .from("users")
         .select("name, photo")
-        .eq("friends", true) // Filter for friends = TRUE
-        .neq("id", 1); // Exclude user with id = 1
+        .eq("friends", true)
+        .neq("id", 1);
 
       if (error) throw error;
 
@@ -216,6 +206,7 @@ export default function Details() {
         <Text style={styles.description}>
           {description || "No Description"}
         </Text>
+
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Reflection</Text>
           <TextInput
@@ -224,8 +215,12 @@ export default function Details() {
             placeholderTextColor="#777"
             multiline={true}
             textAlignVertical="top"
+            returnKeyType="done" // Show "Done" button on the keyboard
+            blurOnSubmit={true} // Ensure keyboard exits when "Done" is pressed
+            onSubmitEditing={Keyboard.dismiss} // Explicitly dismiss the keyboard
           />
         </View>
+
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={[
@@ -260,64 +255,6 @@ export default function Details() {
           </TouchableOpacity>
         </View>
       </View>
-
-      <Modal visible={showFriendPopup} transparent={true} animationType="slide">
-  <View style={styles.modalContainer}>
-    <View style={styles.modalContent}>
-      <TouchableOpacity
-        style={styles.closeIconButton}
-        onPress={closeFriendPopup}
-      >
-        <Icon name="close" size={24} color="#000" />
-      </TouchableOpacity>
-
-      {loadingUsers ? (
-        <ActivityIndicator size="large" color="#509B9B" />
-      ) : (
-        <FlatList
-          data={users}
-          keyExtractor={(item, index) => index.toString()}
-          numColumns={3}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.friendItem}
-              onPress={() => toggleFriendSelection(item.name)}
-            >
-              <Image source={{ uri: item.photo }} style={styles.friendImage} />
-              <Text style={styles.friendName}>{item.name}</Text>
-              {selectedFriends.includes(item.name) && (
-                <View style={styles.checkIconContainer}>
-                  <Icon name="checkmark-circle" size={24} color="#509B9B" />
-                </View>
-              )}
-            </TouchableOpacity>
-          )}
-        />
-      )}
-      <TouchableOpacity
-  style={[
-    styles.submitButton,
-    sendButtonText === "Sent" && styles.sentButton, // Apply a gray style when button is "Sent"
-  ]}
-  onPress={handleSend}
-  disabled={sendButtonText === "Sent"} // Optional: Disable button after it's clicked
->
-  <Text
-    style={[
-      styles.submitButtonText,
-      sendButtonText === "Sent" && styles.sentButtonText, // Change text color to gray
-    ]}
-  >
-    {sendButtonText}
-  </Text>
-</TouchableOpacity>
-
-    </View>
-  </View>
-</Modal>
-
-
-
     </View>
   );
 }
