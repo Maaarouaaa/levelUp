@@ -90,7 +90,7 @@ export default function Profile() {
           style={styles.profilePicture}
         />
         <Text style={styles.profileName}>Taralyn Nguyen</Text>
-        <Text style={styles.memberInfo}>Member since December 2024</Text>
+        <Text style={styles.memberInfo}>Member since November 2024</Text>
       </View>
 
       {/* Stats Section */}
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   header: {
-    height: Dimensions.get("window").height * 0.22, // Set header to 22% of screen height
+    height: "22%", // Set header to 22% of screen height
     backgroundColor: "rgba(80, 155, 155, 0.27)",
     justifyContent: "center",
     alignItems: "center",
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontFamily: "Poppins-Bold",
-    fontSize: 34,
+    fontSize: 40,
     color: "#509B9B",
   },
   profileSection: {
@@ -248,17 +248,19 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontFamily: "Poppins",
-    fontSize: 12,
+    fontSize: 16,
+    marginTop: -2,
   },
   skillsContainer: {
     marginBottom: 20,
     marginHorizontal: 30,
   },
   skillsHeading: {
-    fontFamily: "Poppins",
-    fontSize: 17,
+    fontFamily: "Poppins-SemiBold",
+    fontSize: 20,
     fontWeight: "600",
     marginTop: 5,
+    fontColor: "rgba(0,0,0,0')",
   },
   skillsGrid: {
     flexDirection: "row",
@@ -277,7 +279,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   progressBar: {
-    height: 20,
+    height: 25,
     backgroundColor: "#E0E0E0",
     borderRadius: 20,
     overflow: "hidden",
