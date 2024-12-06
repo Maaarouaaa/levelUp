@@ -157,6 +157,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerText: {
+    fontFamily: "Poppins-Bold",
     fontSize: 40,
     color: "#509B9B",
     fontWeight: "700",
@@ -246,11 +247,13 @@ const styles = StyleSheet.create({
   },
   sentToText: {
     fontSize: 20,
+    fontFamily: "Poppins-Regular",
     fontWeight: "600",
     marginBottom: 5,
   },
   sentDateText: {
     fontSize: 16,
+    fontFamily: "Poppins-Regular",
     fontWeight: "400",
     color: "#555",
   },
@@ -270,7 +273,6 @@ const styles = StyleSheet.create({
   viewTaskText: {
     fontSize: 12,
     color: "#509B9B",
-    fontWeight: "bold",
     marginLeft: 2,
     fontFamily: "Poppins-SemiBold",
   },
