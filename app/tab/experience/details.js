@@ -45,61 +45,111 @@ export default function Details() {
     return skillColors[skillName] || "#000000";
   };
 
+  const updateGraphData = async (id, skillName, updates) => {
+    try {
+      // Fetch the current row for the given ID
+      const { data: currentData, error: fetchError } = await db
+        .from("graph_data")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (fetchError) {
+        console.error("Error fetching current data:", fetchError.message);
+        return;
+      }
+
+      // Dynamically construct the skill-specific field
+      const skillXpField = `${skillName}_xp`; // e.g., problem_solving_xp, adaptability_xp
+
+      // Increment the fields dynamically
+      const updatedData = {
+        total_xp: (currentData.total_xp || 0) + (updates.total_xp || 0), // Increment total_xp
+        [skillXpField]: (currentData[skillXpField] || 0) + (updates.xp || 0), // Increment specific skill XP
+      };
+
+      // Update the table with the incremented values
+      const { error: updateError } = await db
+        .from("graph_data")
+        .update(updatedData)
+        .eq("id", id);
+
+      if (updateError) {
+        console.error("Error updating graph_data:", updateError.message);
+        return;
+      }
+
+      console.log(`Graph data for ID ${id} updated successfully:`, updatedData);
+    } catch (err) {
+      console.error("Error in updateGraphData:", err);
+    }
+  };
+
+  ///
+
   const handleMarkAsDone = async () => {
+    updateGraphData(1, { total_xp: 100, xp: 50 });
+    //updateGraphData(2, ${nSkill}, { total_xp: 150, xp: 60 });
+
     try {
       const { error } = await db
         .from("tasks")
         .update({ done: "TRUE" }) // Mark the task as done
         .eq("id", id);
-  
+
       if (error) {
         console.error("Error marking task as done:", error.message);
         return;
       }
-  
+
       const nSkill = skill.replace(/\s+/g, "").toLowerCase();
-  
+
       // Fetch the current value of {skill}_last
       const { data: userData, error: userError } = await db
         .from("users")
         .select(`${nSkill}_last`) // Dynamically select the column
         .eq("id", 1)
         .single();
-  
+
       if (userError) {
         console.error("Error fetching user's last task:", userError.message);
         return;
       }
-  
+
       const currentLast = userData[`${nSkill}_last`];
       const nextTaskId = currentLast + 1;
-  
+
       // Only unlock the next task if the current task ID is not a multiple of 10
       if (id % 10 !== 0) {
         const { error: unlockError } = await db
           .from("tasks")
           .update({ locked: false }) // Unlock the next task
           .eq("id", nextTaskId);
-  
+
         if (unlockError) {
           console.error("Error unlocking the next task:", unlockError.message);
           return;
         }
       } else {
-        console.log("Current task is a milestone (multiple of 10); next task will not be unlocked.");
+        console.log(
+          "Current task is a milestone (multiple of 10); next task will not be unlocked."
+        );
       }
-  
+
       // Increment the {skill}_last column
       const { error: incrementError } = await db
         .from("users")
         .update({ [`${nSkill}_last`]: currentLast + 1 }) // Update dynamically
         .eq("id", 1);
-  
+
       if (incrementError) {
-        console.error("Error incrementing user's last task:", incrementError.message);
+        console.error(
+          "Error incrementing user's last task:",
+          incrementError.message
+        );
         return;
       }
-  
+
       // Update XP using the RPC
       const { error: xpError } = await db.rpc("update_xp_for_user", {
         skill_name: skill, // Pass the skill name
@@ -107,16 +157,16 @@ export default function Details() {
         user_id: 1, // Hardcoded user ID
         mark_done: true, // Mark as done
       });
-  
+
       if (xpError) {
         console.error("Error updating XP:", xpError.message);
         return;
       }
-  
+
       // Update UI state
       setIsDone(true);
       setShowPopup(true);
-  
+
       console.log(
         "Task marked as done, XP updated, next task unlocked (if applicable), and user's last task incremented."
       );
@@ -124,43 +174,36 @@ export default function Details() {
       console.error("Error:", err);
     }
   };
-  
-  
-  
-  
 
   const handleMarkAsNotDone = async () => {
     try {
-        const { error } = await db
-            .from("tasks")
-            .update({ done: 'FALSE' }) // Update the "done" column to FALSE
-            .eq("id", id); // Filter for the specific task by its ID
+      const { error } = await db
+        .from("tasks")
+        .update({ done: "FALSE" }) // Update the "done" column to FALSE
+        .eq("id", id); // Filter for the specific task by its ID
 
-        if (error) {
-            console.error("Error marking task as not done:", error.message);
+      if (error) {
+        console.error("Error marking task as not done:", error.message);
+      } else {
+        // Call RPC to update XP
+        const { error: xpError } = await db.rpc("update_xp_for_user", {
+          skill_name: `${skill}`, // Pass the skill name (e.g., 'problem_solving')
+          xp_value: xp, // Pass the XP value
+          user_id: 1, // Hardcoded user_id as 1
+          mark_done: false, // Mark as not done (to subtract XP)
+        });
+
+        if (xpError) {
+          console.error("Error updating XP:", xpError.message);
         } else {
-            // Call RPC to update XP
-            const { error: xpError } = await db.rpc('update_xp_for_user', {
-                skill_name: `${skill}`,  // Pass the skill name (e.g., 'problem_solving')
-                xp_value: xp,             // Pass the XP value
-                user_id: 1,               // Hardcoded user_id as 1
-                mark_done: false          // Mark as not done (to subtract XP)
-            });
-
-            if (xpError) {
-                console.error("Error updating XP:", xpError.message);
-            } else {
-                setIsDone(false); // Update the local state
-                console.log("Task marked as not done and XP updated.");
-            }
+          setIsDone(false); // Update the local state
+          console.log("Task marked as not done and XP updated.");
         }
+      }
     } catch (err) {
-        console.error("Error:", err);
+      console.error("Error:", err);
     }
   };
-
-  
-  
 
   const closePopup = () => {
     setShowPopup(false); // Close the popup
@@ -206,26 +249,28 @@ export default function Details() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity 
-  onPress={() => navigateBack()}  
-  style={{ 
-    position: 'absolute', 
-    top: 50, // Adjust the vertical position
-    left: 16, 
-    zIndex: 2 // Ensure it appears above other elements 
-  }}
->
-  <View style={{
-    width: 40,
-    height: 40,
-    backgroundColor: 'rgba(255,255,255,.8)', // Background color of the circle
-    borderRadius: 20, // Half of width/height for a perfect circle
-    justifyContent: 'center',
-    alignItems: 'center',
-  }}>
-    <Icon name="arrow-back" size={24} color="#000000" />
-  </View>
-</TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => navigateBack()}
+        style={{
+          position: "absolute",
+          top: 50, // Adjust the vertical position
+          left: 16,
+          zIndex: 2, // Ensure it appears above other elements
+        }}
+      >
+        <View
+          style={{
+            width: 40,
+            height: 40,
+            backgroundColor: "rgba(255,255,255,.8)", // Background color of the circle
+            borderRadius: 20, // Half of width/height for a perfect circle
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Icon name="arrow-back" size={24} color="#000000" />
+        </View>
+      </TouchableOpacity>
 
       <View style={styles.imageContainer}>
         <Image source={{ uri: photo }} style={styles.image} />
@@ -312,10 +357,10 @@ export default function Details() {
       <Modal visible={showPopup} transparent={true} animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.popup}>
-            <Text style={styles.popupTitle}>Congratulations on Completing this Experience!</Text>
-            <Text style={styles.popupMessage}>
-              You earned {xp} XP.
+            <Text style={styles.popupTitle}>
+              Congratulations on Completing this Experience!
             </Text>
+            <Text style={styles.popupMessage}>You earned {xp} XP.</Text>
             <TouchableOpacity style={styles.okayButton} onPress={closePopup}>
               <Text style={styles.okayButtonText}>Okay</Text>
             </TouchableOpacity>
@@ -325,7 +370,6 @@ export default function Details() {
     </View>
   );
 }
-
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -365,7 +409,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#509B9B", // Same color as `doneIndicator` to maintain consistency
     justifyContent: "center",
     alignItems: "center",
-  },  
+  },
   contentContainer: {
     flex: 1, // This will take up the remaining space
     padding: 14,
@@ -381,14 +425,14 @@ const styles = StyleSheet.create({
   skillTagText: {
     fontSize: 14,
     fontWeight: "600",
-    fontFamily: 'Poppins-Regular',
+    fontFamily: "Poppins-Regular",
   },
   taskName: {
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "left",
     paddingVertical: 4,
-    fontFamily: 'Poppins-SemiBold',
+    fontFamily: "Poppins-SemiBold",
   },
   xpText: {
     fontSize: 16,
@@ -406,7 +450,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     textAlign: "left",
     paddingTop: 6,
-    fontFamily: 'Poppins-Regular',
+    fontFamily: "Poppins-Regular",
   },
   inputContainer: {
     marginTop: 10,
@@ -421,7 +465,7 @@ const styles = StyleSheet.create({
     zIndex: 100,
     fontSize: 12,
     color: "#509B9B",
-    fontFamily: 'Poppins-Regular',
+    fontFamily: "Poppins-Regular",
   },
   textInput: {
     borderWidth: 1,
@@ -431,7 +475,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#000",
     height: 80, // Adjusted height
-    fontFamily: 'Poppins-Regular',
+    fontFamily: "Poppins-Regular",
   },
   buttonContainer: {
     flexDirection: "row",
@@ -454,7 +498,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginLeft: 2, // Spacing between icon and text
-    fontFamily: 'Poppins-SemiBold',
+    fontFamily: "Poppins-SemiBold",
     color: "#509B9B",
   },
   icon: {
@@ -480,15 +524,15 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
-    textAlign: 'center',
-    alignSelf: 'center',
-    fontFamily: 'Poppins-SemiBold',
+    textAlign: "center",
+    alignSelf: "center",
+    fontFamily: "Poppins-SemiBold",
   },
   popupMessage: {
     fontSize: 16,
     textAlign: "center",
     marginBottom: 20,
-    fontFamily: 'Poppins-Regular',
+    fontFamily: "Poppins-Regular",
   },
   okayButton: {
     backgroundColor: "#509B9B",
@@ -500,11 +544,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
-    fontFamily: 'Poppins-SemiBold',
+    fontFamily: "Poppins-SemiBold",
   },
 });
-
-
-
-
-
