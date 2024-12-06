@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
 
   headerText: {
     paddingVertical: 80,
-    fontSize: 34,
+    fontSize: 36,
     color: "#FFAB45",
     fontWeight: "bold",
     fontFamily: 'Poppins-Bold',

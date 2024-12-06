@@ -116,15 +116,20 @@ export default function Three({ navigation }) {
         <Icon name="arrow-back" size={24} color="#838383" />
       </TouchableOpacity>
       <View style={styles.blueBackground}>
-        <Text style={styles.headerText}>Challenge</Text>
+        <Text style={styles.headerText}>Select Challenges</Text>
       </View>
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Search experiences..."
-        placeholderTextColor="#aaa"
-        value={searchText}
-        onChangeText={handleSearch}
-      />
+
+
+        <TextInput
+          style={styles.searchBar}
+          placeholder="Search experiences..."
+          placeholderTextColor="#aaa"
+          value={searchText}
+          onChangeText={handleSearch}
+        />
+
+
+      
       <ScrollView contentContainerStyle={styles.cardsContainer}>
         {filteredTasks.map((task) => (
           <TouchableOpacity
@@ -157,20 +162,21 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   blueBackground: {
-    height: "18%",
+    height: "22%",
     backgroundColor: "rgba(80, 155, 155, .27)",
     justifyContent: "center",
     alignItems: "center",
   },
   headerText: {
-    fontSize: 40,
+    marginBottom: -42,
+    fontSize: 36,
     color: "#509B9B",
     fontFamily: "Poppins-Bold",
     fontWeight: "bold",
   },
   searchBar: {
     position: "absolute",
-    top: "15%", // Ensures it overlaps with the header
+    top: "19.7%", // Ensures it overlaps with the header
     left: "10%", // Centered horizontally (adjust if necessary)
     width: "80%",
     height: 40,
@@ -184,7 +190,8 @@ const styles = StyleSheet.create({
   },
   cardsContainer: {
     marginTop: "20%", // Pushes the cards below the search bar
-    paddingBottom: 80,
+    paddingBottom: 135,
+
     alignItems: "center",
   },
   cardWrapper: {
@@ -199,14 +206,16 @@ const styles = StyleSheet.create({
   },
   sendButton: {
     width: "60%",
+    height: 50,
     padding: 15,
-    borderRadius: 25,
+    marginBottom: 5,
+    borderRadius: 15,
     backgroundColor: "#509B9B",
     alignItems: "center",
   },
   buttonText: {
     color: "#fff",
-    fontFamily: "Poppins-Regular",
+    fontFamily: "Poppins-SemiBold",
     fontWeight: "bold",
     fontSize: 16,
   },

@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     position: "absolute",
-    top: "17%",
+    top: "19.7%",
     alignSelf: "center",
     height: 40,
     width: "80%",
@@ -205,5 +205,6 @@ const styles = StyleSheet.create({
   },
   profilesContainer: {
     padding: 16,
+    paddingTop: 6,
   },
 });
