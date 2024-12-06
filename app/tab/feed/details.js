@@ -427,7 +427,7 @@ export default function Details() {
             <Text style={styles.popupTitle}>
               Congratulations on Completing this Experience!
             </Text>
-            <Text style={styles.popupMessage}>You earned {xp} XP.</Text>
+            <Text style={styles.popupMessage}>You earned {xp} XP!</Text>
             <TouchableOpacity style={styles.okayButton} onPress={closePopup}>
               <Text style={styles.okayButtonText}>Okay</Text>
             </TouchableOpacity>
@@ -594,7 +594,8 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   description: {
-    fontSize: 14,
+    fontSize: 15,
+    lineHeight: 22,
     color: "#555",
     marginBottom: 24,
     textAlign: "left",

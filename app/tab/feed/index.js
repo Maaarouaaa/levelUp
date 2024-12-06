@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   headerLogo: {
-    paddingTop: 10,
+    marginTop: 45,
     width: "50%",
     height: "50%",
   },
@@ -251,6 +251,7 @@ const styles = StyleSheet.create({
     fontWeight: 200,
     fontFamily: "Poppins-SemiBold",
     marginBottom: 5,
+    marginTop: -15,
   },
   xpRow: {
     flexDirection: "row",
@@ -273,6 +274,7 @@ const styles = StyleSheet.create({
     width: 55,
     borderRadius: 50,
     marginLeft: 20,
+    marginTop: -20,
   },
   skillsContainer: {
     flex: 1,
