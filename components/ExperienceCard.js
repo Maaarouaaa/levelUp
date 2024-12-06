@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap", // Allows the name to wrap to a second line if needed
     lineHeight: 24,
     paddingTop: 2,
-    fontFamily: 'Poppins-Regular',
+    fontFamily: "Poppins-Regular",
   },
   xpRow: {
     flexDirection: "row",
@@ -397,4 +397,3 @@ const styles = StyleSheet.create({
   },
 });
 */
-
