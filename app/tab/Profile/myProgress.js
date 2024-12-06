@@ -208,11 +208,11 @@ export default function MyProgress() {
 
           {/* X-Axis Title */}
           <SvgText
-            x={screenWidth / 2 - 20}
+            x={(screenWidth / 2 - 20)} 
             y={graphHeight + 80 + yOffset} // Added yOffset
             style={styles.graphAxisTitle} // Use style for font
           >
-            Days
+            Weeks
           </SvgText>
         </Svg>
       </View>
@@ -229,7 +229,7 @@ export default function MyProgress() {
         onPress={() => navigateBack()}
         style={{ position: "absolute", top: 40, left: 16 }}
       >
-        <Icon name="arrow-back" size={24} color="#838383" />
+        <Icon name="arrow-back" size={24} color="#838383" onPress={navigateBack} />
       </TouchableOpacity>
 
       <Text style={styles.headerTitle}>My Progress</Text>
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
     marginBottom: "1%",
     marginLeft: 45,
     fontFamily: "Poppins-SemiBold",
-    fontSize: 14,
+    fontSize: 16,
     color: "#000000",
   },
   filterContainer: {
@@ -416,7 +416,7 @@ const styles = StyleSheet.create({
     borderColor: "#509B9B",
   },
   filterTextLabel: {
-    fontFamily: "Poppins-Regular",
+    fontFamily: "Poppins-SemiBold",
     fontSize: 12,
   },
   selectedFilterText: {
