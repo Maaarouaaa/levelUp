@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 30,
   },
   skillsHeading: {
-    fontFamily: "Poppins-SemiBold",
+    fontFamily: "Poppins-Regular",
     fontSize: 20,
     fontWeight: "600",
     marginTop: 5,

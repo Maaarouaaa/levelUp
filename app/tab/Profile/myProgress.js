@@ -226,7 +226,12 @@ export default function MyProgress() {
       <View style={styles.headerBackground}></View>
       <TouchableOpacity
         onPress={() => navigateBack()}
-        style={{ position: "absolute", top: 40, left: 16 }}
+        style={{
+          position: "absolute",
+          top: 50, // Adjust the vertical position to sit right above the header
+          left: 16,
+          zIndex: 2, // Ensure it appears above other elements
+        }}
       >
         <Icon name="arrow-back" size={24} color="#838383" onPress={navigateBack} />
       </TouchableOpacity>
@@ -376,18 +381,18 @@ const styles = StyleSheet.create({
     left: 16,
   },
   headerTitle: {
-    position: "absolute",
-    top: 50,
-    left: "22%",
+    paddingVertical: 80,
+    alignSelf: "center",
     fontFamily: "Poppins-Bold",
     fontSize: 34,
     color: "#509B9B",
+    marginBottom: -190,
   },
   filterText: {
     marginTop: "28%",
-    marginBottom: "1%",
+    marginBottom: ".2%",
     marginLeft: 45,
-    fontFamily: "Poppins-SemiBold",
+    fontFamily: "Poppins-Regular",
     fontSize: 16,
     color: "#000000",
   },
@@ -422,11 +427,12 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
   graphTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "500",
     textAlign: "center",
     color: "black",
-    marginTop: 30,
+    marginTop: 40,
+    marginBottom: -18,
     fontFamily: "Poppins-SemiBold",
   },
   graphContainer: {

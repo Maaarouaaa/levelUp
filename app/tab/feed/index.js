@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: "#D0E4E4",
     width: "100%",
-    height: "25%",
+    height: "30%",
     justifyContent: "center",
     alignItems: "center",
     padding: 10,
@@ -269,6 +269,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "70%",
     marginVertical: 10,
+    marginTop: 5,
   },
   image: {
     height: 55,
@@ -285,6 +286,7 @@ const styles = StyleSheet.create({
   miniTitle: {
     fontSize: 18,
     padding: 12,
+    paddingBottom: 8,
     paddingLeft: 20,
     alignSelf: "flex-start",
     fontFamily: "Poppins-Regular",
