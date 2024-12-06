@@ -1,64 +1,117 @@
-import React, { useState, useCallback } from "react";
-import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import TodaysExperience from "@/components/TodaysExperience";
 import Icon from "react-native-vector-icons/Ionicons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import db from "@/database/db";
-import { useFocusEffect } from "@react-navigation/native";
 
 export default function Feed() {
-  const id = 40;
   const router = useRouter();
-  const navigateToDetails = () => {
-    router.push({ pathname: "/tab/feed/details", params: { id: id } });
-  };
-
-  const navigateToProblemSolving = () => {
-    router.push("/tab/feed/problemS");
-  };
-
-  const navigateToCommunication = () => {
-    router.push("/tab/feed/communication");
-  };
-
-  const navigateToLeadership = () => {
-    router.push("/tab/feed/leadership");
-  };
-
-  const navigateToAdapt = () => {
-    router.push("/tab/feed/adaptability");
-  };
-
-  const [total_xp, set_total_xp] = useState(null);
+  const [todaysExperience, setTodaysExperience] = useState(null);
+  const [totalXp, setTotalXp] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetch_total_xp = async () => {
-        try {
-          setLoading(true);
-          const { data, error } = await db
-            .from("users")
-            .select("total_xp")
-            .eq("id", 1)
-            .single();
+  const fetchTodaysExperience = async () => {
+    try {
+      setLoading(true);
 
-          if (error) {
-            console.error("Error fetching total xp:", error.message);
-          } else if (data) {
-            set_total_xp(data.total_xp);
-          }
-        } catch (err) {
-          console.error("Error:", err);
-        } finally {
+      // Retrieve the stored experience and timestamp
+      const storedExperience = await AsyncStorage.getItem("todaysExperience");
+      const storedTimestamp = await AsyncStorage.getItem(
+        "todaysExperienceTimestamp"
+      );
+
+      const currentTimestamp = Date.now(); // Current time in milliseconds
+
+      if (storedExperience && storedTimestamp) {
+        const elapsedSeconds =
+          (currentTimestamp - parseInt(storedTimestamp)) / 1000;
+
+        if (elapsedSeconds < 1) {
+          // If less than 1 second has passed, use the stored experience
+          setTodaysExperience(JSON.parse(storedExperience));
           setLoading(false);
+          return;
         }
-      };
+      }
 
-      fetch_total_xp();
-    }, []) // Empty dependency array ensures this runs every time the screen is focused
-  );
+      // Fetch a new task if more than 1 second has passed
+      const { data, error } = await db
+        .from("tasks")
+        .select("id, name, description, skill, locked, done")
+        .eq("locked", false)
+        .eq("done", false);
+
+      if (error) {
+        console.error("Error fetching experience:", error.message);
+      } else if (data && data.length > 0) {
+        // Pick a random task
+        const randomIndex = Math.floor(Math.random() * data.length);
+        const experience = data[randomIndex];
+        setTodaysExperience(experience);
+
+        // Save the experience and current timestamp
+        await AsyncStorage.setItem(
+          "todaysExperience",
+          JSON.stringify(experience)
+        );
+        await AsyncStorage.setItem(
+          "todaysExperienceTimestamp",
+          currentTimestamp.toString()
+        );
+      } else {
+        setTodaysExperience(null); // No matching experiences found
+      }
+    } catch (err) {
+      console.error("Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchTotalXp = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await db
+        .from("users")
+        .select("total_xp")
+        .eq("id", 1)
+        .single();
+
+      if (error) {
+        console.error("Error fetching total xp:", error.message);
+      } else if (data) {
+        setTotalXp(data.total_xp);
+      }
+    } catch (err) {
+      console.error("Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTotalXp();
+    fetchTodaysExperience();
+  }, []);
+
+  const navigateToDetails = () => {
+    if (todaysExperience) {
+      router.push({
+        pathname: "/tab/feed/details",
+        params: { id: todaysExperience.id },
+      });
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -66,7 +119,7 @@ export default function Feed() {
         {/* Header */}
         <View style={styles.header}>
           <Image
-            source={require("@/assets/level Up. (3).png")} 
+            source={require("@/assets/level Up. (3).png")}
             style={styles.headerLogo}
             resizeMode="contain"
           />
@@ -76,7 +129,12 @@ export default function Feed() {
               <View style={styles.xpRow}>
                 <Icon name="star" size={20} color="#509B9B" />
                 <Text style={styles.xp}>
-                  {loading ? "Loading..." : total_xp !== null ? total_xp : "No Data"} XP
+                  {loading
+                    ? "Loading..."
+                    : totalXp !== null
+                    ? totalXp
+                    : "No Data"}{" "}
+                  XP
                 </Text>
               </View>
             </View>
@@ -92,21 +150,33 @@ export default function Feed() {
         {/* Today's Experience Section */}
         <Text style={styles.miniTitle}>Today's Experience</Text>
         <View style={styles.postButton}>
-          <TodaysExperience id={id} onPress={navigateToDetails} />
+          {loading ? (
+            <Text>Loading...</Text>
+          ) : todaysExperience ? (
+            <TodaysExperience
+              id={todaysExperience.id}
+              name={todaysExperience.name}
+              description={todaysExperience.description}
+              onPress={navigateToDetails}
+            />
+          ) : (
+            <Text>No experience available for today.</Text>
+          )}
         </View>
 
         {/* Skills Section */}
         <View style={styles.skillsContainer}>
           <Text style={styles.miniTitle}>My Skills</Text>
           <View style={styles.pair}>
-            <TouchableOpacity onPress={navigateToProblemSolving}>
+            <TouchableOpacity onPress={() => router.push("/tab/feed/problemS")}>
               <Image
                 source={require("@/assets/probIcon.png")}
                 style={styles.skillIcon}
               />
             </TouchableOpacity>
-
-            <TouchableOpacity onPress={navigateToCommunication}>
+            <TouchableOpacity
+              onPress={() => router.push("/tab/feed/communication")}
+            >
               <Image
                 source={require("@/assets/commIcon.png")}
                 style={styles.skillIcon}
@@ -115,14 +185,17 @@ export default function Feed() {
           </View>
 
           <View style={styles.pair}>
-            <TouchableOpacity onPress={navigateToLeadership}>
+            <TouchableOpacity
+              onPress={() => router.push("/tab/feed/leadership")}
+            >
               <Image
                 source={require("@/assets/Leadicon.png")}
                 style={styles.skillIcon}
               />
             </TouchableOpacity>
-
-            <TouchableOpacity onPress={navigateToAdapt}>
+            <TouchableOpacity
+              onPress={() => router.push("/tab/feed/adaptability")}
+            >
               <Image
                 source={require("@/assets/AdaptIcon.png")}
                 style={styles.skillIcon}
@@ -169,15 +242,15 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     flex: 1,
     justifyContent: "flex-start",
-    marginRight: 20, 
+    marginRight: 20,
   },
   welcomeText: {
     color: "#509B9B",
     fontSize: 24,
     width: 500,
     fontWeight: 200,
-    fontFamily: 'Poppins-SemiBold',
-    marginBottom: 5, 
+    fontFamily: "Poppins-SemiBold",
+    marginBottom: 5,
   },
   xpRow: {
     flexDirection: "row",
@@ -186,20 +259,20 @@ const styles = StyleSheet.create({
   xp: {
     fontSize: 16,
     fontFamily: "Poppins-Regular",
-    marginLeft: 5, 
+    marginLeft: 5,
     marginTop: 2,
   },
   pair: {
-    flexDirection: "row", 
-    justifyContent: "space-between", 
-    width: "70%", 
-    marginVertical: 10, 
-  },  
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "70%",
+    marginVertical: 10,
+  },
   image: {
-    height: 55, 
-    width: 55, 
+    height: 55,
+    width: 55,
     borderRadius: 50,
-    marginLeft: 20, 
+    marginLeft: 20,
   },
   skillsContainer: {
     flex: 1,
