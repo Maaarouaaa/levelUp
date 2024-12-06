@@ -20,6 +20,7 @@ export default function Three({ navigation }) {
   const [completed, setCompleted] = useState([]);
   const [filteredTasks, setFilteredTasks] = useState([]);
   const [allTasks, setAllTasks] = useState([]); // Store the original list of tasks
+  
 
   const router = useRouter();
 
