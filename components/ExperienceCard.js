@@ -234,13 +234,6 @@ const styles = StyleSheet.create({
   },
 });
 
-
-
-
-
-
-
-
 /*
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator } from "react-native";
@@ -427,4 +420,3 @@ const styles = StyleSheet.create({
   },
 });
 */
-

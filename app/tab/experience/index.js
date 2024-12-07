@@ -13,7 +13,13 @@ import ExperienceCard from "@/components/ExperienceCard";
 import db from "@/database/db";
 import { useFocusEffect } from "@react-navigation/native";
 
-const categories = ["All", "problem solving", "adaptability", "leadership", "communication"];
+const categories = [
+  "All",
+  "problem solving",
+  "adaptability",
+  "leadership",
+  "communication",
+];
 
 export default function Three() {
   const [searchText, setSearchText] = useState("");
@@ -51,6 +57,7 @@ export default function Three() {
   };
 
   // Refetch data when the screen is focused
+
   useFocusEffect(
     useCallback(() => {
       fetchTasks();
@@ -322,6 +329,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-
-
