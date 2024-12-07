@@ -222,15 +222,15 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: "#D0E4E4",
     width: "100%",
-    height: "25%",
+    height: "30%",
     justifyContent: "center",
     alignItems: "center",
     padding: 10,
   },
   headerLogo: {
-    paddingTop: 10,
-    width: "50%",
-    height: "50%",
+    marginTop: 45,
+    width: "45%",
+    height: "45%",
   },
   bottomHalf: {
     flexDirection: "row",
@@ -251,10 +251,12 @@ const styles = StyleSheet.create({
     fontWeight: 200,
     fontFamily: "Poppins-SemiBold",
     marginBottom: 5,
+    marginTop: -12,
   },
   xpRow: {
     flexDirection: "row",
     alignItems: "center",
+    marginTop: -8,
   },
   xp: {
     fontSize: 16,
@@ -267,12 +269,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "70%",
     marginVertical: 10,
+    marginTop: 5,
   },
   image: {
     height: 55,
     width: 55,
     borderRadius: 50,
     marginLeft: 20,
+    marginTop: -10,
   },
   skillsContainer: {
     flex: 1,
@@ -282,6 +286,7 @@ const styles = StyleSheet.create({
   miniTitle: {
     fontSize: 18,
     padding: 12,
+    paddingBottom: 8,
     paddingLeft: 20,
     alignSelf: "flex-start",
     fontFamily: "Poppins-Regular",

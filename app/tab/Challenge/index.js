@@ -83,12 +83,13 @@ export default function Three() {
       </View>
 
       <TextInput
-        style={styles.searchBar}
-        placeholder="Search challenges..."
-        placeholderTextColor="#aaa"
-        value={searchText}
-        onChangeText={setSearchText}
-      />
+  style={[styles.searchBar, { fontFamily: 'Poppins-Regular' }]} // Apply Poppins font
+  placeholder="Search challenges..."
+  placeholderTextColor="#aaa"
+  value={searchText}
+  onChangeText={setSearchText}
+/>
+
 
       <View style={styles.toggleWrapper}>
         <TouchableOpacity style={styles.toggleContainer} onPress={handleToggle}>
@@ -202,12 +203,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: -20,
   },
   blueBackground: {
-    height: "18%",
+    height: "22%",
     backgroundColor: "rgba(80, 155, 155, 0.27)",
     justifyContent: "center",
     alignItems: "center",
   },
   headerText: {
+    marginBottom: -42,
     fontFamily: "Poppins-Bold",
     fontSize: 40,
     color: "#509B9B",
@@ -215,13 +217,13 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     position: "absolute",
-    top: "15%",
+    top: "19.7%",
     alignSelf: "center",
     height: 40,
     width: "80%",
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 10,
+    borderRadius: 8,
     paddingHorizontal: 10,
     backgroundColor: "#fff",
     color: "#000",

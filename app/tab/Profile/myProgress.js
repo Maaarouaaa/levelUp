@@ -40,9 +40,8 @@ export default function MyProgress() {
         console.log("Fetching data from the database...");
         const { data, error } = await db
           .from("graph_data")
-          .select(
-            'total_xp, "problem solving_xp", communication_xp, leadership_xp, adaptability_xp'
-          );
+          .select('total_xp, \"problem solving_xp\", communication_xp, leadership_xp, adaptability_xp')
+          .order("id", { ascending: true }); // Add ordering by 'id'
 
         if (error) {
           console.error("Error fetching data:", error.message);
@@ -52,7 +51,7 @@ export default function MyProgress() {
           const cumulativeData = [];
           let cumulativeSums = {
             total_xp: 0,
-            problem_solving_xp: 0,
+            "problem solving_xp": 0,
             communication_xp: 0,
             leadership_xp: 0,
             adaptability_xp: 0,
@@ -93,7 +92,8 @@ export default function MyProgress() {
     );
 
     // Dynamically determine the Y-axis interval
-    const interval = maxValue >= 500 ? 100 : 50;
+    const interval = maxValue >= 1000 ? 200 : maxValue >= 500 ? 100 : 50;
+
 
     const scaledData = selectedFilters.map((filter) => ({
       filter,
@@ -160,7 +160,7 @@ export default function MyProgress() {
                       stroke={
                         {
                           total_xp: "#509B9B",
-                          problem_solving_xp: "#FF8460",
+                          "problem solving_xp": "#FF8460",
                           communication_xp: "#4CA8FF",
                           adaptability_xp: "#FFAB45",
                           leadership_xp: "#58CDB0",
@@ -182,7 +182,7 @@ export default function MyProgress() {
                   fill={
                     {
                       total_xp: "#509B9B",
-                      problem_solving_xp: "#FF8460",
+                      "problem solving_xp": "#FF8460",
                       communication_xp: "#4CA8FF",
                       adaptability_xp: "#FFAB45",
                       leadership_xp: "#58CDB0",
@@ -207,11 +207,11 @@ export default function MyProgress() {
 
           {/* X-Axis Title */}
           <SvgText
-            x={screenWidth / 2 - 20}
+            x={(screenWidth / 2 - 20)} 
             y={graphHeight + 80 + yOffset} // Added yOffset
             style={styles.graphAxisTitle} // Use style for font
           >
-            Days
+            Weeks
           </SvgText>
         </Svg>
       </View>
@@ -226,9 +226,14 @@ export default function MyProgress() {
       <View style={styles.headerBackground}></View>
       <TouchableOpacity
         onPress={() => navigateBack()}
-        style={{ position: "absolute", top: 40, left: 16 }}
+        style={{
+          position: "absolute",
+          top: 50, // Adjust the vertical position to sit right above the header
+          left: 16,
+          zIndex: 2, // Ensure it appears above other elements
+        }}
       >
-        <Icon name="arrow-back" size={24} color="#838383" />
+        <Icon name="arrow-back" size={24} color="#838383" onPress={navigateBack} />
       </TouchableOpacity>
 
       <Text style={styles.headerTitle}>My Progress</Text>
@@ -239,16 +244,16 @@ export default function MyProgress() {
           <TouchableOpacity
             style={[
               styles.filterButton,
-              selectedFilters.includes("problem_solving_xp") &&
+              selectedFilters.includes("problem solving_xp") &&
                 styles.selectedFilterButton,
             ]}
-            onPress={() => toggleFilter("problem_solving_xp")}
+            onPress={() => toggleFilter("problem solving_xp")}
           >
             <Text
               style={[
                 styles.filterTextLabel,
                 { color: "#FF8460" }, // Same color as the graph for Problem Solving
-                selectedFilters.includes("problem_solving_xp") &&
+                selectedFilters.includes("problem solving_xp") &&
                   styles.selectedFilterText,
               ]}
             >
@@ -376,19 +381,19 @@ const styles = StyleSheet.create({
     left: 16,
   },
   headerTitle: {
-    position: "absolute",
-    top: 50,
-    left: "22%",
+    paddingVertical: 80,
+    alignSelf: "center",
     fontFamily: "Poppins-Bold",
     fontSize: 34,
     color: "#509B9B",
+    marginBottom: -190,
   },
   filterText: {
     marginTop: "28%",
-    marginBottom: "1%",
+    marginBottom: ".2%",
     marginLeft: 45,
-    fontFamily: "Poppins-SemiBold",
-    fontSize: 14,
+    fontFamily: "Poppins-Regular",
+    fontSize: 16,
     color: "#000000",
   },
   filterContainer: {
@@ -415,18 +420,19 @@ const styles = StyleSheet.create({
     borderColor: "#509B9B",
   },
   filterTextLabel: {
-    fontFamily: "Poppins-Regular",
+    fontFamily: "Poppins-SemiBold",
     fontSize: 12,
   },
   selectedFilterText: {
     fontWeight: "800",
   },
   graphTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "500",
     textAlign: "center",
     color: "black",
-    marginTop: 30,
+    marginTop: 40,
+    marginBottom: -18,
     fontFamily: "Poppins-SemiBold",
   },
   graphContainer: {
