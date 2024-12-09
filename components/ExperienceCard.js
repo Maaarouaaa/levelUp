@@ -76,7 +76,8 @@ export default function ExperienceCard({ id, navigate, bool }) {
           detailFromHome();
           break;
         case "experience":
-          detailFromExperience();
+          //detailFromExperience();
+          detailFromHome();
           break;
         default:
           break;
