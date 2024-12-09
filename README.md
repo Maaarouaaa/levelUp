@@ -37,7 +37,7 @@ In the Challenge Log, the challenges under “Inbox” and “Sent” are hardco
 The number of friends on the profile page is hardcoded.
 
 
-**Wizard of Oz Techniques **
+**Wizard of Oz Techniques**
 “Today’s Experience” should recommend a task for the user based on their past activity using a tailored algorithm. However, it currently selects a task randomly from the user’s remaining tasks without considering their activity history.
 Clicking “View Task” in the Challenge Log is intended to show the actual task sent to or received from another user. Instead, it navigates to a randomly selected task each time, even from already completed tasks (marked with green check marks) or tasks sent to others.
 While other users are displayed to mimic a social network, only one user, Taralyn, is functional. As a result, challenges are not sent to real users, nor can users receive challenges through this prototype.
