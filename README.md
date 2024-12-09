@@ -9,11 +9,12 @@ Research shows that 85% of career success depends on interpersonal skills, yet m
 We developed our high-fidelity prototype using React Native and Expo. During the development process, we leveraged the Xcode Simulator to run and test the app. Navigation was implemented through Stack Navigation using the Expo Router. For the design phase, we used Figma to create and prototype the Medium-Fidelity design of our app.
 
 **Operating Instructions**
-- Installation and Accessing the Source Code
+Installation and Accessing the Source Code
 - Download the code from our Level Up GitHub Repository
 - Download Expo and npm
   - Alternatively, Apple’s XCode Simulator works as well
 - Open in VS Code or the IDE of your choice
+- Open the default branch named “main-branch.” Please note this is different from “main” and running the latter will not lead to the correct version of Level Up.
 - Run npm install
 - Run npx expo and open either on Expo Go or the XCode Simulator.
 - You should be taken to the app's home screen. From here, you can navigate to different tabs, click buttons on screens, and carry out other interactions. 
