@@ -7,6 +7,321 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
+import {
+  VictoryChart,
+  VictoryLine,
+  VictoryAxis,
+  VictoryTheme,
+  VictoryLegend,
+} from "victory-native";
+import { useRouter } from "expo-router";
+import Icon from "react-native-vector-icons/Ionicons";
+import db from "@/database/db";
+
+export default function MyProgress() {
+  const [chartData, setChartData] = useState(null);
+  const [selectedFilters, setSelectedFilters] = useState(["total_xp"]);
+  const screenWidth = Dimensions.get("window").width * 0.9;
+  const graphHeight = 300;
+  const topMargin = 50;
+  const bottomPadding = 100;
+  const router = useRouter();
+
+  const toggleFilter = (filter) => {
+    setSelectedFilters((prev) =>
+      prev.includes(filter)
+        ? prev.filter((item) => item !== filter)
+        : [...prev, filter]
+    );
+  };
+
+  const navigateBack = () => {
+    router.back();
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data, error } = await db
+          .from("graph_data")
+          .select(
+            'total_xp, "problem solving_xp", communication_xp, leadership_xp, adaptability_xp'
+          )
+          .order("id", { ascending: true });
+
+        if (error) {
+          console.error("Error fetching data:", error.message);
+        } else {
+          const cumulativeData = [];
+          let cumulativeSums = {
+            total_xp: 0,
+            "problem solving_xp": 0,
+            communication_xp: 0,
+            leadership_xp: 0,
+            adaptability_xp: 0,
+          };
+
+          data.forEach((row) => {
+            const cumulativeRow = {};
+            for (let key in cumulativeSums) {
+              cumulativeSums[key] += row[key] || 0;
+              cumulativeRow[key] = cumulativeSums[key];
+            }
+            cumulativeData.push(cumulativeRow);
+          });
+
+          setChartData(cumulativeData);
+        }
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (!chartData) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>Loading...</Text>
+      </View>
+    );
+  }
+
+  const getGraphData = () => {
+    const maxValue = Math.max(
+      ...chartData.flatMap((row) =>
+        selectedFilters.map((filter) => row[filter])
+      )
+    );
+
+    // Dynamically determine the Y-axis interval
+    const interval = maxValue >= 1000 ? 200 : maxValue >= 500 ? 100 : 50;
+
+    const scaledData = selectedFilters.map((filter) => ({
+      filter,
+      data: chartData.map((row) => (row[filter] / maxValue) * graphHeight),
+    }));
+
+    return {
+      maxValue,
+      scaledData,
+      interval,
+    };
+  };
+
+  const { maxValue, scaledData, interval } = getGraphData();
+
+  return (
+    <ScrollView
+      style={styles.scrollView}
+      contentContainerStyle={styles.contentContainer}
+    >
+      <View style={styles.headerBackground}></View>
+      <TouchableOpacity
+        onPress={() => navigateBack()}
+        style={styles.backButton}
+      >
+        <Icon name="arrow-back" size={24} color="#838383" />
+      </TouchableOpacity>
+
+      <Text style={styles.headerTitle}>My Progress</Text>
+      <Text style={styles.filterText}>Filter by</Text>
+      <View style={styles.filterContainer}>
+        {[
+          "problem solving_xp",
+          "communication_xp",
+          "adaptability_xp",
+          "leadership_xp",
+        ].map((filter) => (
+          <TouchableOpacity
+            key={filter}
+            style={[
+              styles.filterButton,
+              selectedFilters.includes(filter) && styles.selectedFilterButton,
+            ]}
+            onPress={() => toggleFilter(filter)}
+          >
+            <Text
+              style={[
+                styles.filterTextLabel,
+                {
+                  color:
+                    filter === "problem solving_xp"
+                      ? "#FF8460"
+                      : filter === "communication_xp"
+                      ? "#4CA8FF"
+                      : filter === "adaptability_xp"
+                      ? "#FFAB45"
+                      : "#58CDB0",
+                },
+                selectedFilters.includes(filter) && styles.selectedFilterText,
+              ]}
+            >
+              {filter.replace(/_/g, " ").toUpperCase()}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <Text style={styles.graphTitle}>Skill Progress</Text>
+
+      <View style={styles.graphContainer}>
+        <VictoryChart
+          theme={VictoryTheme.material}
+          width={screenWidth}
+          height={graphHeight + bottomPadding}
+        >
+          <VictoryAxis
+            tickValues={chartData.map((_, index) => index + 1)}
+            tickFormat={(tick) => `Week ${tick}`}
+          />
+          <VictoryAxis
+            dependentAxis
+            tickValues={Array.from(
+              { length: Math.ceil(maxValue / interval) + 1 },
+              (_, i) => i * interval
+            )}
+            tickFormat={(tick) => tick}
+          />
+
+          {scaledData.map(({ filter, data }) => (
+            <VictoryLine
+              key={filter}
+              data={data}
+              style={{
+                data: {
+                  stroke:
+                    filter === "total_xp"
+                      ? "#509B9B"
+                      : filter === "problem solving_xp"
+                      ? "#FF8460"
+                      : filter === "communication_xp"
+                      ? "#4CA8FF"
+                      : filter === "adaptability_xp"
+                      ? "#FFAB45"
+                      : "#58CDB0",
+                  strokeWidth: 2,
+                },
+              }}
+            />
+          ))}
+        </VictoryChart>
+        <VictoryLegend
+          x={screenWidth - 150}
+          y={10}
+          orientation="vertical"
+          gutter={10}
+          style={{ border: { stroke: "black", width: 1 } }}
+          data={[
+            { name: "Total XP", symbol: { fill: "#509B9B" } },
+            { name: "Problem Solving", symbol: { fill: "#FF8460" } },
+            { name: "Communication", symbol: { fill: "#4CA8FF" } },
+            { name: "Adaptability", symbol: { fill: "#FFAB45" } },
+            { name: "Leadership", symbol: { fill: "#58CDB0" } },
+          ]}
+        />
+      </View>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  scrollView: {
+    flexGrow: 1,
+  },
+  contentContainer: {
+    flexGrow: 1,
+    paddingBottom: 20,
+  },
+  headerBackground: {
+    position: "absolute",
+    width: "100%",
+    height: "30%",
+    backgroundColor: "rgba(80, 155, 155, 0.27)",
+  },
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 16,
+    zIndex: 2,
+  },
+  headerTitle: {
+    paddingVertical: 80,
+    alignSelf: "center",
+    fontFamily: "Poppins-Bold",
+    fontSize: 34,
+    color: "#509B9B",
+    marginBottom: -190,
+  },
+  filterText: {
+    marginTop: "28%",
+    marginBottom: ".2%",
+    marginLeft: 45,
+    fontFamily: "Poppins-Regular",
+    fontSize: 16,
+    color: "#000000",
+  },
+  filterContainer: {
+    alignItems: "center",
+    paddingTop: 4,
+  },
+  filterButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: "47%",
+    height: 30,
+    borderRadius: 15,
+    borderWidth: 2,
+    borderColor: "#E0E0E0",
+    backgroundColor: "#FFFFFF",
+  },
+  selectedFilterButton: {
+    borderColor: "#509B9B",
+  },
+  filterTextLabel: {
+    fontFamily: "Poppins-SemiBold",
+    fontSize: 12,
+  },
+  selectedFilterText: {
+    fontWeight: "800",
+  },
+  graphTitle: {
+    fontSize: 20,
+    fontWeight: "500",
+    textAlign: "center",
+    color: "black",
+    marginTop: 40,
+    marginBottom: -18,
+    fontFamily: "Poppins-SemiBold",
+  },
+  graphContainer: {
+    marginTop: 4,
+    alignItems: "center",
+    padding: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+  },
+  loadingText: {
+    fontSize: 16,
+    color: "#509B9B",
+  },
+});
+
+/*
+import React, { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import Svg, { Line, Circle, Text as SvgText } from "react-native-svg";
 import { useRouter } from "expo-router";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -117,7 +432,7 @@ export default function MyProgress() {
           height={graphHeight + bottomPadding + yOffset}
           style={{ marginHorizontal: 10 }}
         >
-          {/* Draw Y-Axis Labels */}
+          {/* Draw Y-Axis Labels 
           {yAxisPoints.map((point, index) => (
             <SvgText
               key={`y-axis-${index}`}
@@ -133,7 +448,7 @@ export default function MyProgress() {
             </SvgText>
           ))}
 
-          {/* Y-Axis Title */}
+          {/* Y-Axis Title 
           <SvgText
             x={10} // Adjusted for better alignment
             y={graphHeight / 2 + yOffset} // Added yOffset
@@ -143,7 +458,7 @@ export default function MyProgress() {
             XP
           </SvgText>
 
-          {/* Draw Graphs for Selected Filters */}
+          {/* Draw Graphs for Selected Filters 
           {scaledData.map(({ filter, data }) => (
             <React.Fragment key={filter}>
               {data.map((_, index) => {
@@ -193,7 +508,7 @@ export default function MyProgress() {
             </React.Fragment>
           ))}
 
-          {/* X-Axis Labels */}
+          {/* X-Axis Labels 
           {chartData.map((_, index) => (
             <SvgText
               key={`label-${index}`}
@@ -205,7 +520,7 @@ export default function MyProgress() {
             </SvgText>
           ))}
 
-          {/* X-Axis Title */}
+          {/* X-Axis Title 
           <SvgText
             x={(screenWidth / 2 - 20)} 
             y={graphHeight + 80 + yOffset} // Added yOffset
@@ -240,7 +555,7 @@ export default function MyProgress() {
       <Text style={styles.filterText}>Filter by</Text>
       <View style={styles.filterContainer}>
         <View style={styles.row}>
-          {/* Problem Solving Filter */}
+          {/* Problem Solving Filter 
           <TouchableOpacity
             style={[
               styles.filterButton,
@@ -261,7 +576,7 @@ export default function MyProgress() {
             </Text>
           </TouchableOpacity>
 
-          {/* Communication Filter */}
+          {/* Communication Filter 
           <TouchableOpacity
             style={[
               styles.filterButton,
@@ -284,7 +599,7 @@ export default function MyProgress() {
         </View>
 
         <View style={styles.row}>
-          {/* Adaptability Filter */}
+          {/* Adaptability Filter 
           <TouchableOpacity
             style={[
               styles.filterButton,
@@ -305,7 +620,7 @@ export default function MyProgress() {
             </Text>
           </TouchableOpacity>
 
-          {/* Leadership Filter */}
+          {/* Leadership Filter 
           <TouchableOpacity
             style={[
               styles.filterButton,
@@ -330,13 +645,13 @@ export default function MyProgress() {
 
       <Text style={styles.graphTitle}>Skill Progress</Text>
       <View style={styles.graphContainer}>
-        {/* Legend Positioned in Top Right */}
+        {/* Legend Positioned in Top Right 
         <View style={styles.legendContainer}>
           <View style={[styles.legendCircle, { backgroundColor: "#509B9B" }]} />
           <Text style={styles.legendText}>Total XP</Text>
         </View>
 
-        {/* Render the Graph */}
+        {/* Render the Graph 
         {renderGraphs()}
       </View>
     </ScrollView>
@@ -505,3 +820,4 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+*/

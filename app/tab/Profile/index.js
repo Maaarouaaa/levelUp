@@ -1,5 +1,13 @@
 import React, { useState, useCallback } from "react";
-import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+  ScrollView,
+} from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
@@ -9,7 +17,8 @@ export default function Profile() {
   const router = useRouter();
 
   const navigateToProgress = () => {
-    router.push("/tab/Profile/myProgress");
+    router.push("/tab/Profile/myFriends");
+    //router.push({ pathname: "/tab/feed/details" });
   };
 
   const [skillData, setSkillData] = useState({
@@ -62,7 +71,10 @@ export default function Profile() {
             .eq("done", true);
 
           if (error) {
-            console.error("Error fetching completed experiences:", error.message);
+            console.error(
+              "Error fetching completed experiences:",
+              error.message
+            );
           } else {
             setCompletedExperiences(data.length);
           }
@@ -102,7 +114,9 @@ export default function Profile() {
             label: "Total XP",
           },
           {
-            icon: <Icon name="checkmark-done-circle" size={24} color="#509B9B" />,
+            icon: (
+              <Icon name="checkmark-done-circle" size={24} color="#509B9B" />
+            ),
             number: loading ? "..." : completedExperiences,
             label: "Experiences",
           },
@@ -119,49 +133,49 @@ export default function Profile() {
           </View>
         ))}
       </View>
-
       {/* Skills Section */}
-      <View style={styles.skillsContainer}>
-        <Text style={styles.skillsHeading}>My Skills</Text>
-        <View style={styles.skillsGrid}>
-          {[
-            {
-              skillName: "Problem Solving",
-              currentXP: skillData.problem_solving_xp,
-              maxXP: 500,
-              color: "#FF8460",
-            },
-            {
-              skillName: "Communication",
-              currentXP: skillData.communication_xp,
-              maxXP: 500,
-              color: "#4CA8FF",
-            },
-            {
-              skillName: "Adaptability",
-              currentXP: skillData.adaptability_xp,
-              maxXP: 500,
-              color: "#FFAB45",
-            },
-            {
-              skillName: "Leadership",
-              currentXP: skillData.leadership_xp,
-              maxXP: 500,
-              color: "#6CE7C9",
-            },
-          ].map((skill, index) => (
-            <SkillBar key={index} {...skill} />
-          ))}
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.skillsContainer}>
+          <Text style={styles.skillsHeading}>My Skills</Text>
+          <View style={styles.skillsGrid}>
+            {[
+              {
+                skillName: "Problem Solving",
+                currentXP: skillData.problem_solving_xp,
+                maxXP: 500,
+                color: "#FF8460",
+              },
+              {
+                skillName: "Communication",
+                currentXP: skillData.communication_xp,
+                maxXP: 500,
+                color: "#4CA8FF",
+              },
+              {
+                skillName: "Adaptability",
+                currentXP: skillData.adaptability_xp,
+                maxXP: 500,
+                color: "#FFAB45",
+              },
+              {
+                skillName: "Leadership",
+                currentXP: skillData.leadership_xp,
+                maxXP: 500,
+                color: "#6CE7C9",
+              },
+            ].map((skill, index) => (
+              <SkillBar key={index} {...skill} />
+            ))}
+          </View>
         </View>
-      </View>
-
-      {/* Buttons Section */}
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.button} onPress={navigateToProgress}>
-          <Icon name="stats-chart" size={16} color="#509B9B" />
-          <Text style={styles.buttonText}>My Progress</Text>
-        </TouchableOpacity>
-      </View>
+        {/* Buttons Section */}
+        <View style={styles.buttonsContainer}>
+          <TouchableOpacity style={styles.button} onPress={navigateToProgress}>
+            <Icon name="stats-chart" size={16} color="#509B9B" />
+            <Text style={styles.buttonText}>My Progress</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -185,11 +199,16 @@ const SkillBar = ({ skillName, currentXP, maxXP, color }) => {
   );
 };
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingBottom: 50,
   },
   header: {
     height: "22%", // Set header to 22% of screen height
@@ -284,7 +303,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8, // Opacity of the shadow
     shadowRadius: 4, // Blur radius of the shadow
     elevation: 5, // Elevation for Android shadow
-  },  
+  },
   progress: {
     height: "100%",
   },
@@ -320,5 +339,3 @@ const styles = StyleSheet.create({
     marginLeft: 2,
   },
 });
-
-

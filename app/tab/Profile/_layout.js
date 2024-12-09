@@ -21,8 +21,9 @@ export default function FeedStackLayout() {
         name="myFriends" // Matches "feed/newpost.js"
         options={{
           title: "My Friends",
+          animation: "slide_from_right",
           headerShown: false, // Show header for this screen
-          presentation: "modal", // Modal presentation for this screen
+          presentation: "absolute", // Modal presentation for this screen
           headerStyle: {
             backgroundColor: Theme.colors.backgroundPrimary,
           },
@@ -42,7 +43,7 @@ export default function FeedStackLayout() {
           },
           headerTintColor: "#fff",
         }}
-      /> 
+      />
     </Stack>
   );
 }
